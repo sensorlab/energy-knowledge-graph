@@ -1,0 +1,8 @@
+numpy
+scipy
+pandas
+matplotlib
+
+psycopg2
+pyarrow
+python-dotenv

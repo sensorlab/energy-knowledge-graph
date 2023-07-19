@@ -6,3 +6,7 @@ matplotlib
 psycopg2
 pyarrow
 python-dotenv
+
+pytz >= 2021.3
+typing >= 3.10.0.2
+av >= 8.0.3

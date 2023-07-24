@@ -2,6 +2,7 @@ numpy
 scipy
 pandas
 matplotlib
+pickle
 
 psycopg2
 pyarrow

@@ -3,6 +3,9 @@ scipy
 pandas
 matplotlib
 pickle
+rasterio
+holidays
+pycountry
 
 psycopg2
 pyarrow

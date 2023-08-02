@@ -15,9 +15,10 @@ def parse_UCIML(data_path, save_path):
 
     household = pd.read_parquet(data_path)
     df = preprocess_dataframe(household)
-
+    houses = {}
     data = {}
     for col in df.columns:
         data[col] = pd.DataFrame(df[col])
+    houses["UCIML_1"] = data
 
-    save_to_pickle(data, save_path)
+    save_to_pickle(houses, save_path)

@@ -17,6 +17,7 @@ def process_file(path : str) -> pd.DataFrame:
 def parse_name(file_name: str) -> str:
     name = file_name.split(".")[0]
     name = name.split("_")[-1]
+    name = "LERTA_" + name[-1]
     return name
 
 

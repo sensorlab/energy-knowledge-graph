@@ -35,21 +35,21 @@ def parse_HES(data_path, save_path):
         dfs[device] = device_df
 
 
-    house_data['house1'] = dfs
+    house_data['HES_1'] = dfs
 
 
     df_total = pd.Series(dtype='float64')
 
     # calculate total energy consumption
-    for device in house_data['house1']:
-        df_total = df_total.add(house_data['house1'][device][device], fill_value=0)
+    for device in house_data['HES_1']:
+        df_total = df_total.add(house_data['HES_1'][device][device], fill_value=0)
 
         
     # rename the column to 'aggregate'
     df_total = df_total.rename('aggregate')
 
     # add the aggregate to the house data
-    house_data['house1']['aggregate'] = pd.DataFrame(df_total)
+    house_data['HES_1']['aggregate'] = pd.DataFrame(df_total)
 
     save_to_pickle(house_data, save_path)    
 

@@ -156,7 +156,8 @@ def parse_ECO(file_path: str, path_to_save: str):
 
     for house in os.listdir(file_path):
         mapping = get_device_map(house)
-        houses_data[house] = get_house_data(file_path+"/"+house, mapping)
+        name = "ECO_"+house[-1]
+        houses_data[name] = get_house_data(file_path+"/"+house, mapping)
 
 
     save_to_pickle(houses_data, path_to_save)

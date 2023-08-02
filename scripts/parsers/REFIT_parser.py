@@ -65,7 +65,7 @@ def parse_REFIT(data_path, save_path):
     for i, house in enumerate(houses_df):
         if i >= 13:
             i=i+1
-        name = "house_" + str(i+1)
+        name = "REFIT_" + str(i+1)
         data = {}
         #  add dataframes for each appliance
         for col in house.columns:

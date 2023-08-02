@@ -14,7 +14,7 @@ def parse_HUE(data_path, save_path):
     residentials = residentials.copy()
     
     # save each house in a separate dataframe
-    df_dict = {"house_"+str(id): to_dict(residentials["energy"]) for id, df_group in residentials.groupby('residential_id')}
+    df_dict = {"HUE_"+str(id): to_dict(residentials["energy"]) for id, df_group in residentials.groupby('residential_id')}
 
 
     save_to_pickle(df_dict, save_path)

@@ -66,7 +66,7 @@ This will process datasets from `path/to/data/` directory and save the calculate
 
 ## Output
 
-The script generates load profiles for each dataset and for each house in the dataset. These are saved in a pickle file in your specified save path. In addition, a merged load profile across all datasets is also generated and saved.
+The script generates load profiles for each device and aggregate consumption in each household in all the datasets. These are saved in a pickle file in your specified save path. In addition, a merged load profile across all datasets is also generated and saved.
 
 # Generate metadata
 `python generate_metadata.py <data_path> <save_path> [--save]`

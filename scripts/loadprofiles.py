@@ -40,7 +40,7 @@ elif len(sys.argv) == 3:
     data_path = sys.argv[1]
     save_folder = sys.argv[2]
 
-
+loadprofiles_merged = {}
 
 for dataset in tqdm(os.listdir(data_path)):
     name = dataset.split(".")[0]
@@ -52,7 +52,11 @@ for dataset in tqdm(os.listdir(data_path)):
             house_lp[device] = calculate_loadprofiles(data_dict[house][device])
 
         loadprofiles[house] = house_lp
+    loadprofiles_merged[name] = loadprofiles
     with open(save_folder + name + "_loadprofiles.pkl", 'wb') as f:
         pickle.dump(loadprofiles, f, pickle.HIGHEST_PROTOCOL)
+
+with open(save_folder + "merged_loadprofiles.pkl", 'wb') as f:
+    pickle.dump(loadprofiles_merged, f, pickle.HIGHEST_PROTOCOL)
     
 

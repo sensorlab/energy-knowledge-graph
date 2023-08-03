@@ -117,8 +117,7 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
         VALUES (:yearly, :hourly)
         RETURNING weather_id;
     ''')
-
-    #sql = query_location_sql.format(meta=json.dumps(meta))
+    # queary location data to check if location already exists in database
     locations = conn.execute(query_location_sql, dict(country=household["country"], latitude=household["lat"], longitude=household["lon"])).scalars().all()
 
     # Sanity checks
@@ -129,15 +128,17 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
         location_id = locations[0]
         return location_id
     
+    # get location data
     lat, lon, country = household['lat'], household['lon'], household['country']
     if lat is None or lon is None or isnan(lat) or isnan(lon):
         location_data = create_location_dict(country, household["first_reading"], 0)
     else:
         location_data = create_location_dict(country, household["first_reading"], 1, lat, lon)
 
+    # get weather data TODO for now just fill with null
     weather_id = conn.execute(insert_weather_sql, dict(yearly=None, hourly=None)).scalar_one()
 
-
+    # Create entry in DB
     location_id = conn.execute(insert_location_sql,
                                 dict(
         weather_id=weather_id,
@@ -176,7 +177,17 @@ def query_osm_metadata(lat:float, lon:float) -> dict:
 
 def get_or_create_household_id(conn: Connection, household: dict) -> int:
     """Currently there is no way to validate duplication of the entries."""
-    # TODO check if household already exists maybe by name?
+
+    query_household_sql = text('''
+        SELECT household_id FROM households WHERE name = :name
+    ''')
+
+    # Does entry already exist? If it does, use it, otherwise create new one.
+    households = conn.execute(query_household_sql, dict(name=household["name"])).scalars().all()
+
+    if len(households) > 0:
+        household_id = households[0]
+        return household_id
 
     insert_household_sql = text('''
         INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs)
@@ -184,17 +195,19 @@ def get_or_create_household_id(conn: Connection, household: dict) -> int:
         RETURNING household_id;
     ''')
 
-    # Pick geographical metadata about of household's location depending on the availability of lat/lon
 
 
     
     # Obtain location ID
     location_id = get_or_create_location_id(conn, household)
+
+    # Convert occupancy to int if it is not NaN
     if not isnan(household["occupancy"]):
         household["occupancy"] = int(household["occupancy"])
     else:
         household["occupancy"] = None
 
+    # Create entry in DB
     household_id = conn.execute(insert_household_sql, dict(
         location_id=location_id,
         name=household["name"],

@@ -8,6 +8,7 @@ pycountry_convert
 # tzwhere
 timezonefinder
 requests
+pyyaml
 
 psycopg2
 pyarrow

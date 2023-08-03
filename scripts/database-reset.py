@@ -9,16 +9,21 @@ import pandas as pd
 from src.enrich_data import create_location_dict, create_weather_dict
 from src.api import get_or_create_location_id, get_or_create_device_id, get_or_create_household_id
 
+# Change path to data
+
+# generated metadata from generate_metadata.py
+DATA_PATH = './energy-knowledge-graph/data/metadata/residential_metadata.parquet'
+
+# calculated loadprofiles from loadprofiles.py
+LOADPROFILES_PATH = './energy-knowledge-graph/data/loadprofiles/merged_loadprofiles.pkl'
+
 def load_data(conn:Connection):
-    # TODO change path
 
-    df = pd.read_parquet('./energy-knowledge-graph/data/metadata/residential_metadata.parquet')
-    loadprofiles = pd.read_pickle('./energy-knowledge-graph/data/merged_loadprofiles.pkl')
-
+    df = pd.read_parquet(DATA_PATH)
+    loadprofiles = pd.read_pickle(LOADPROFILES_PATH)
+    print("Populating database...")
+    # iterate over rows in dataframe
     for _, row in df.iterrows():
-        # if "HUE" in row["name"] or "REFIT" in row["name"] or "UCIML" in row["name"]:
-        #     continue
-        print(row['name'])
         id = get_or_create_household_id(conn, row.to_dict())
         for device in loadprofiles[row['name']]:
             get_or_create_device_id(conn, device, id , loadprofiles[row['name']])
@@ -48,7 +53,6 @@ def main():
         # save changes
         conn.commit()
 
-        inspector = inspect(engine)
 
 
     with engine.connect() as conn:
@@ -59,23 +63,12 @@ def main():
         # populate dataset
         load_data(conn)
 
-
+        # save changes
         conn.commit()
-
-        inspector = inspect(engine)
-        print(inspector.get_table_names())
+        print("Done")
 
         
-
-
-    # with engine.begin() as conn:
-    #     print('Locations:', conn.execute(text('SELECT COUNT(1) FROM locations')).scalar_one())
-    #     print('Households:', conn.execute(text('SELECT COUNT(1) FROM households')).scalar_one())
-
-    #     print('Locations:', conn.execute(text('SELECT * FROM locations')).all())
-
-    #     print('Weather:', conn.execute(text('SELECT * FROM weather')).all())
-    #     # print all tables of db
+    
         
 
 if __name__ == '__main__':

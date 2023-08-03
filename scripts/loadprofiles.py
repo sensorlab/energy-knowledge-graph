@@ -53,10 +53,10 @@ for dataset in tqdm(os.listdir(data_path)):
 
         loadprofiles[house] = house_lp
     loadprofiles_merged[name] = loadprofiles
-    with open(save_folder + name + "_loadprofiles.pkl", 'wb') as f:
+    with open(save_folder+ "loadprofiles/" + name + "_loadprofiles.pkl", 'wb') as f:
         pickle.dump(loadprofiles, f, pickle.HIGHEST_PROTOCOL)
 
-with open(save_folder + "merged_loadprofiles.pkl", 'wb') as f:
+with open(save_folder + "/loadprofiles/" +"merged_loadprofiles.pkl", 'wb') as f:
     pickle.dump(loadprofiles_merged, f, pickle.HIGHEST_PROTOCOL)
     
 

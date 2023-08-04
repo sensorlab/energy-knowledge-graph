@@ -36,6 +36,8 @@ elif len(sys.argv) == 3:
 # # folder to save the preprocessed data
 # save_folder = "../data/testing"
 
+# TODO add DRED parser
+
 for dataset in tqdm(os.listdir(data_path)):
     if dataset == "SMART":
         # continue

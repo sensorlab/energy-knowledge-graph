@@ -12,6 +12,7 @@ from LERTA_parser import parse_LERTA
 from SMART_parser import parse_SMART
 from UCIML_parser import parse_UCIML
 from DRED_parser import parse_DRED
+from REDD_parser import parse_REDD
 
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
@@ -67,6 +68,9 @@ for dataset in tqdm(os.listdir(data_path)):
     elif dataset == "DRED":
         # continue
         parse_DRED(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "REDD":
+        # continue
+        parse_REDD(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     else:
         print("Dataset not found: " + dataset)
         # sys.exit(1)

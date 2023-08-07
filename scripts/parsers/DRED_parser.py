@@ -2,7 +2,7 @@ import pandas as pd
 from helper_functions import save_to_pickle, watts2kwh
 
 def parse_DRED(data_path : str, save_path : str):
-    df = pd.read_csv(data_path+"All_data.csv", skiprows=1, parse_dates=["Unnamed: 0"]).drop(columns=["unknown"])
+    df = pd.read_csv(data_path+"All_data.csv", skiprows=1).drop(columns=["unknown"])
 
     # rename time column and mains to aggregate
     df = df.rename(columns={'Unnamed: 0':'time','mains':'aggregate'})

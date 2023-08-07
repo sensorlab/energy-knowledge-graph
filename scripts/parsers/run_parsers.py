@@ -11,6 +11,7 @@ from HUE_parser import parse_HUE
 from LERTA_parser import parse_LERTA
 from SMART_parser import parse_SMART
 from UCIML_parser import parse_UCIML
+from DRED_parser import parse_DRED
 
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
@@ -36,9 +37,9 @@ elif len(sys.argv) == 3:
 # # folder to save the preprocessed data
 # save_folder = "../data/testing"
 
-# TODO add DRED parser
 
 for dataset in tqdm(os.listdir(data_path)):
+    print("Processing " + dataset + ".... ")
     if dataset == "SMART":
         # continue
         parse_SMART(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
@@ -63,6 +64,9 @@ for dataset in tqdm(os.listdir(data_path)):
     elif dataset == "UCIML":
         # continue
         parse_UCIML(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "DRED":
+        # continue
+        parse_DRED(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     else:
         print("Dataset not found: " + dataset)
-        sys.exit(1)
+        # sys.exit(1)

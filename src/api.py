@@ -245,9 +245,13 @@ def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:
     device_id = conn.execute(insert_device_sql, dict(
         household_id=household_id, 
         name = device,
-        loadprofile_daily = list(data[device]["daily"].flatten()),
-        loadprofile_weekly = list(data[device]["weekly"].flatten()),
-        loadprofile_monthly = list(data[device]["monthly"].flatten()),
+        # loadprofile_daily = list(data[device]["daily"].flatten()),
+        # loadprofile_weekly = list(data[device]["weekly"].flatten()),
+        # loadprofile_monthly = list(data[device]["monthly"].flatten()),
+        loadprofile_daily = data[device]["daily"].flatten().astype(float).tolist(),
+        loadprofile_weekly = data[device]["weekly"].flatten().astype(float).tolist(),
+        loadprofile_monthly = data[device]["monthly"].flatten().astype(float).tolist(),
+        
         )).scalar_one()
     return device_id
 

@@ -24,6 +24,10 @@ def load_data(conn:Connection):
     print("Populating database...")
     # iterate over rows in dataframe
     for _, row in df.iterrows():
+        # for debugging
+        # if "LERTA" in row["name"] or"HES" in row['name'] or "UCIML" in row["name"] or "HUE" in row['name'] or "ECO" in row['name'] or "REFIT" in row['name'] or "UKDALE" in row["name"]:
+        #     continue
+        # print(row['name'])
         id = get_or_create_household_id(conn, row.to_dict())
         for device in loadprofiles[row['name']]:
             get_or_create_device_id(conn, device, id , loadprofiles[row['name']])

@@ -52,7 +52,7 @@ for dataset in tqdm(os.listdir(data_path)):
             house_lp[device] = calculate_loadprofiles(data_dict[house][device])
 
         loadprofiles[house] = house_lp
-    loadprofiles_merged[name] = loadprofiles
+        loadprofiles_merged[house] = house_lp
     with open(save_folder+ "loadprofiles/" + name + "_loadprofiles.pkl", 'wb') as f:
         pickle.dump(loadprofiles, f, pickle.HIGHEST_PROTOCOL)
 

@@ -289,7 +289,7 @@ def REDD_metadata():
             "last_reading": value["aggregate"].index.date.max(),
             "lat" : 42.360338,
             "lon" : -71.064709,
-            "country" : "United states",
+            "country" : "United States",
         }
         
         

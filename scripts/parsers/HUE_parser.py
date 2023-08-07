@@ -1,5 +1,4 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 from helper_functions import watts2kwh, save_to_pickle
 
 def to_dict(df):

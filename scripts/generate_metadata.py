@@ -268,6 +268,51 @@ def UKDALE_metadata():
 
     return UKDALE_metadata
 
+def DRED_metadata():
+    dred ={
+    "name" : "DRED_1",
+    "first_reading" : date(2015, 7, 5),
+    "last_reading" : date(2015, 12, 5),
+    "country" : "Netherlands",
+    }
+    dred = pd.DataFrame(dred, index=[0])
+    return dred
+
+def REDD_metadata():
+    redd_data = pd.read_pickle(DATA_PATH+"REDD.pkl")
+
+    redd = {}
+
+    for name, value in redd_data.items():
+        redd[name] =  {
+            "first_reading": value["aggregate"].index.date.min(),
+            "last_reading": value["aggregate"].index.date.max(),
+            "lat" : 42.360338,
+            "lon" : -71.064709,
+            "country" : "United states",
+        }
+        
+        
+    redd = pd.DataFrame(redd).T
+    redd.index.name = "name"
+    redd.reset_index(inplace=True)
+    return redd
+
+def IAWE_metadata():
+    iawe = {
+    "name": "IAWE_1",
+    "country": "India",
+    "lat": 28.644800,
+    "lon": 77.216721,
+    "first_reading": date(2013,7,13),
+    "last_reading": date(2013, 8,4),
+    }
+
+    df = pd.DataFrame(iawe, index=[0])
+    return df
+
+
+
 def generate_metadata(save=True):
     """Generate metadata for all datasets and save to parquet file if save is True"""
     # generate metadata for all datasets
@@ -278,9 +323,12 @@ def generate_metadata(save=True):
     ECO_meta = ECO_metadata()
     LERTA_meta = LERTA_metadata()
     UKDALE_meta = UKDALE_metadata()
+    DRED_meta = DRED_metadata()
+    REDD_meta = REDD_metadata()
+    IAWE_meta = IAWE_metadata()
 
     # concat all metadata
-    metadata = pd.concat([HUE_meta, REFIT_meta, UCIML_meta, HES_meta, ECO_meta, LERTA_meta, UKDALE_meta], ignore_index=True, axis=0)
+    metadata = pd.concat([HUE_meta, REFIT_meta, UCIML_meta, HES_meta, ECO_meta, LERTA_meta, UKDALE_meta, DRED_meta, REDD_meta, IAWE_meta], ignore_index=True, axis=0)
     metadata.reset_index(inplace=True, drop=True)
 
     # convert first and last reading to datetime

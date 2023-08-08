@@ -14,6 +14,7 @@ from UCIML_parser import parse_UCIML
 from DRED_parser import parse_DRED
 from REDD_parser import parse_REDD
 from IAWE_parser import parse_IAWE
+from DEKN_parser import parse_DEKN
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
 Usage: python run_parsers.py <path to data> <path to save folder>
@@ -74,6 +75,9 @@ for dataset in tqdm(os.listdir(data_path)):
     elif dataset == "IAWE":
         # continue
         parse_IAWE(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "DEKN":
+        # continue
+        parse_DEKN(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     else:
         print("Dataset not found: " + dataset)
         # sys.exit(1)

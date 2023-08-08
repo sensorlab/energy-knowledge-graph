@@ -311,6 +311,23 @@ def IAWE_metadata():
     df = pd.DataFrame(iawe, index=[0])
     return df
 
+def DEKN_metadata():
+    dekn = pd.read_pickle(DATA_PATH+"DEKN.pkl")
+    data = {}
+    for house in dekn:
+        data[house] = {
+            "name": house,
+            "first_reading": pd.to_datetime(dekn[house]["aggregate"].index.date.min()),
+            "last_reading": pd.to_datetime(dekn[house]["aggregate"].index.date.max()),
+            "country": "Germany",
+            "lat" : 47.66033,
+            "lon" : 9.17582,
+        }
+    dekn = pd.DataFrame(data).T.reset_index(drop=True)
+
+    return dekn
+
+
 
 
 def generate_metadata(save=True):
@@ -326,9 +343,10 @@ def generate_metadata(save=True):
     DRED_meta = DRED_metadata()
     REDD_meta = REDD_metadata()
     IAWE_meta = IAWE_metadata()
+    DEKN_meta = DEKN_metadata()
 
     # concat all metadata
-    metadata = pd.concat([HUE_meta, REFIT_meta, UCIML_meta, HES_meta, ECO_meta, LERTA_meta, UKDALE_meta, DRED_meta, REDD_meta, IAWE_meta], ignore_index=True, axis=0)
+    metadata = pd.concat([HUE_meta, REFIT_meta, UCIML_meta, HES_meta, ECO_meta, LERTA_meta, UKDALE_meta, DRED_meta, REDD_meta, IAWE_meta, DEKN_meta], ignore_index=True, axis=0)
     metadata.reset_index(inplace=True, drop=True)
 
     # convert first and last reading to datetime

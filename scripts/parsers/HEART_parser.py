@@ -1,0 +1,42 @@
+import pandas as pd
+import os
+from helper_functions import *
+
+
+def parse_name(file_name: str):
+    """
+    Parse the file name to get the house name
+    """
+    # appliance name
+    appliance_name = file_name.split(".")[0]
+
+    # date
+    return "HEART" + "_" + appliance_name[5:]
+
+
+def parse_HEART(data_path : str, save_path : str):
+    data_dict = {}
+    for file in os.listdir(data_path):
+        if file.endswith(".csv"):
+            # 
+            df = pd.read_csv(data_path + file)
+            # convert unix timestamp to datetime
+            df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms")
+            # set datetime as index and drop unnecessary columns
+            df = df.set_index("Timestamp").drop(columns=["dw", "wm"])
+            
+            df.rename(columns={"Value": "aggregate"}, inplace=True)
+            # convert watts to kilowatt hours
+            df = watts2kwh(df, 1/3600)
+            df.dropna(inplace=True)
+            # create a dictionary of dataframes for each device
+            devices_dict = {}
+            for device in df.columns:
+                    devices_dict[device] = pd.DataFrame(df[device])
+            # add the device dictionary to the data dictionary
+            data_dict[parse_name(file)] = devices_dict
+
+
+    #save to pickle
+    save_to_pickle(data_dict, save_path)
+

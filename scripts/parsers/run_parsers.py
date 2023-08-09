@@ -15,6 +15,8 @@ from DRED_parser import parse_DRED
 from REDD_parser import parse_REDD
 from IAWE_parser import parse_IAWE
 from DEKN_parser import parse_DEKN
+from SUST_parser import parse_SUST
+from HEART_parser import parse_HEART
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
 Usage: python run_parsers.py <path to data> <path to save folder>
@@ -32,6 +34,39 @@ elif len(sys.argv) == 3:
     data_path = sys.argv[1]
     save_folder = sys.argv[2]
 
+#####################################################################
+# TODO will be used to clean up the code later
+# parse_functions = {
+#     "SMART": parse_SMART,
+#     "REFIT": parse_REFIT,
+#     "ECO": parse_ECO,
+#     "HES": parse_HES,
+#     "UK-DALE": parse_UKDALE,
+#     "HUE": parse_HUE,
+#     "LERTA": parse_LERTA,
+#     "UCIML": parse_UCIML,
+#     "DRED": parse_DRED,
+#     "REDD": parse_REDD,
+#     "IAWE": parse_IAWE,
+#     "DEKN": parse_DEKN,
+#     "SUST": parse_SUST,
+#     "HEART": parse_HEART
+# }
+
+
+# for dataset in tqdm(os.listdir(data_path)):
+#     print(f"Processing {dataset}.... ")
+    
+#     # Get the appropriate parsing function from the dictionary
+#     parse_function = parse_functions.get(dataset)
+    
+#     if parse_function:
+#         parse_function(data_path + dataset + "/", save_folder + "/" + dataset + ".pkl")
+#     else:
+#         print(f"Dataset not found: {dataset}")
+
+#########################################################################
+
 
 # # path to all the data on the compute machine
 # data_path = "../../shared/Energy_graph_datasets/raw/"
@@ -43,41 +78,47 @@ elif len(sys.argv) == 3:
 for dataset in tqdm(os.listdir(data_path)):
     print("Processing " + dataset + ".... ")
     if dataset == "SMART":
-        # continue
+        continue
         parse_SMART(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "REFIT":
-        # continue
+        continue
         parse_REFIT(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "ECO":
-        # continue
+        continue
         parse_ECO(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "HES":
-        # continue
+        continue
         parse_HES(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "UK-DALE":
-        # continue
+        continue
         parse_UKDALE(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "HUE":
-        # continue
+        continue
         parse_HUE(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "LERTA":
-        # continue
+        continue
         parse_LERTA(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "UCIML":
-        # continue
+        continue
         parse_UCIML(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "DRED":
-        # continue
+        continue
         parse_DRED(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "REDD":
-        # continue
+        continue
         parse_REDD(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "IAWE":
-        # continue
+        continue
         parse_IAWE(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "DEKN":
         # continue
         parse_DEKN(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "SUST":
+        # continue
+        parse_SUST(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "HEART":
+        # continue
+        parse_HEART(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     else:
         print("Dataset not found: " + dataset)
         # sys.exit(1)

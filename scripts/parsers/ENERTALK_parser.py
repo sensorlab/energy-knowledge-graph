@@ -65,7 +65,7 @@ def parse_ENERTALK(data_path, save_path):
     # data_path = "./Energy_graph/data/temp/ENERTALK/"
     house_paths = [os.path.join(data_path, house) for house in os.listdir(data_path)]
     queue = multiprocessing.Manager().Queue()
-
+    # use process pool to parallelize using half the available cores
     with tqdm(total=len(house_paths), desc="Processing houses", unit="house") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=os.cpu_count()/2) as executor:
             futures = [executor.submit(process_house, house_path, queue) for house_path in house_paths]

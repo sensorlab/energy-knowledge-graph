@@ -19,6 +19,7 @@ from SUST_parser import parse_SUST
 from HEART_parser import parse_HEART
 from ENERTALK_parser import parse_ENERTALK
 from DEDDIAG_parser import parse_DEDDIAG
+from IDEAL_parser import parse_IDEAL
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
 Usage: python run_parsers.py <path to data> <path to save folder>
@@ -80,37 +81,37 @@ elif len(sys.argv) == 3:
 for dataset in tqdm(os.listdir(data_path)):
     print("Processing " + dataset + ".... ")
     if dataset == "SMART":
-        continue
+        # continue
         parse_SMART(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "REFIT":
-        continue
+        # continue
         parse_REFIT(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "ECO":
-        continue
+        # continue
         parse_ECO(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "HES":
-        continue
+        # continue
         parse_HES(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "UK-DALE":
-        continue
+        # continue
         parse_UKDALE(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "HUE":
-        continue
+        # continue
         parse_HUE(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "LERTA":
-        continue
+        # continue
         parse_LERTA(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "UCIML":
-        continue
+        # continue
         parse_UCIML(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "DRED":
-        continue
+        # continue
         parse_DRED(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "REDD":
-        continue
+        # continue
         parse_REDD(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "IAWE":
-        continue
+        # continue
         parse_IAWE(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "DEKN":
         # continue
@@ -127,6 +128,8 @@ for dataset in tqdm(os.listdir(data_path)):
     elif dataset == "DEDDIAG":
         # continue
         parse_DEDDIAG(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "IDEAL":
+        parse_IDEAL(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     else:
         print("Dataset not found: " + dataset)
         # sys.exit(1)

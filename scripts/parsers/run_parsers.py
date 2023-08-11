@@ -2,6 +2,7 @@ import os
 from tqdm import tqdm
 import sys
 
+# TODO SPLIT IMPORTS INTO LABLLED AND UNLABELED
 # import parsers
 from REFIT_parser import parse_REFIT
 from ECO_parser import parse_ECO
@@ -20,6 +21,9 @@ from HEART_parser import parse_HEART
 from ENERTALK_parser import parse_ENERTALK
 from DEDDIAG_parser import parse_DEDDIAG
 from IDEAL_parser import parse_IDEAL
+
+# Unlabeled datasets
+from ECDUY_parser import parse_ECDUY
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
 Usage: python run_parsers.py <path to data> <path to save folder>
@@ -129,7 +133,11 @@ for dataset in tqdm(os.listdir(data_path)):
         # continue
         parse_DEDDIAG(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "IDEAL":
+        # continue
         parse_IDEAL(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "ECD-UY":
+        # continue
+        parse_ECDUY(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     else:
         print("Dataset not found: " + dataset)
         # sys.exit(1)

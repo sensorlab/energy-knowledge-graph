@@ -59,7 +59,7 @@ def parse_ECDUY(data_path : str, save_path : str):
 
     # merge the dataframes
     for key in tqdm(data):
-        data[key]["aggregate"] = pd.concat(data[key]["aggregate"])
+        data[key]["aggregate"] = pd.concat(data[key]["aggregate"]).sort_index()
     
     # save the data
     save_to_pickle(data, save_path)

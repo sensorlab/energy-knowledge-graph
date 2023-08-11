@@ -356,7 +356,7 @@ def HEART_metadata():
     return heart
 
 def SUST_metadata():
-    # drop unnecessary columns
+    # drop unnecessary columns TODO UPDATE PATH
     df = pd.read_csv("./Energy_graph/data/temp/SUST/meta/demographics.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
     # rename columns to match the other metadata
     df.rename(columns={"# People": "occupancy", "Type (A/H)": "house_type", "Start Measuring" : "first_reading", "End Measuring" : "last_reading", "SustData IID": "name"},inplace=True)
@@ -408,6 +408,13 @@ def ENERTALK_metadata():
     df["country"] = "South Korea"
     return df
 
+def ECDUY_metadata():
+    data = pd.read_pickle(DATA_PATH + "ECDUY_metadata.pkl")
+    df = pd.DataFrame(data).T.reset_index(drop=True)
+
+    df["country"] = "Uruguay"
+    return df
+
 def generate_metadata(save=True):
     """Generate metadata for all datasets and save to parquet file if save is True"""
     # generate metadata for all datasets
@@ -426,6 +433,7 @@ def generate_metadata(save=True):
     SUST_meta = SUST_metadata()
     DEDDIAG_meta = DEDDIAG_metadata()
     ENERTALK_meta = ENERTALK_metadata()
+    ECDUY_meta = ECDUY_metadata()
 
     # concat all metadata
     metadata = pd.concat(
@@ -444,7 +452,8 @@ def generate_metadata(save=True):
         HEART_meta,
         SUST_meta,
         DEDDIAG_meta,
-        ENERTALK_meta
+        ENERTALK_meta,
+        ECDUY_meta
         ],
          ignore_index=True, axis=0)
     metadata.reset_index(inplace=True, drop=True)

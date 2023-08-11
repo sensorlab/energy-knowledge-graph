@@ -5,10 +5,12 @@ matplotlib
 rasterio
 holidays
 pycountry_convert
-# tzwhere
 timezonefinder
 requests
 pyyaml
+
+lxml
+beautifulsoup4
 
 psycopg2
 pyarrow

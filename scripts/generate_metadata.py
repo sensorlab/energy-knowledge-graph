@@ -5,6 +5,8 @@ from datetime import date
 import yaml
 import sys
 import argparse
+from io import StringIO
+
 
 DATA_PATH = "./energy-knowledge-graph/data/metadata/datasets/"
 SAVE_PATH = "./energy-knowledge-graph/data/metadata/"
@@ -327,8 +329,84 @@ def DEKN_metadata():
 
     return dekn
 
+def HEART_metadata():
+    data = {}
+
+    data = {
+        "HEART_7"  : {
+            "name" : "HEART_7",
+            "first_reading" : date(2022,7,7),
+            "last_reading"  : date(2022,8,8),
+            "country"       : "Greece",
+            
+        },
+        
+        "HEART_33"  : {
+            "name": "HEART_33",
+            "first_reading" : date(2022,7,7),
+            "last_reading"  : date(2022,8,8),
+            "country"       : "Greece",
+            
+        }
+
+    }
+
+    heart = pd.DataFrame.from_dict(data).T
+    heart.reset_index(drop=True, inplace=True)
+    return heart
+
+def SUST_metadata():
+    # drop unnecessary columns
+    df = pd.read_csv("./Energy_graph/data/temp/SUST/meta/demographics.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
+    # rename columns to match the other metadata
+    df.rename(columns={"# People": "occupancy", "Type (A/H)": "house_type", "Start Measuring" : "first_reading", "End Measuring" : "last_reading", "SustData IID": "name"},inplace=True)
+    # convert to datetime
+    df["first_reading"] = pd.to_datetime(df["first_reading"])
+    df["last_reading"] = pd.to_datetime(df["last_reading"])
+    # convert to match the other metadata
+    df["house_type"] = df["house_type"].apply(lambda x: "apartment" if x == "A" else "house")
+    # convert to match the other metadata
+    df["name"] = "SUST_"+df["name"].astype(str)
+    # add country and location
+    df["country"] = "Portugal"
+    df["lat"] = 32.371666
+    df["lon"] = -16.274998
+    # drop the 4 rows with missing data
+    df.drop([50,51,52,53], inplace=True)
+
+    return df
+
+def DEDDIAG_metadata():
+    data = {
+    "name" : "DEDDIAG_8",
+    "first_reading" : date(2017, 9, 12),
+    "last_reading" : date(2018, 7, 28),
+    "country" : "Germany",
+    }   
+
+    return pd.DataFrame(data, index=[0])
+
+def ENERTALK_metadata():
+    
 
 
+    html_string = """
+    <table class="data last-table"><thead class="c-article-table-head"><tr><th class="u-text-left "><p>House code</p></th><th class="u-text-left "><p>Start date</p></th><th class="u-text-left "><p>End date</p></th><th class="u-text-left "><p>Duration (days)</p></th><th class="u-text-left "><p>Refrigerator</p></th><th class="u-text-left "><p>Kimchi refrigerator</p></th><th class="u-text-left "><p>Rice cooker</p></th><th class="u-text-left "><p>Washing machine</p></th><th class="u-text-left "><p>TV</p></th><th class="u-text-left "><p>Microwave</p></th><th class="u-text-left "><p>Water-purifier</p></th></tr></thead><tbody><tr><td class="u-text-left "><p>00</p></td><td class="u-text-left "><p>2016-11-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>91</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td></tr><tr><td class="u-text-left "><p>01</p></td><td class="u-text-left "><p>2016-10-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>122</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>02</p></td><td class="u-text-left "><p>2016-10-01</p></td><td class="u-text-left "><p>2016-10-31</p></td><td class="u-text-left "><p>30</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>03</p></td><td class="u-text-left "><p>2016-10-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>122</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>04</p></td><td class="u-text-left "><p>2016-09-01</p></td><td class="u-text-left "><p>2016-11-30</p></td><td class="u-text-left "><p>90</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>05</p></td><td class="u-text-left "><p>2016-09-03</p></td><td class="u-text-left "><p>2016-10-31</p></td><td class="u-text-left "><p>58</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>06</p></td><td class="u-text-left "><p>2016-09-01</p></td><td class="u-text-left "><p>2016-10-15</p></td><td class="u-text-left "><p>44</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td></tr><tr><td class="u-text-left "><p>07</p></td><td class="u-text-left "><p>2016-12-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>61</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>08</p></td><td class="u-text-left "><p>2016-12-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>61</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>09</p></td><td class="u-text-left "><p>2016-10-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>122</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>10</p></td><td class="u-text-left "><p>2016-10-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>122</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>11</p></td><td class="u-text-left "><p>2017-04-01</p></td><td class="u-text-left "><p>2017-04-30</p></td><td class="u-text-left "><p>29</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>12</p></td><td class="u-text-left "><p>2016-10-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>122</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>13</p></td><td class="u-text-left "><p>2016-11-02</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>90</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>14</p></td><td class="u-text-left "><p>2016-10-01</p></td><td class="u-text-left "><p>2017-01-20</p></td><td class="u-text-left "><p>111</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>15</p></td><td class="u-text-left "><p>2017-03-15</p></td><td class="u-text-left "><p>2017-04-30</p></td><td class="u-text-left "><p>46</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>16</p></td><td class="u-text-left "><p>2016-09-01</p></td><td class="u-text-left "><p>2016-11-15</p></td><td class="u-text-left "><p>75</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>17</p></td><td class="u-text-left "><p>2016-11-03</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>89</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>18</p></td><td class="u-text-left "><p>2016-09-01</p></td><td class="u-text-left "><p>2016-10-19</p></td><td class="u-text-left "><p>48</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>19</p></td><td class="u-text-left "><p>2016-09-01</p></td><td class="u-text-left "><p>2016-10-31</p></td><td class="u-text-left "><p>60</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>20</p></td><td class="u-text-left "><p>2017-03-01</p></td><td class="u-text-left "><p>2017-04-30</p></td><td class="u-text-left "><p>60</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr><tr><td class="u-text-left "><p>21</p></td><td class="u-text-left "><p>2016-12-01</p></td><td class="u-text-left "><p>2017-01-31</p></td><td class="u-text-left "><p>61</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>O</p></td><td class="u-text-left "><p>X</p></td><td class="u-text-left "><p>X</p></td></tr></tbody></table>
+    """
+
+    # Read the HTML into a list of DataFrames
+    df = pd.read_html(StringIO(html_string))[0]
+    df.drop(columns=["Duration (days)","Refrigerator","Kimchi refrigerator","Rice cooker","Washing machine","TV","Microwave","Water-purifier"], inplace=True)
+    df.rename(columns={"House code":"name", "Start date" : "first_reading", "End date": "last_reading"},inplace=True)
+
+    # Convert the date columns to datetime
+    df["first_reading"] = pd.to_datetime(df["first_reading"])
+    df["last_reading"] = pd.to_datetime(df["last_reading"])
+
+    # changed name so its the same as the other datasets
+    df["name"] = "ENERTALK_" + df["name"].astype(str)
+    df["country"] = "South Korea"
+    return df
 
 def generate_metadata(save=True):
     """Generate metadata for all datasets and save to parquet file if save is True"""
@@ -344,9 +422,31 @@ def generate_metadata(save=True):
     REDD_meta = REDD_metadata()
     IAWE_meta = IAWE_metadata()
     DEKN_meta = DEKN_metadata()
+    HEART_meta = HEART_metadata()
+    SUST_meta = SUST_metadata()
+    DEDDIAG_meta = DEDDIAG_metadata()
+    ENERTALK_meta = ENERTALK_metadata()
 
     # concat all metadata
-    metadata = pd.concat([HUE_meta, REFIT_meta, UCIML_meta, HES_meta, ECO_meta, LERTA_meta, UKDALE_meta, DRED_meta, REDD_meta, IAWE_meta, DEKN_meta], ignore_index=True, axis=0)
+    metadata = pd.concat(
+        [
+        HUE_meta,
+        REFIT_meta,
+        UCIML_meta,
+        HES_meta,
+        ECO_meta,
+        LERTA_meta,
+        UKDALE_meta,
+        DRED_meta,
+        REDD_meta,
+        IAWE_meta,
+        DEKN_meta,
+        HEART_meta,
+        SUST_meta,
+        DEDDIAG_meta,
+        ENERTALK_meta
+        ],
+         ignore_index=True, axis=0)
     metadata.reset_index(inplace=True, drop=True)
 
     # convert first and last reading to datetime

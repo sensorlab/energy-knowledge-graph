@@ -357,7 +357,7 @@ def HEART_metadata():
 
 def SUST_metadata():
     # drop unnecessary columns TODO UPDATE PATH
-    df = pd.read_csv("./Energy_graph/data/temp/SUST/meta/demographics.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
+    df = pd.read_csv(DATA_PATH+"demographics_SUST.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
     # rename columns to match the other metadata
     df.rename(columns={"# People": "occupancy", "Type (A/H)": "house_type", "Start Measuring" : "first_reading", "End Measuring" : "last_reading", "SustData IID": "name"},inplace=True)
     # convert to datetime

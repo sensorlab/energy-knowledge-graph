@@ -36,7 +36,10 @@ def parse_SUST(data_path : str, save_path : str):
     # appliance consumption data
     for file in os.listdir(data_path+"appliances/"):
         if file.endswith(".csv"):
-            data_dict[parse_name(file)] = pd.read_csv(data_path + "appliances/" + file).set_index("timestamp")
+            df = pd.read_csv(data_path + "appliances/" + file)
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+            df.set_index("timestamp", inplace=True)
+            data_dict[parse_name(file)] = df
 
     data = {
         "SUST_1": data_dict

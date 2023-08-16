@@ -415,6 +415,38 @@ def ECDUY_metadata():
     df["country"] = "Uruguay"
     return df
 
+
+def IDEAL_metadata():
+
+    df = pd.read_csv(DATA_PATH+"IDEAL_metadata.csv")
+    df["name"] = "IDEAL_" + df["homeid"].astype(str)
+
+    # get coordinates for each location
+    coordinates = {
+        "Edinburgh" : (55.9533, -3.1883),
+        "Midlothian" : (55.889829774, -3.067833062),
+        "WestLothian": (55.916663, -3.499998),
+        "EastLothian" : (55.916663, -2.749997),
+        "Fife" : (56.249999, -3.1999992),
+    }
+    #  add coordinates and country data
+    df["lat"] = df["location"].apply(lambda x: coordinates[x][0])
+    df["lon"] = df["location"].apply(lambda x: coordinates[x][1])
+    df["country"] = "United Kingdom"
+    # rename columns to match other datasets and drop unnecessary columns
+    df.rename(columns={"residents": "occupancy", "starttime": "first_reading","endtime" : "last_reading", "build_era": "construction_year", "hometype" : "house_type" }, inplace=True)
+    df.drop(columns=["homeid",'install_type', "starttime_enhanced", "cohortid", "income_band","study_class","new_build_year", "smart_monitors","smart_automation","occupied_days","occupied_nights","outdoor_space","outdoor_drying", "urban_rural_class", "equivalised_income", "entry_floor", "urban_rural_name", "location", "occupancy"], inplace=True)
+    # convert first and last reading to datetime
+    df["first_reading"] = pd.to_datetime(df["first_reading"])
+    df["last_reading"] = pd.to_datetime(df["last_reading"])
+    # change house type to match other datasets
+    df['house_type'] = df['house_type'].replace({
+        'flat': 'apartment',
+        'house_or_bungalow': 'house'
+    })
+
+    return df
+
 def generate_metadata(save=True):
     """Generate metadata for all datasets and save to parquet file if save is True"""
     # generate metadata for all datasets
@@ -434,6 +466,7 @@ def generate_metadata(save=True):
     DEDDIAG_meta = DEDDIAG_metadata()
     ENERTALK_meta = ENERTALK_metadata()
     ECDUY_meta = ECDUY_metadata()
+    IDEAL_meta = IDEAL_metadata()
 
     # concat all metadata
     metadata = pd.concat(
@@ -453,7 +486,8 @@ def generate_metadata(save=True):
         SUST_meta,
         DEDDIAG_meta,
         ENERTALK_meta,
-        ECDUY_meta
+        ECDUY_meta,
+        IDEAL_meta
         ],
          ignore_index=True, axis=0)
     metadata.reset_index(inplace=True, drop=True)

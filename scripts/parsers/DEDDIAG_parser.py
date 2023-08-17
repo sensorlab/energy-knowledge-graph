@@ -8,6 +8,9 @@ def parse_id(file_name : str) -> int:
 
 def parse_DEDDIAG(data_path : str, save_path: str):
     data = {}
+
+    # extend data path
+    data_path = os.path.join(data_path, "house_08/")
     # get map of item_id to label for appliance
     labels = pd.read_csv(data_path+"items.tsv", sep="\t")
     labels.set_index("item_id", inplace=True)

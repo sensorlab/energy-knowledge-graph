@@ -43,7 +43,7 @@ def get_house_data(file_path: str, device_mapping: dict):
         if f.endswith(".csv"):
             df = pd.read_csv(os.path.join(file_path_SM, f), header=None)
             df.drop(df.columns[1:], axis=1, inplace=True)
-            df.columns = ["Total"]
+            df.columns = ["aggregate"]
             date_index = pd.date_range(start=f.split(".")[0], periods=len(df), freq='S')
             df.set_index(date_index, inplace=True)
 
@@ -52,7 +52,7 @@ def get_house_data(file_path: str, device_mapping: dict):
                 total_df = pd.concat([total_df, df], axis=0)
 
     total_df = watts2kwh(total_df, 1/3600)
-    house_data["Total"] = total_df
+    house_data["aggregate"] = total_df
 
 
     return house_data

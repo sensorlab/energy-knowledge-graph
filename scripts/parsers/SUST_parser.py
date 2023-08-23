@@ -22,7 +22,12 @@ def parse_SUST(data_path : str, save_path : str):
 
     # set timestamp as idnex
     df_aggregate["timestamp"] = pd.to_datetime(df_aggregate["timestamp"])
+    
     df_aggregate.set_index("timestamp", inplace=True)
+    # localize to Lisbon timezone and handle DST
+    df_aggregate.index =  df_aggregate.index.tz_localize("UTC", ambiguous="NaT").tz_convert("Europe/Lisbon")
+    df_aggregate = df_aggregate[df_aggregate.index.notna()]
+
 
     # drop unnecessary columns
     df_aggregate.drop(columns=['Unnamed: 0', "Q","V","I"], inplace=True)
@@ -38,7 +43,19 @@ def parse_SUST(data_path : str, save_path : str):
         if file.endswith(".csv"):
             df = pd.read_csv(data_path + "appliances/" + file)
             df["timestamp"] = pd.to_datetime(df["timestamp"])
+
             df.set_index("timestamp", inplace=True)
+            # convert to Lisbon timezone and handle DST
+            if df.index.tz is None:
+                df.index = df.index.tz_localize("UTC", ambiguous="NaT").tz_convert("Europe/Lisbon")
+                df = df[df.index.notna()]
+            else:   
+                df.index =  df.index.tz_convert("Europe/Lisbon")
+                # Handle duplicate indices due to DST: keep the first occurrence, drop the others
+                df = df[~df.index.duplicated(keep='first')]
+
+
+
             data_dict[parse_name(file)] = df
 
     data = {

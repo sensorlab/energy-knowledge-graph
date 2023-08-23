@@ -11,13 +11,19 @@ import multiprocessing
 
 
 def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Parse the name of the file to get the device name"
-    """
+  
     df.drop(columns=["reactive_power"], inplace=True)
     # convert unix timestamp to datetime and set as index
-    df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms").dt.tz_localize('UTC').dt.tz_convert('Asia/Seoul')
+    df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms").dt.tz_localize('UTC', ambiguous="infer").dt.tz_convert('Asia/Seoul')
+    
     df.set_index("timestamp", inplace=True)
+
+    # handle duplicate timestamps
+    df = df[~df.index.duplicated(keep='first')]
+
+   
+
+
     # convert to kWh 15hz data
     df = watts2kwh(df, (1/15)/3600)
     # resample to 1 second
@@ -33,6 +39,9 @@ def parse_name(file_name: str):
     file_name = file_name.split(".")[0]
     # get the device name
     file_name = file_name.split("_")[1]
+
+    if file_name == "total":
+        file_name = "aggregate"
  
 
     return file_name
@@ -52,7 +61,10 @@ def process_house(house_path, queue):
             house_dict[name].append(df)
 
     for key in house_dict:
-        house_dict[key] = pd.concat(house_dict[key], axis=0)
+        df = pd.concat(house_dict[key], axis=0)
+        # remove duplicate timestamps
+        df = df[~df.index.duplicated(keep='first')]
+        house_dict[key] = df
 
     queue.put(1)  # Indicate that one house has been processed
     return house_name, house_dict
@@ -66,7 +78,7 @@ def parse_ENERTALK(data_path, save_path):
     house_paths = [os.path.join(data_path, house) for house in os.listdir(data_path)]
     queue = multiprocessing.Manager().Queue()
     # use process pool to parallelize using half the available cores
-    cpu_count = int(s.cpu_count()/2)
+    cpu_count = int(os.cpu_count()/2)
     with tqdm(total=len(house_paths), desc="Processing houses", unit="house") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
             futures = [executor.submit(process_house, house_path, queue) for house_path in house_paths]

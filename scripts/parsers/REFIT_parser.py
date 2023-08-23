@@ -33,7 +33,7 @@ appliances = [
         'aggregate, magimix (blender), freezer, chest freezer (in garage), fridge-freezer, washing machine, dishwasher, television site, microwave, kenwood kmix',
         'aggregate, fridge, fridge-freezer, washing machine, dishwasher, computer site, microwave, kettle, router, hi-fi',
         'aggregate, fridge-freezer, television site(lounge), microwave, kettle, toaster, television site (bedroom), not used, not used, not used',
-        'aggregate, television site, unknown, washing machine, dishwasher, tumble dryer, television site, computer site, microwave, kettle',
+        'aggregate, television site, unknown, washing machine, dishwasher, tumble dryer, television site2, computer site, microwave, kettle',
         None,
         'aggregate, fridge-freezer, tumble dryer, washing machine, dishwasher, computer site, television site, microwave, kettle, toaster',
         'aggregate, fridge-freezer (1), fridge-freezer (2), electric heater (1)?, electric heater (2), washing machine, dishwasher, computer site, television site, dehumidifier/heater',
@@ -69,6 +69,8 @@ def parse_REFIT(data_path, save_path):
         data = {}
         #  add dataframes for each appliance
         for col in house.columns:
+            if "not used" in col:
+                continue
             data[col] = pd.DataFrame(house[col])
 
             houses_data[name] = data

@@ -15,6 +15,7 @@ def process_file(file_path):
     df = convert2kWh(df)
     df["time"] = pd.to_datetime(df["time"])
     df = df.set_index('time')
+    df.sort_index(inplace=True)
     return df
 
 # get apartment name from file path

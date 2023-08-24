@@ -251,6 +251,9 @@ def UKDALE_metadata():
 
             name = file.split(".")[0]
             name = "UKDALE_"+name[-1]
+            # skip due to lacking device submeter data(devices grouped together)
+            if name == "UKDALE_4":
+                continue
             house_data[name] = {
                 "first_reading": start,
                 "last_reading": end,

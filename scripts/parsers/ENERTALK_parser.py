@@ -17,6 +17,7 @@ def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms").dt.tz_localize('UTC', ambiguous="infer").dt.tz_convert('Asia/Seoul')
     
     df.set_index("timestamp", inplace=True)
+    df.sort_index(inplace=True)
 
     # handle duplicate timestamps
     df = df[~df.index.duplicated(keep='first')]

@@ -19,6 +19,7 @@ def parse_DRED(data_path : str, save_path : str):
     # set time as index
     df.reset_index(drop=True, inplace=True)
     df.set_index("time", inplace=True)
+    df.sort_index(inplace=True)
 
 
     # convert from watts to kWh

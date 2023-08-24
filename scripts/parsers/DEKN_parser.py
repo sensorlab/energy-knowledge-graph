@@ -13,6 +13,7 @@ def parse_DEKN(data_path : str, save_path : str):
     df["cet_cest_timestamp"] = df["cet_cest_timestamp"].apply(lambda x: x.split("+")[0])
     df["cet_cest_timestamp"] = pd.to_datetime(df["cet_cest_timestamp"], format="%Y-%m-%dT%H:%M:%S")
     df = df.set_index("cet_cest_timestamp")
+    df.sort_index(inplace=True)
 
     # handle duplicates from daylight savings time change
     df = df[~df.index.duplicated(keep='first')]

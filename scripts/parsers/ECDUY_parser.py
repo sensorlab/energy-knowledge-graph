@@ -17,6 +17,7 @@ def process_file(file):
     df = df.pivot(index="datetime", columns="id", values="value")
     # convert the timestamps to datetime objects and set the correct timezone
     df.index = pd.to_datetime(df.index, unit='s', utc=True).tz_convert('America/Montevideo')
+    df.sort_index(inplace=True)
     
     temp_data = defaultdict(lambda: {"aggregate": []})
     # iterate over each column and add the data to the dictionary and drop missing values

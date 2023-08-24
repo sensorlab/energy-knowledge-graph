@@ -24,6 +24,7 @@ def parse_SUST(data_path : str, save_path : str):
     df_aggregate["timestamp"] = pd.to_datetime(df_aggregate["timestamp"])
     
     df_aggregate.set_index("timestamp", inplace=True)
+    df_aggregate.sort_index(inplace=True)
     # localize to Lisbon timezone and handle DST
     df_aggregate.index =  df_aggregate.index.tz_localize("UTC", ambiguous="NaT").tz_convert("Europe/Lisbon")
     df_aggregate = df_aggregate[df_aggregate.index.notna()]
@@ -45,6 +46,7 @@ def parse_SUST(data_path : str, save_path : str):
             df["timestamp"] = pd.to_datetime(df["timestamp"])
 
             df.set_index("timestamp", inplace=True)
+            df.sort_index(inplace=True)
             # convert to Lisbon timezone and handle DST
             if df.index.tz is None:
                 df.index = df.index.tz_localize("UTC", ambiguous="NaT").tz_convert("Europe/Lisbon")

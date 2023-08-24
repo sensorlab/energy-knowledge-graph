@@ -9,6 +9,7 @@ from helper_functions import watts2kwh, save_to_pickle
 def process_file(path : str) -> pd.DataFrame:
     df = pd.read_csv(path).set_index("Time")
     df.index = pd.to_datetime(df.index)
+    df.sort_index(inplace=True)
     df = watts2kwh(df,6/3600)
 
     return df

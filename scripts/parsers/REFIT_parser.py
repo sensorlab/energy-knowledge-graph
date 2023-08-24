@@ -47,6 +47,8 @@ appliances = [
 def parse_REFIT(data_path, save_path):
     # read data
     df = pd.read_parquet(data_path).set_index("timestamp")
+    df.sort_index(inplace=True)
+
     # remove metadata
     df.drop(columns=['occupancy', 'construction_year',
         'appliances_owned', 'house_type', 'house_size', 'country', 'location',

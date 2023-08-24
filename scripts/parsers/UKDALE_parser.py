@@ -44,6 +44,9 @@ def parse_UKDALE(data_path, save_path):
     for house in os.listdir(data_path):
         if "house" in house:
             name = "UKDALE_"+house.split("_")[1]
+            # skip due to lacking device submeter data(devices grouped together) and in general only 5 submeters
+            if name == "UKDALE_4":
+                continue
             houses_data[name] = process_house(data_path + "/" + house + "/")
         
     save_to_pickle(houses_data, save_path)

@@ -30,6 +30,7 @@ def parse_DEDDIAG(data_path : str, save_path: str):
             df["time"] = pd.to_datetime(df["time"])
             df.drop(columns=["item_id"], inplace=True)
             df.set_index("time", inplace=True)
+            df.sort_index(inplace=True)
             df = df[~df.index.duplicated(keep='first')]
             df = df.resample("1s").ffill()
             df.dropna(inplace=True)

@@ -21,9 +21,10 @@ def parse_HEART(data_path : str, save_path : str):
             # 
             df = pd.read_csv(data_path + file)
             # convert unix timestamp to datetime
-            df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms")
+            df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms").dt.tz_localize("UTC").dt.tz_convert("Europe/Athens")
             # set datetime as index and drop unnecessary columns
             df = df.set_index("Timestamp").drop(columns=["dw", "wm"])
+            df.sort_index(inplace=True)
             
             df.rename(columns={"Value": "aggregate"}, inplace=True)
             # convert watts to kilowatt hours

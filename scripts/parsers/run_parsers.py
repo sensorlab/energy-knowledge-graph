@@ -2,16 +2,11 @@ import os
 from tqdm import tqdm
 import sys
 
-# TODO SPLIT IMPORTS INTO LABLLED AND UNLABELED
-# import parsers
+# labelled datasets
 from REFIT_parser import parse_REFIT
 from ECO_parser import parse_ECO
 from HES_parser import parse_HES
 from UKDALE_parser import parse_UKDALE
-from HUE_parser import parse_HUE
-from LERTA_parser import parse_LERTA
-from SMART_parser import parse_SMART
-from UCIML_parser import parse_UCIML
 from DRED_parser import parse_DRED
 from REDD_parser import parse_REDD
 from IAWE_parser import parse_IAWE
@@ -22,8 +17,12 @@ from ENERTALK_parser import parse_ENERTALK
 from DEDDIAG_parser import parse_DEDDIAG
 from IDEAL_parser import parse_IDEAL
 
-# Unlabeled datasets
+# Unlabelled datasets
 from ECDUY_parser import parse_ECDUY
+from HUE_parser import parse_HUE
+from LERTA_parser import parse_LERTA
+from SMART_parser import parse_SMART
+from UCIML_parser import parse_UCIML
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
 Usage: python run_parsers.py <path to data> <path to save folder>

@@ -56,8 +56,7 @@ if __name__ == "__main__":
         data_path = sys.argv[1]
         save_folder = sys.argv[2]
 
-
-    dataset_paths = [dataset for dataset in os.listdir(data_path)]
+    dataset_paths = [dataset for dataset in os.listdir(data_path) if dataset.endswith('.pkl')]
     queue = multiprocessing.Manager().Queue()
 
 

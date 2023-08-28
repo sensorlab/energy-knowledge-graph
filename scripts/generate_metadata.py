@@ -358,7 +358,7 @@ def HEART_metadata():
     heart.reset_index(drop=True, inplace=True)
     return heart
 
-def SUST_metadata():
+def SUST1_metadata():
     # drop unnecessary columns TODO UPDATE PATH
     df = pd.read_csv(DATA_PATH+"demographics_SUST.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
     # rename columns to match the other metadata
@@ -369,7 +369,7 @@ def SUST_metadata():
     # convert to match the other metadata
     df["house_type"] = df["house_type"].apply(lambda x: "apartment" if x == "A" else "house")
     # convert to match the other metadata
-    df["name"] = "SUST_"+df["name"].astype(str)
+    df["name"] = "SUST1_"+df["name"].astype(str)
     # add country and location
     df["country"] = "Portugal"
     df["lat"] = 32.371666
@@ -378,6 +378,14 @@ def SUST_metadata():
     df.drop([50,51,52,53], inplace=True)
 
     return df
+
+def SUST2_metadata():
+    data = {
+        "name" : "SUST2_1",
+        "first_reading" : date(2016, 10, 6),
+        "last_reading" : date(2016, 12, 31),
+        "country" : "Portugal",
+    }
 
 def DEDDIAG_metadata():
     data = {

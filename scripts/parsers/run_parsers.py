@@ -11,7 +11,7 @@ from DRED_parser import parse_DRED
 from REDD_parser import parse_REDD
 from IAWE_parser import parse_IAWE
 from DEKN_parser import parse_DEKN
-from SUST_parser import parse_SUST
+from SUST2_parser import parse_SUST2
 from HEART_parser import parse_HEART
 from ENERTALK_parser import parse_ENERTALK
 from DEDDIAG_parser import parse_DEDDIAG
@@ -23,6 +23,7 @@ from HUE_parser import parse_HUE
 from LERTA_parser import parse_LERTA
 from SMART_parser import parse_SMART
 from UCIML_parser import parse_UCIML
+from SUST1_parser import parse_SUST1
 """
 This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
 Usage: python run_parsers.py <path to data> <path to save folder>
@@ -119,9 +120,12 @@ for dataset in tqdm(os.listdir(data_path)):
     elif dataset == "DEKN":
         # continue
         parse_DEKN(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
-    elif dataset == "SUST":
+    elif dataset == "SUST1":
         # continue
-        parse_SUST(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+        parse_SUST1(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
+    elif dataset == "SUST2":
+        # continue
+        parse_SUST2(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")
     elif dataset == "HEART":
         # continue
         parse_HEART(data_path + dataset+"/", save_folder + "/" + dataset + ".pkl")

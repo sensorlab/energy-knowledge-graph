@@ -13,7 +13,7 @@ def parse_name(file_name: str):
     # date
     return appliance_name
 
-def parse_SUST(data_path : str, save_path : str):
+def parse_SUST2(data_path : str, save_path : str):
     # aggregate consumption data
     df_aggregate = pd.DataFrame()
     for file in os.listdir(data_path + "aggregate"):
@@ -61,7 +61,7 @@ def parse_SUST(data_path : str, save_path : str):
             data_dict[parse_name(file)] = df
 
     data = {
-        "SUST_1": data_dict
+        "SUST2_1": data_dict
     }
     # save to pickle
     save_to_pickle(data, save_path)

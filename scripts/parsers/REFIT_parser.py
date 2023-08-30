@@ -1,23 +1,6 @@
 import pandas as pd
 from helper_functions import watts2kwh, save_to_pickle
-
-
-
-
-# renames columns to appliance names and returns a list of dataframes where index is house number
-def rename_columns(df: pd.DataFrame) -> list:
-
-    house_dfs = []
-    for house in df["house"].unique():
-        house_df = df[df["house"] == house].copy()
-        house_df.drop(columns=["house"], inplace=True)
-        house_df /= 1000 # convert to kWh
-        device_names = appliances[house-1].split(",")
-        if device_names != None:
-            house_df.columns = appliances[house-1].split(",")
-            
-        house_dfs.append(house_df)
-    return house_dfs
+import os
 
 # appliance names for each house
 appliances = [
@@ -44,39 +27,59 @@ appliances = [
         'aggregate, fridge-freezer, tumble dryer, washing machine, dishwasher, food mixer, television, kettle/toaster, vivarium, pond pump',
 ]
 
+
+
+def process_dataframe(df: pd.DataFrame, house_number) -> pd.DataFrame:
+    df.drop(columns=["Unix", "Issues"], inplace=True)
+    df["Time"] = pd.to_datetime(df["Time"])
+    df = df.set_index("Time").sort_index()
+    df = df.resample("8s").fillna(method="nearest", limit=1).dropna()
+    df = watts2kwh(df, 8/3600)
+
+    device_names = appliances[house_number-1].split(",")
+    if device_names != None:
+        df.columns = device_names
+    # dictionary to hold devices for each house
+    data_dict = {}
+    for c in df.columns:
+        data_dict[c] = pd.DataFrame(df[c])
+    
+    return data_dict
+
+
+def parse_name(name: str) -> int:
+    name = name.split(".")[0]
+    return int(name.split("House")[1])
+    
+
 def parse_REFIT(data_path, save_path):
     # read data
-    df = pd.read_parquet(data_path).set_index("timestamp")
-    df.sort_index(inplace=True)
 
-    # remove metadata
-    df.drop(columns=['occupancy', 'construction_year',
-        'appliances_owned', 'house_type', 'house_size', 'country', 'location',
-        'lat', 'lon', 'tz', 'appliances', 'is_holiday', 'weekday', 'is_weekend',
-        'day_percent', 'week_percent', 'year_percent', 'solar_altitude',
-        'solar_azimuth', 'solar_radiation'], inplace=True)
+    data_path = data_path + "CLEAN_REFIT_081116/"
 
-    houses_df = rename_columns(df)
+    # store house data in a dictionary keyed by house name and valued by a dictionary of appliances
+    data = {}
+    for file in os.listdir(data_path):
+        if not file.endswith(".csv"):
+            continue
+        house_number = parse_name(file)
+        # No device data for house 14
+        if house_number == 14:
+            continue
+        df = process_dataframe(pd.read_csv(data_path + file), house_number)
+        
+        name = "REFIT_" + str(house_number)
+
+        data[name] = df
+        
+
+
+
+
+
+
+
    
 
-    # dict to store dataframes for each house
-    houses_data = {}
-
-
-    # populate dict of dataframes for each house
-    for i, house in enumerate(houses_df):
-        if i >= 13:
-            i=i+1
-        name = "REFIT_" + str(i+1)
-        data = {}
-        #  add dataframes for each appliance
-        for col in house.columns:
-            if "not used" in col:
-                continue
-            data[col] = pd.DataFrame(house[col])
-
-            houses_data[name] = data
-
-
     # save data
-    save_to_pickle(houses_data, save_path)
+    save_to_pickle(data, save_path)

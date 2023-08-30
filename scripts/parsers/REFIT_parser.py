@@ -42,6 +42,8 @@ def process_dataframe(df: pd.DataFrame, house_number) -> pd.DataFrame:
     # dictionary to hold devices for each house
     data_dict = {}
     for c in df.columns:
+        if "not used" in c:
+                continue
         data_dict[c] = pd.DataFrame(df[c])
     
     return data_dict

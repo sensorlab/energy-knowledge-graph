@@ -17,6 +17,8 @@ def get_house_data(file_path: str, device_mapping: dict):
         device_df = pd.DataFrame()
         # get device name from map
         device_name = device_mapping[int(device)]
+        if device_name == "Entertainment" or device_name == "Kitchen appliances":
+            continue
         for f in os.listdir(path):
             if f.endswith(".csv"):
                 df = pd.read_csv(path+"/"+f, header=None)

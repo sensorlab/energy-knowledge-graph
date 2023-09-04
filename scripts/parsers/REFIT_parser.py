@@ -13,7 +13,7 @@ appliances = [
         'aggregate, fridge, freezer (garage), freezer, tumble dryer, washing machine, dishwasher, television site, toaster, kettle',
         'aggregate, fridge, freezer, dryer, washing machine, toaster, computer, television site, microwave, kettle',
         'aggregate, fridge-freezer, washer dryer, washing machine, dishwasher, television site, microwave, kettle, hi-fi, electric heater',
-        'aggregate, magimix (blender), freezer, chest freezer (in garage), fridge-freezer, washing machine, dishwasher, television site, microwave, kenwood kmix',
+        'aggregate, blender, freezer, chest freezer (in garage), fridge-freezer, washing machine, dishwasher, television site, microwave, food processor',
         'aggregate, fridge, fridge-freezer, washing machine, dishwasher, computer site, microwave, kettle, router, hi-fi',
         'aggregate, fridge-freezer, television site(lounge), microwave, kettle, toaster, television site (bedroom), not used, not used, not used',
         'aggregate, television site, unknown, washing machine, dishwasher, tumble dryer, television site2, computer site, microwave, kettle',
@@ -42,7 +42,7 @@ def process_dataframe(df: pd.DataFrame, house_number) -> pd.DataFrame:
     # dictionary to hold devices for each house
     data_dict = {}
     for c in df.columns:
-        if "not used" in c:
+        if "not used" in c or "unknown" in c:
                 continue
         data_dict[c] = pd.DataFrame(df[c])
     

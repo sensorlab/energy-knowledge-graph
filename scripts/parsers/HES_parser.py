@@ -17,6 +17,8 @@ def parse_HES(data_path, save_path):
         # check if df is empty
         if len(device_dict[device]) == 0:
             continue
+        if "basement bathroom" in device:
+            continue
         device_df = pd.concat(device_dict[device], axis=0)
         # Reset the index (to handle any potential index related issues)
         device_df = device_df.reset_index()

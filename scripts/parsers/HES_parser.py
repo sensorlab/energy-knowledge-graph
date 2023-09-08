@@ -24,8 +24,8 @@ def parse_HES(data_path, save_path):
         device_df = device_df.reset_index()
         # Rename the columns to include the device name for uniqueness
         device_df.columns = ['date', device]
-        
-        
+        device_df["date"] = device_df["date"].dt.to_timestamp()
+        device_df["date"] = pd.to_datetime(device_df["date"])
         # set index to date and sort
         device_df.set_index('date', inplace=True)
         device_df.sort_index(inplace=True)

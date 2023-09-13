@@ -1893,7 +1893,8 @@ def F1Score(y_true, y_pred):
     precision = tp / (tp + fp + K.epsilon())
     recall = tp / (tp + fn + K.epsilon())
     f1 = 2 * precision * recall / (precision + recall + K.epsilon())
-
+    # Handle the case where both precision and recall are zero
+    f1 = tf.where(tf.math.is_nan(f1), tf.zeros_like(f1), f1)
     return K.mean(f1)
 
 
@@ -1923,7 +1924,8 @@ def WeightedF1Score(class_weights):
         precision = tp / (tp + fp + K.epsilon())
         recall = tp / (tp + fn + K.epsilon())
         f1 = 2 * precision * recall / (precision + recall + K.epsilon())
-
+        # Handle the case where both precision and recall are zero
+        f1 = tf.where(tf.math.is_nan(f1), tf.zeros_like(f1), f1)
         weighted_f1 = K.sum(class_weights * f1) / K.sum(class_weights)
 
         return weighted_f1

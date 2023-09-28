@@ -54,6 +54,7 @@ from matplotlib import pyplot as plt
 from sklearn.metrics import multilabel_confusion_matrix, classification_report, confusion_matrix
 # GPU goes brrrrrrrrrrrrrrrrrrrr
 from tensorflow.keras import mixed_precision
+from tensorflow.keras import regularizers
 mixed_precision.set_global_policy('mixed_float16')
 
 
@@ -2430,3 +2431,94 @@ def PC0(classes,
 ##############################################################################################    
 ##############################################################################################
 ##############################################################################################
+def PC0_reg(classes,
+             window_size,
+             method,
+             method_num,
+             k,
+             include_top=True,
+             input_tensor=None,
+              pooling=None,
+             lambda_l2=0.001,
+            ):
+
+    # Determine proper input shape
+    input_shape = (window_size,1)
+
+    if input_tensor is None:
+        img_input = Input(shape=input_shape)
+    else:
+        if not K.is_keras_tensor(input_tensor):
+            img_input = Input(tensor=input_tensor, shape=input_shape)
+        else:
+            img_input = input_tensor
+    # Block 1
+    x = Conv1D(k*64, (3), activation='relu', padding='same',kernel_regularizer=regularizers.l2(lambda_l2), name='block1_conv1')(img_input)
+    x = Conv1D(k*64, (3), activation='relu', padding='same',kernel_regularizer=regularizers.l2(lambda_l2), name='block1_conv2')(x)
+    x = MaxPooling1D((2), strides=(2), name='block1_pool')(x)
+
+    # Block 2
+    x = Conv1D(k*128, (3), activation='relu', padding='same',kernel_regularizer=regularizers.l2(lambda_l2),  name='block2_conv1')(x)
+    x = Conv1D(k*128, (3), activation='relu', padding='same', kernel_regularizer=regularizers.l2(lambda_l2), name='block2_conv2')(x)
+    x = MaxPooling1D((2), strides=(2), name='block2_pool')(x)
+
+    # Block 3
+    x = Conv1D(k*256, (3), activation='relu', padding='same', name='block3_conv1')(x)
+    x = Conv1D(k*256, (3), activation='relu', padding='same', name='block3_conv2')(x)
+    x = Conv1D(k*256, (3), activation='relu', padding='same', name='block3_conv3')(x)
+    x = Conv1D(k*256, (3), activation='relu', padding='same', name='block3_conv4')(x)
+    x = MaxPooling1D((2), strides=(2), name='block3_pool')(x)
+
+    # Block 4
+    x = Conv1D(k*512, (3), activation='relu', padding='same', name='block4_conv1')(x)
+    x = Conv1D(k*512, (3), activation='relu', padding='same', name='block4_conv2')(x)
+    x = Conv1D(k*512, (3), activation='relu', padding='same', name='block4_conv3')(x)
+    x = Conv1D(k*512, (3), activation='relu', padding='same', name='block4_conv4')(x)
+    x = MaxPooling1D((2), strides=(2), name='block4_pool')(x)
+    
+    # Block 5
+    x = Conv1DTranspose(k*512, (3), activation='relu', padding='same', name='block5_tran_conv1')(x)
+    x = Conv1DTranspose(k*512, (3), activation='relu', padding='same', name='block5_tran_conv2')(x)
+    x = Conv1DTranspose(k*512, (3), activation='relu', padding='same', name='block5_tran_conv3')(x)
+    x = Conv1DTranspose(k*512, (3), activation='relu', padding='same', name='block5_tran_conv4')(x)
+    x = AveragePooling1D((2), strides=(2), name='block5_pool')(x)
+    
+    # GRU layer, btw GRU stands for Gated Recurrent Units; https://en.wikipedia.org/wiki/Gated_recurrent_unit
+    if method == 'gru':
+        print("GRU enabled")
+        x = GRU(method_num, activation='tanh', recurrent_activation='sigmoid')(x)
+        
+    if method == 'gru2':
+        print("GRU enabled")
+        x = GRU(method_num,activation='tanh',recurrent_activation='sigmoid',reset_after=True)(x)        
+        
+    if method == 'bigru':
+        print("Bi-GRU enabled")
+        x = Bidirectional(GRU(method_num, activation='tanh', recurrent_activation='sigmoid'))(x)
+        
+    if method == 'lstm':
+        print("LSTM enabled")
+        x = LSTM(method_num, activation='tanh', recurrent_activation='sigmoid')(x)
+    
+    # LSTM layer, btw LSTM stands for long short-term memory; https://en.wikipedia.org/wiki/Long_short-term_memory
+    if include_top:
+        # Classification block
+        x = Flatten(name='flatten')(x)
+        x = Dense(4096, activation='relu', name='fc1',kernel_regularizer=regularizers.l2(lambda_l2))(x)
+        x = Dense(4096, activation='relu', name='fc2',kernel_regularizer=regularizers.l2(lambda_l2))(x)
+        x = Dense(classes, activation='sigmoid', name='predictions')(x)
+    else:
+        if pooling == 'avg':
+            x = GlobalAveragePooling1D()(x)
+        elif pooling == 'max':
+            x = GlobalMaxPooling1D()(x)
+
+    # Ensure that the model takes into account
+    # any potential predecessors of `input_tensor`.
+    if input_tensor is not None:
+        inputs = get_source_inputs(input_tensor)
+    else:
+        inputs = img_input
+    # Create model.
+    model = Model(inputs, x, name='PC0')
+    return model

@@ -63,6 +63,9 @@ def process_dictionary(data: dict, values=0) -> pd.DataFrame:
 
     # drop rows with NaN values
     df.dropna(inplace=True)
+    
+    # handle negative values
+    df[df<0] = 0
 
     # treshold in watts
     treshold = 5

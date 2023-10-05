@@ -67,6 +67,8 @@ def process_dictionary(data: dict, values=0) -> pd.DataFrame:
     # handle negative values
     df[df<0] = 0
 
+
+
     # treshold in watts
     treshold = 5
     if values == 0:
@@ -152,6 +154,10 @@ def create_windows(data : dict, labels_path: str, save_path : str, time_window=2
                 continue
 
             x = window["aggregate"].values
+            # if there is a value bigger than 50000 skip the window
+            if (x > 50000).any():
+                print("x too big: ", x)
+                continue
             devices = [False] * len(labels)
             # check if device is on in the window
             for c in window.columns:

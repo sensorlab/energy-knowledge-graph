@@ -129,7 +129,7 @@ def generate_syn_ideal(devices_processed, num_windows, device_list):
         df["aggregate"] = df.sum(axis=1)
         count = 0
         # if the aggregate consumption is less than 20w try to choose other windows for devices if after 20 tries aggregate still under 20w choose other devices
-        while df["aggregate"].median() < 20 or df["aggregate"].mean() < 20:
+        while df["aggregate"].median() < 20 or df["aggregate"].mean() < 20 or df["aggregate"].max() > 50000:
             count += 1
             if count > 20:
                 nm_device = sample_normal_within_range()
@@ -218,11 +218,13 @@ def generate_syn_unmetered(devices_processed, num_windows, device_list):
 
 def create_training_data(windows, labels):
     X_Y_test= []
-    
+    max_value = 0
     for window in tqdm(windows):
         
         x = window["aggregate"].values
         devices = [False] * len(labels)
+        if x.max() > max_value:
+            max_value = x.max()
         # prepare Y
         for c in window.columns:
             if c == "aggregate":

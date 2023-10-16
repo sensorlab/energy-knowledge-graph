@@ -137,6 +137,7 @@ def create_windows(data : dict, labels_path: str, save_path : str, time_window=2
     X_Y = [] # list of tuples (X, Y)
     skip_count_1 = 0
     skip_count_2 = 0
+    skip_count_3 = 0
     total_count = 0
 
     for df in tqdm(data.values()):
@@ -156,7 +157,7 @@ def create_windows(data : dict, labels_path: str, save_path : str, time_window=2
             x = window["aggregate"].values
             # if there is a value bigger than 50000 skip the window
             if (x > 50000).any():
-                print("x too big: ", x)
+                skip_count_3 += 1
                 continue
             devices = [False] * len(labels)
             # check if device is on in the window
@@ -173,8 +174,8 @@ def create_windows(data : dict, labels_path: str, save_path : str, time_window=2
 
             # windows.append(window)
 
-    print("Total windows: ", total_count, "Skipped windows due to 30min gap: ", skip_count_1, "Skipped windows due to 15 gaps of 32s or more: ", skip_count_2 ,"Procentage skipped: ", (skip_count_1+skip_count_2) / total_count * 100)
-    with open(save_path+ f"/X_Y_wsize{time_window}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}.pkl", "wb") as f:
+    print("Total windows: ", total_count, "Skipped windows due to 30min gap: ", skip_count_1, "Skipped windows due to 15 gaps of 32s or more: ", skip_count_2 ,"Skipped windows due to values larger than 50k: ", skip_count_3 ,"Procentage skipped: ", (skip_count_1+skip_count_2+ skip_count_3) / total_count * 100)
+    with open(save_path+ f"/X_Y_wsize{time_window}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}.pkl", "wb") as f:
         pickle.dump(X_Y, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 

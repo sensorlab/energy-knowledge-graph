@@ -218,13 +218,12 @@ def generate_syn_unmetered(devices_processed, num_windows, device_list):
 
 def create_training_data(windows, labels):
     X_Y_test= []
-    max_value = 0
+    
     for window in tqdm(windows):
         
         x = window["aggregate"].values
         devices = [False] * len(labels)
-        if x.max() > max_value:
-            max_value = x.max()
+    
         # prepare Y
         for c in window.columns:
             if c == "aggregate":
@@ -284,6 +283,7 @@ if __name__ == "__main__":
     print("Upper bound: ", upper_bound)
     print("Max gap: ", max_gap)
     print("Synthetic type: ", args.syn_type)
+    print("Num devices: ", len(labels))
 
     # Get data and create windows
     data = get_device_windows(path, time_window, upper_bound, max_gap)
@@ -293,8 +293,20 @@ if __name__ == "__main__":
 
     elif args.syn_type == "unmetered":
         windows = generate_syn_unmetered(data, num_windows, labels)
+    elif args.syn_type == "both":
+        windows_ideal = generate_syn_ideal(data, num_windows, labels)
+        windows_unmetered = generate_syn_unmetered(data, num_windows, labels)
+        X_Y_ideal = create_training_data(windows_ideal, labels)
+        X_Y_unmetered = create_training_data(windows_unmetered, labels)
+
+        with open(save_path+ f"/X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_ideal.pkl", "wb") as f:
+            pickle.dump(X_Y_ideal, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+        with open(save_path+ f"/X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_unmetered.pkl", "wb") as f:
+            pickle.dump(X_Y_unmetered, f, protocol=pickle.HIGHEST_PROTOCOL)
+        exit()
 
     X_Y = create_training_data(windows, labels)
-    with open(save_path+ f"/X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_{args.syn_type}.pkl", "wb") as f:
+    with open(save_path+ f"/X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_{args.syn_type}.pkl", "wb") as f:
         pickle.dump(X_Y, f, protocol=pickle.HIGHEST_PROTOCOL)
 

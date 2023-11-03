@@ -20,4 +20,6 @@ scikit-learn
 tensorflow
 tqdm
 
+SQLAlchemy
+
 

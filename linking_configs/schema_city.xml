@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LIMES SYSTEM "limes.dtd">
+
+<LIMES>
+
+<PREFIX>
+    <NAMESPACE>http://www.w3.org/2002/07/owl#</NAMESPACE>
+    <LABEL>owl</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.w3.org/2000/01/rdf-schema#</NAMESPACE>
+    <LABEL>rdfs</LABEL>
+</PREFIX>
+
+
+
+<PREFIX>
+    <NAMESPACE>http://www.w3.org/2001/XMLSchema#</NAMESPACE>
+    <LABEL>xsd</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>https://schema.org/</NAMESPACE>
+    <LABEL>schema</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.wikidata.org/entity/</NAMESPACE>
+    <LABEL>wd</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.wikidata.org/prop/direct/</NAMESPACE>
+    <LABEL>wdt</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.wikidata.org/prop/direct-normalized/</NAMESPACE>
+    <LABEL>wdtn</LABEL>
+</PREFIX>
+
+<SOURCE>
+    <ID>cities</ID>
+    <ENDPOINT>no_ontology.ttl</ENDPOINT>
+    <VAR>?city</VAR>
+    <PAGESIZE>1000</PAGESIZE>
+    <RESTRICTION>?city a schema:City</RESTRICTION>
+    <PROPERTY>schema:name</PROPERTY>
+</SOURCE>
+
+<TARGET>
+    <ID>wikidataCities</ID>
+    <ENDPOINT>https://query.wikidata.org/sparql</ENDPOINT>
+    <VAR>?item</VAR>
+    <PAGESIZE>1000</PAGESIZE>
+    <RESTRICTION>?item wdt:P31 wd:Q515</RESTRICTION> <!-- Q515 is the identifier for cities in Wikidata -->
+    <PROPERTY>rdfs:label</PROPERTY>
+</TARGET>   
+
+<METRIC>trigram(?city.rdfs:label, ?item.rdfs:label)</METRIC>
+<ACCEPTANCE>
+    <THRESHOLD>0.9</THRESHOLD>
+    <FILE>accepted.nt</FILE>
+    <RELATION>owl:sameAs</RELATION>
+</ACCEPTANCE>
+<REVIEW>
+    <THRESHOLD>0.8</THRESHOLD>
+    <FILE>review.nt</FILE>
+</REVIEW>
+
+<EXECUTION>
+    <REWRITER>default</REWRITER>
+    <PLANNER>default</PLANNER>
+    <ENGINE>default</ENGINE>
+</EXECUTION>
+
+<OUTPUT>NT</OUTPUT>
+</LIMES>

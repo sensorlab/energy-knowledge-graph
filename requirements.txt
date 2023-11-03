@@ -16,3 +16,8 @@ psycopg2
 pyarrow
 python-dotenv
 
+scikit-learn
+tensorflow
+tqdm
+
+

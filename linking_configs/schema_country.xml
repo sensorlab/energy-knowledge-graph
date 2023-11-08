@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE LIMES SYSTEM "limes.dtd">
+
+<LIMES>
+
+<PREFIX>
+    <NAMESPACE>http://www.w3.org/2002/07/owl#</NAMESPACE>
+    <LABEL>owl</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.w3.org/2000/01/rdf-schema#</NAMESPACE>
+    <LABEL>rdfs</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.w3.org/1999/02/22-rdf-syntax-ns#</NAMESPACE>
+    <LABEL>rdf</LABEL>
+</PREFIX>
+
+
+<PREFIX>
+    <NAMESPACE>http://www.w3.org/2001/XMLSchema#</NAMESPACE>
+    <LABEL>xsd</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>https://schema.org/</NAMESPACE>
+    <LABEL>schema</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.wikidata.org/entity/</NAMESPACE>
+    <LABEL>wd</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.wikidata.org/prop/direct/</NAMESPACE>
+    <LABEL>wdt</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://www.wikidata.org/prop/direct-normalized/</NAMESPACE>
+    <LABEL>wdtn</LABEL>
+</PREFIX>
+
+<PREFIX>
+    <NAMESPACE>http://mydata.example.org/</NAMESPACE>
+    <LABEL>data</LABEL>
+</PREFIX>
+  
+<PREFIX>
+    <NAMESPACE>http://vocabulary.example.org/</NAMESPACE>
+    <LABEL>voc</LABEL>
+</PREFIX>
+    
+   
+    
+
+<SOURCE>
+    <ID>countries</ID>
+    <ENDPOINT>LIMES/tests.nt</ENDPOINT>
+    <VAR>?x</VAR>
+    <PAGESIZE>-1</PAGESIZE>
+    <RESTRICTION>?x rdf:type schema:Country . ?x schema:name ?v1 .</RESTRICTION>
+    <PROPERTY>schema:name RENAME name2</PROPERTY>
+    <TYPE>N-TRIPLE</TYPE>
+</SOURCE>
+
+<TARGET>
+    <ID>wikidataCountries</ID>
+    <ENDPOINT>https://query.wikidata.org/sparql</ENDPOINT>
+    <VAR>?item</VAR>
+    <PAGESIZE>1000</PAGESIZE>
+<!--     <RESTRICTION>?item wdt:P31/wdt:P279* wd:Q515</RESTRICTION> Q515 is the identifier for cities in Wikidata -->
+    <RESTRICTION>?item wdt:P31/wdt:P279* wd:Q6256 . ?item rdfs:label ?v1 . FILTER(LANG(?v1) = "en") .</RESTRICTION>
+    <!-- Select the label -->
+    <PROPERTY>rdfs:label AS nolang RENAME name</PROPERTY>
+    <TYPE>sparql</TYPE>
+</TARGET>   
+
+<METRIC>jaccard(item.name, x.name2)| 0.5</METRIC>
+<ACCEPTANCE>
+    <THRESHOLD>0.5</THRESHOLD>
+    <FILE>accepted.nt</FILE>
+    <RELATION>owl:sameAs</RELATION>
+</ACCEPTANCE>
+<REVIEW>
+    <THRESHOLD>0.4</THRESHOLD>
+    <FILE>review.nt</FILE>
+    <RELATION>owl:sameAs</RELATION>
+</REVIEW>
+
+<EXECUTION>
+    <REWRITER>default</REWRITER>
+    <PLANNER>default</PLANNER>
+    <ENGINE>default</ENGINE>
+</EXECUTION>
+
+<OUTPUT>NT</OUTPUT>
+</LIMES>

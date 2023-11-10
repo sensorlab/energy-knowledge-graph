@@ -22,4 +22,6 @@ tqdm
 
 SQLAlchemy
 
-
+SPARQLWrapper
+fuzzywuzzy
+geopy

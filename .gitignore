@@ -270,3 +270,8 @@ $RECYCLE.BIN/
 # ignore turtle files and N-TRIPLE files
 *.ttl
 *.nt
+
+# ignore device txt files
+
+house_devices.txt
+lables.txt

@@ -42,11 +42,12 @@
 
 <SOURCE>
     <ID>cities</ID>
-    <ENDPOINT>no_ontology.ttl</ENDPOINT>
+    <ENDPOINT>C:/Users/foglo/Documents/IJS/energy-knowledge-graph/linking_configs/no_ontology.ttl</ENDPOINT>
     <VAR>?city</VAR>
     <PAGESIZE>1000</PAGESIZE>
-    <RESTRICTION>?city a schema:City</RESTRICTION>
-    <PROPERTY>schema:name</PROPERTY>
+    <RESTRICTION>?city rdf:type schema:City</RESTRICTION>
+    <PROPERTY>schema:name RENAME name</PROPERTY>
+    <TYPE>TURTLE</TYPE>
 </SOURCE>
 
 <TARGET>
@@ -55,10 +56,11 @@
     <VAR>?item</VAR>
     <PAGESIZE>1000</PAGESIZE>
     <RESTRICTION>?item wdt:P31 wd:Q515</RESTRICTION> <!-- Q515 is the identifier for cities in Wikidata -->
-    <PROPERTY>rdfs:label</PROPERTY>
+    <OPTIONAL_PROPERTY>rdfs:label RENAME name</OPTIONAL_PROPERTY>
+    <TYPE>sparql</TYPE>
 </TARGET>   
 
-<METRIC>trigram(?city.rdfs:label, ?item.rdfs:label)</METRIC>
+<METRIC>trigram(?city.name, ?item.name)</METRIC>
 <ACCEPTANCE>
     <THRESHOLD>0.9</THRESHOLD>
     <FILE>accepted.nt</FILE>
@@ -67,12 +69,13 @@
 <REVIEW>
     <THRESHOLD>0.8</THRESHOLD>
     <FILE>review.nt</FILE>
+    <RELATION>owl:sameAs</RELATION>
 </REVIEW>
 
 <EXECUTION>
     <REWRITER>default</REWRITER>
     <PLANNER>default</PLANNER>
-    <ENGINE>default</ENGINE>
+    <ENGINE>owl:sameAs</ENGINE>
 </EXECUTION>
 
 <OUTPUT>NT</OUTPUT>

@@ -27,16 +27,20 @@ def process_dictionary(data: dict, values=0) -> pd.DataFrame:
         'subpanel',
     ]
     dfs = []
-
+    df = data["aggregate"].resample("8s").mean()
+    df.columns = ["aggregate"]
+    dfs.append(df)
     for device in data:
         # ignore devices
         if any(ignored_device in device.lower() for ignored_device in ignored_devices):
             continue
-
+        if device == "aggregate":
+            continue
         # preprocess device name
         device_name = preprocess_string(device)
         
         df = data[device]
+        df = df.resample("8s").mean()
 
         # rename column to standardized device name
         df.columns = [device_name]
@@ -51,21 +55,23 @@ def process_dictionary(data: dict, values=0) -> pd.DataFrame:
         if len(df) < (3*24 * 60 * 60) / median_interval.total_seconds():
             print("less than 3 days of data for device: ", device_name)
             continue
+        df.dropna(inplace=True)
         dfs.append(df)
 
     # concatenate all dataframes
     df = pd.concat(dfs, axis=1)
 
-    # resample to 8s
-    df = df.resample("8s").fillna(method="nearest", limit=4)
+    # handle missing values
+    df = df.ffill(limit=6)
+    df.fillna(0, inplace=True)
 
-    # check for gaps in data TODO do this in 
-
-    # drop rows with NaN values
-    df.dropna(inplace=True)
-    
     # handle negative values
     df[df<0] = 0
+
+    df["sum_ideal"] = df.sum(axis=1) - df["aggregate"]
+    df.drop(columns=["aggregate"], inplace=True)
+
+    df.rename(columns={"sum_ideal": "aggregate"}, inplace=True)
 
 
 

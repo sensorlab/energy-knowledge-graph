@@ -107,6 +107,110 @@ def query_graphDB(endpoint : str):
     return results_Graphdb 
 
 
+
+def get_dbpedia_results(latitude : float, longitude : float):
+    query = f"""
+    PREFIX dbo: <http://dbpedia.org/ontology/>
+    PREFIX dbr: <http://dbpedia.org/resource/>
+    PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+    SELECT DISTINCT ?city ?cityLabel 
+    WHERE {{
+      ?city a dbo:City .
+      ?city rdfs:label ?cityLabel .
+      ?city geo:lat ?lat .
+      ?city geo:long ?long .
+      FILTER (LANG(?cityLabel) = "en")
+      FILTER (
+        bif:st_intersects (
+          bif:st_point (?long, ?lat),
+          bif:st_point ({longitude}, {latitude}),
+          50
+        )
+      )
+    }}
+    LIMIT 1000
+
+
+    """
+
+    sparql_dbpedia = SPARQLWrapper("http://dbpedia.org/sparql")
+
+    sparql_dbpedia.setQuery(query)
+
+    sparql_dbpedia.setReturnFormat(JSON)
+
+    results = sparql_dbpedia.query().convert()
+
+    return results
+
+def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, data=None):
+    if data is None:
+        print("Querying DBpedia......")
+        query = f"""
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        PREFIX dbr: <http://dbpedia.org/resource/>
+        PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+        SELECT DISTINCT ?city ?cityLabel ?lat ?long
+        WHERE {{
+          ?city a dbo:City .
+          ?city rdfs:label ?cityLabel .
+          ?city geo:lat ?lat .
+          ?city geo:long ?long .
+          FILTER (LANG(?cityLabel) = "en")
+          FILTER (
+            bif:st_intersects (
+              bif:st_point (?long, ?lat),
+              bif:st_point ({longitude}, {latitude}),
+              50
+            )
+          )
+        }}
+        LIMIT 1000
+
+
+        """
+
+        sparql_dbpedia = SPARQLWrapper("http://dbpedia.org/sparql")
+
+        sparql_dbpedia.setQuery(query)
+
+        sparql_dbpedia.setReturnFormat(JSON)
+
+        results = sparql_dbpedia.query().convert()
+    else:
+        results = data
+
+    matched_cities = []
+    
+    for r in results["results"]["bindings"]:
+        ratio_partial = fuzz.partial_ratio(r["cityLabel"]["value"], label)
+        ratio = fuzz.ratio(r["cityLabel"]["value"], label)
+
+        ratio = (ratio + ratio_partial) / 2
+
+        if ratio > 80:
+            matched_cities.append((ratio, r))
+
+    if len(matched_cities) == 0:
+        min_distance = math.inf
+        for r in results["results"]["bindings"]:
+            coords = (float(r["lat"]["value"]), float(r["long"]["value"]))
+            distance = geodesic((latitude, longitude), coords).kilometers
+            if distance < min_distance:
+                min_distance = distance
+                closest_city = r
+
+        return closest_city
+    
+    matched_cities.sort(key=lambda x: x[0], reverse=True)
+    return matched_cities[0][1]
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process energy graph data.")
 
@@ -123,7 +227,9 @@ if __name__ == "__main__":
         latitude = float(c["latitude"]["value"])
         print(label, longitude, latitude)
         result_wikidata = (c,query_wikidata_coordinates(latitude, longitude, label))
+        result_dbpedia = (c,query_dbpedia_coordinates(latitude, longitude, label))
         matches.append(result_wikidata)
+        matches.append(result_dbpedia)
 
     triples = []
     for m in matches:

@@ -25,6 +25,8 @@ def load_data(conn:Connection):
     # iterate over rows in dataframe
     for _, row in tqdm(df.iterrows()):
         # sanity check
+        if "ECDUY" in row['name'] :
+            continue
         if row['name'] not in loadprofiles:
             print("No loadprofile for: ", row['name'])
             continue

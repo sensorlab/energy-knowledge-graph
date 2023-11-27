@@ -7,6 +7,8 @@ import argparse
 
 
 def get_wikidata_results(latitude : float, longitude : float):
+
+    # wiki data query to get the cities in a 50km radius of the given coordinates
     query_wikidata = f"""
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
     PREFIX wd: <http://www.wikidata.org/entity/>
@@ -52,12 +54,13 @@ def query_wikidata_coordinates(latitude : float, longitude : float, label : str,
 
         
     matched_cities = []
-    
+    # match the label of the city with the results and if the similarity is above 80% add it to the list of matches
     for r in results["results"]["bindings"]:
         ratio = fuzz.partial_ratio(r["cityLabel"]["value"], label)
         if ratio > 80:
             matched_cities.append((ratio, r))
 
+    # if no match is found, return the closest city
     if len(matched_cities) == 0:
         min_distance = math.inf
         for r in results["results"]["bindings"]:
@@ -68,7 +71,7 @@ def query_wikidata_coordinates(latitude : float, longitude : float, label : str,
                 min_distance = distance
                 closest_city = r
         return closest_city
-    
+    # sort the results by the ratio of the match and return the best match
     matched_cities.sort(key=lambda x: x[0], reverse=True)
     return matched_cities[0][1]
 
@@ -109,6 +112,7 @@ def query_graphDB(endpoint : str):
 
 
 def get_dbpedia_results(latitude : float, longitude : float):
+    # dbpedia query to get the cities in a 50km radius of the given coordinates
     query = f"""
     PREFIX dbo: <http://dbpedia.org/ontology/>
     PREFIX dbr: <http://dbpedia.org/resource/>
@@ -185,7 +189,7 @@ def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, 
         results = data
 
     matched_cities = []
-    
+    # check if the label of the city matches the label of the results and if the similarity is above 80% add it to the list of matches
     for r in results["results"]["bindings"]:
         ratio_partial = fuzz.partial_ratio(r["cityLabel"]["value"], label)
         ratio = fuzz.ratio(r["cityLabel"]["value"], label)
@@ -194,7 +198,7 @@ def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, 
 
         if ratio > 80:
             matched_cities.append((ratio, r))
-
+    # if no match is found, return the closest city
     if len(matched_cities) == 0:
         min_distance = math.inf
         for r in results["results"]["bindings"]:
@@ -205,7 +209,7 @@ def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, 
                 closest_city = r
 
         return closest_city
-    
+    # sort the results by the ratio of the match and return the best match
     matched_cities.sort(key=lambda x: x[0], reverse=True)
     return matched_cities[0][1]
 
@@ -217,10 +221,12 @@ if __name__ == "__main__":
     parser.add_argument("--energy_endpoint", default="http://localhost:7200/repositories/test", type=str, help="Sparql enpoint for the energy KG")
     parser.add_argument("--path_to_save", default="matches.nt", type=str, help="Path to save the matches")
 
-    args = parser.parse_args()
+    args = parser.parse_args() 
 
+    # query the energy knowledge graph for the cities and their coordinates
     results_Graphdb = query_graphDB(args.energy_endpoint)
     matches= []
+    # iterate over the results and query Wikidata and DBpedia for each city
     for c in results_Graphdb["results"]["bindings"]:
         label = c["cityName"]["value"]
         longitude = float(c["longitude"]["value"])
@@ -232,9 +238,10 @@ if __name__ == "__main__":
         matches.append(result_dbpedia)
 
     triples = []
+    # generate the triples for the matches
     for m in matches:
         s = "<"+m[0]["City"]["value"] +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+m[1]["city"]["value"] +"> .\n"
         triples.append(s)
-
+    # save the triples
     with open(args.path_to_save, "w") as f:
         f.writelines(triples)

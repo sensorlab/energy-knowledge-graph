@@ -42,8 +42,9 @@ def process_data(df : pd.DataFrame, time_window, upper_bound, max_gap) -> list:
     df = df.resample("8S").fillna(method="nearest", limit=4)
     df.fillna(0, inplace=True)
     # handle negatve values
-    df[df<0] = 0
-    # df.dropna(inplace=True)
+    df[df<0] = 0 # TODO FIX
+   
+   
     windows = []
     for i in range(0, len(df) - time_window, time_window + 1):
         window = df.iloc[i:i + time_window]

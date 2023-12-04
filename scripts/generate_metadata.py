@@ -360,7 +360,7 @@ def HEART_metadata():
 
 def SUST1_metadata():
     # drop unnecessary columns TODO UPDATE PATH
-    df = pd.read_csv(DATA_PATH+"demographics_SUST.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
+    df = pd.read_csv(DATA_PATH+"demographics_SUST1.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
     # rename columns to match the other metadata
     df.rename(columns={"# People": "occupancy", "Type (A/H)": "house_type", "Start Measuring" : "first_reading", "End Measuring" : "last_reading", "SustData IID": "name"},inplace=True)
     # convert to datetime
@@ -385,6 +385,8 @@ def SUST2_metadata():
         "first_reading" : date(2016, 10, 6),
         "last_reading" : date(2016, 12, 31),
         "country" : "Portugal",
+        "occupancy" : 3,
+        "house_type" : "house",
     }
 
 def DEDDIAG_metadata():
@@ -424,6 +426,9 @@ def ECDUY_metadata():
     df = pd.DataFrame(data).T.reset_index(drop=True)
 
     df["country"] = "Uruguay"
+    df["city"] = "Montevideo"
+    df["lat"] = -34.901112
+    df["lon"] = -56.164532
     return df
 
 
@@ -473,7 +478,8 @@ def generate_metadata(save=True):
     IAWE_meta = IAWE_metadata()
     DEKN_meta = DEKN_metadata()
     HEART_meta = HEART_metadata()
-    SUST_meta = SUST_metadata()
+    # SUST_meta = SUST_metadata() TODO SUST1 SUST2
+    SUST_meta = pd.concat([SUST1_metadata(), SUST2_metadata()], ignore_index=True, axis=0)
     DEDDIAG_meta = DEDDIAG_metadata()
     ENERTALK_meta = ENERTALK_metadata()
     ECDUY_meta = ECDUY_metadata()

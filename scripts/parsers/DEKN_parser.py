@@ -4,7 +4,7 @@ from helper_functions import save_to_pickle
 
 # https://data.open-power-system-data.org/household_data/
 def parse_DEKN(data_path : str, save_path : str):
-    df = pd.read_csv(data_path+"household_data_15min_singleindex_filtered.csv")
+    df = pd.read_csv(data_path+"household_data_1min_singleindex_filtered.csv")
 
     # drop unnecessary columns
     df =df.drop(columns=["utc_timestamp", "interpolated"])

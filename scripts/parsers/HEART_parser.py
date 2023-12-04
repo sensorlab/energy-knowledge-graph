@@ -27,8 +27,7 @@ def parse_HEART(data_path : str, save_path : str):
             df.sort_index(inplace=True)
             
             df.rename(columns={"Value": "aggregate"}, inplace=True)
-            # convert watts to kilowatt hours
-            df = watts2kwh(df, 1/3600)
+
             df.dropna(inplace=True)
             # create a dictionary of dataframes for each device
             devices_dict = {}

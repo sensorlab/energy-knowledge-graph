@@ -4,7 +4,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from nilmtk import DataSet
 import pandas as pd
 
-from helper_functions import save_to_pickle, watts2kwh
+from helper_functions import save_to_pickle
 
 
 
@@ -71,7 +71,7 @@ def parse_IAWE(data_path : str, save_path : str):
     for house in prepared_data:
         for meter in prepared_data[house]:
             df = pd.DataFrame(prepared_data[house][meter]["power"]["active"])
-            prepared_data[house][meter] = watts2kwh(df, 60/3600)
+            prepared_data[house][meter] = df
 
 
     save_to_pickle(prepared_data, save_path)

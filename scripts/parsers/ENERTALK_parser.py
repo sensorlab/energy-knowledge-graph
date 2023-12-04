@@ -3,7 +3,7 @@ import pandas as pd
 from collections import defaultdict
 import concurrent.futures
 from tqdm import tqdm
-from helper_functions import save_to_pickle, watts2kwh
+from helper_functions import save_to_pickle
 import multiprocessing
 
 
@@ -25,8 +25,7 @@ def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
    
 
 
-    # convert to kWh 15hz data
-    df = watts2kwh(df, (1/15)/3600)
+ 
     # resample to 1 second
     df = df.resample("1S").sum()
 

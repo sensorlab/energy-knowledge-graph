@@ -6,9 +6,7 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from helper_functions import *
 
-def watts2kwh(df, data_frequency):
-    df = df/1000 * data_frequency
-    return df
+
 def read_and_preprocess_df(path):
     df = pd.read_csv(path, header=None, names=["timestamp", "value"])
     df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -18,8 +16,7 @@ def read_and_preprocess_df(path):
     # resample to 7s and forward fill up to 35s
     df = df.resample("7s").ffill(limit=7).dropna()
 
-    # convert to kWh
-    df = watts2kwh(df, 7/3600)
+
     return df
 
 # get house name and appliance name from file name

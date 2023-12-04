@@ -4,7 +4,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from nilmtk import DataSet
 import pandas as pd
 
-from helper_functions import save_to_pickle, watts2kwh
+from helper_functions import save_to_pickle
 
 
 def load_redd_dataset(path):
@@ -68,7 +68,7 @@ def parse_REDD(data_path : str, save_path : str):
         for meter in prepared_data[house]:
             df = prepared_data[house][meter]
             prepared_data[house][meter] = df.resample('7s').ffill(limit=1).fillna(0)
-            prepared_data[house][meter] = watts2kwh(prepared_data[house][meter], 7/3600)
+     
 
 
 

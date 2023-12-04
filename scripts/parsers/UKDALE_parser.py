@@ -3,7 +3,7 @@ import os
 import yaml
 
 
-from helper_functions import save_to_pickle, watts2kwh
+from helper_functions import save_to_pickle
 
 # gets the number of the device from the filename
 def getNumber(device : str) -> int:
@@ -14,7 +14,6 @@ def preproces_file(file_path : str) -> pd.DataFrame:
     df = pd.read_csv(file_path, header=None, sep=" ")
     df[0] = pd.to_datetime(df[0], unit='s')
     df = df.set_index(0)
-    df = watts2kwh(df, 6/3600)
     
     return df
 

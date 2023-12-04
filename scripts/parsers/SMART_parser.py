@@ -3,16 +3,10 @@ import os
 
 from helper_functions import save_to_pickle
 
-# convert to kWh
-def convert2kWh(df):
-    df['power[kW]'] = df['power[kW]'] * 0.25 # 15 min interval -> *4
-    df.columns = ['time', 'power[kWh]']
-    return df
 
-# read the file and convert to kWh 
+# read the file and set time as index
 def process_file(file_path):
     df = pd.read_csv(file_path, header=None, names=["time", "power[kW]"])
-    df = convert2kWh(df)
     df["time"] = pd.to_datetime(df["time"])
     df = df.set_index('time')
     df.sort_index(inplace=True)
@@ -67,7 +61,8 @@ def parse_SMART(data_path, save_path):
             
         
 
-        data_for_all_apartments[apt] = df
+        name ="SMART_"+str(sort_key(apt))
+        data_for_all_apartments[name] = df
 
 
     save_to_pickle(data_for_all_apartments, save_path)

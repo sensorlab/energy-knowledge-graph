@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import pickle
 from functools import reduce
-from helper_functions import watts2kwh, save_to_pickle
+from helper_functions import save_to_pickle
 
 
 # read data from ECO convert to kWh and save to dictionary
@@ -34,8 +34,6 @@ def get_house_data(file_path: str, device_mapping: dict):
         
         
         device_df.sort_index(inplace=True)
-        device_df = watts2kwh(device_df, 1/3600)
-
         house_data[device_name] = device_df
 
     # read total data
@@ -52,8 +50,6 @@ def get_house_data(file_path: str, device_mapping: dict):
             # ignore days with missing data
             if not (df == -1).any().any():
                 total_df = pd.concat([total_df, df], axis=0)
-
-    total_df = watts2kwh(total_df, 1/3600)
     house_data["aggregate"] = total_df
 
 

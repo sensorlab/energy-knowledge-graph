@@ -13,7 +13,7 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
         'PFmax', 'PFavg', 'miss_flag', 'iid', 'deploy']).dropna().set_index("tmstp").sort_index()
     df = df[~df.index.duplicated(keep='first')]
     df = df.resample("min").fillna(method="nearest", limit=5).dropna()# if there is data within 5 minutes, fill it in else drop it
-    df = watts2kwh(df, 1/60)
+   
     return df
 
 def parse_SUST1(data_path: str, save_path : str):

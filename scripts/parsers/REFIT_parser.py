@@ -1,5 +1,5 @@
 import pandas as pd
-from helper_functions import watts2kwh, save_to_pickle
+from helper_functions import save_to_pickle
 import os
 
 # appliance names for each house
@@ -34,7 +34,7 @@ def process_dataframe(df: pd.DataFrame, house_number) -> pd.DataFrame:
     df["Time"] = pd.to_datetime(df["Time"])
     df = df.set_index("Time").sort_index()
     df = df.resample("8s").fillna(method="nearest", limit=1).dropna()
-    df = watts2kwh(df, 8/3600)
+
 
     device_names = appliances[house_number-1].split(",")
     if device_names != None:

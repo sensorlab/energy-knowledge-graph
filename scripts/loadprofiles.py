@@ -6,6 +6,10 @@ import sys
 import concurrent.futures
 import multiprocessing
 
+# watts to kWh given data frequency as a fraction of an hour (e.g. 0.5 for half-hourly data)
+def watts2kwh(df, data_frequency):
+    df = df/1000 * data_frequency
+    return df
 
 
 def calculate_loadprofiles(df):
@@ -38,7 +42,16 @@ def process_dataset(dataset):
     for house in data_dict:
         house_lp = {}
         for device in data_dict[house]:
-            house_lp[device] = calculate_loadprofiles(data_dict[house][device])
+            # these datasets are already in kWh
+            if "ECDUY" in  house or "DEKN" in house or "HUE" in house:
+                house_lp[device] = calculate_loadprofiles(data_dict[house][device])
+            else:
+                # get sampling rate for kWh conversion
+                time_deltas = data_dict[house][device].index.to_series().diff().dropna()
+                median_time_delta = time_deltas.median()
+                sampling_rate = median_time_delta.total_seconds()/3600
+                house_lp[device] = calculate_loadprofiles(watts2kwh(data_dict[house][device], sampling_rate))
+            
         loadprofiles[house] = house_lp
 
     with open(os.path.join(save_folder, dataset.split(".")[0] + "_loadprofiles.pkl"), 'wb') as f:
@@ -77,20 +90,5 @@ if __name__ == "__main__":
     with open(save_folder + "/" +"merged_loadprofiles.pkl", 'wb') as f:
         pickle.dump(data_dict, f, pickle.HIGHEST_PROTOCOL)
         
-    # for dataset in tqdm(os.listdir(data_path)):
-    #     if not dataset.endswith(".pkl"):
-    #         continue
-    #     name = dataset.split(".")[0]
-    #     data_dict = pd.read_pickle(data_path + dataset)
-    #     loadprofiles = {}
-    #     for house in data_dict:
-    #         house_lp = {}
-    #         for device in data_dict[house]:
-    #             house_lp[device] = calculate_loadprofiles(data_dict[house][device])
-
-    #         loadprofiles[house] = house_lp
-    #         loadprofiles_merged[house] = house_lp
-    #     with open(save_folder+ "/" + name + "_loadprofiles.pkl", 'wb') as f:
-    #         pickle.dump(loadprofiles, f, pickle.HIGHEST_PROTOCOL)
 
 

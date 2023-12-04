@@ -34,7 +34,6 @@ def parse_DEDDIAG(data_path : str, save_path: str):
             df = df[~df.index.duplicated(keep='first')]
             df = df.resample("1s").ffill()
             df.dropna(inplace=True)
-            df = watts2kwh(df, 1/3600)
             data[label] = df
 
         

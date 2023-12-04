@@ -8,7 +8,6 @@ def preprocess_dataframe(df):
     df.set_index("timestamp", inplace=True)
     df.sort_index(inplace=True)
     df.drop(columns=["country", "region", "lat", "lon", "tz", "voltage", "global_reactive_power", "global_intensity", "unmetered"], inplace=True)
-    df /= 1000 # to kWh
     return df
 
 

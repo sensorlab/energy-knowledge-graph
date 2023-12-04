@@ -1,5 +1,5 @@
 import pandas as pd
-from helper_functions import save_to_pickle, watts2kwh
+from helper_functions import save_to_pickle
 
 def parse_DRED(data_path : str, save_path : str):
     df = pd.read_csv(data_path+"All_data.csv", skiprows=1).drop(columns=["unknown"])
@@ -21,9 +21,6 @@ def parse_DRED(data_path : str, save_path : str):
     df.set_index("time", inplace=True)
     df.sort_index(inplace=True)
 
-
-    # convert from watts to kWh
-    df = watts2kwh(df, 1/3600)
 
     # split into appliances
     data = {}

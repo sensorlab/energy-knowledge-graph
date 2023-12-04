@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from helper_functions import watts2kwh, save_to_pickle
+from helper_functions import  save_to_pickle
 
 
 # read data from HES convert to kWh and save to dictionary
@@ -30,8 +30,7 @@ def parse_HES(data_path, save_path):
         device_df.set_index('date', inplace=True)
         device_df.sort_index(inplace=True)
 
-        # Convert the power values from watts to kWh
-        device_df = watts2kwh(device_df, 7/3600)
+  
 
         # Add the current device dataframe to the dict of dataframes
         dfs[device] = device_df

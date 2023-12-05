@@ -20,6 +20,7 @@ def parse_HEART(data_path : str, save_path : str):
         if file.endswith(".csv"):
             # 
             df = pd.read_csv(data_path + file)
+            df.drop(columns=["router"], inplace=True)
             # convert unix timestamp to datetime
             df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms").dt.tz_localize("UTC").dt.tz_convert("Europe/Athens")
             # set datetime as index and drop unnecessary columns

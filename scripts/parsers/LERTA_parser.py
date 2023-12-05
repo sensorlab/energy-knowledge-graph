@@ -28,7 +28,8 @@ def parse_LERTA(data_path : str, save_path : str):
             df = process_file(data_path + house)
             data = {}
             for col in df.columns:
-                data[col] = pd.DataFrame(df[col])
+                if "AGGREGATE" in col:
+                    data[col.lower()] = pd.DataFrame(df[col])
             houses_data[parse_name(house)] = data
 
     save_to_pickle(houses_data, save_path)

@@ -6,8 +6,9 @@ from helper_functions import save_to_pickle
 
 # read the file and set time as index
 def process_file(file_path):
-    df = pd.read_csv(file_path, header=None, names=["time", "power[kW]"])
+    df = pd.read_csv(file_path, header=None, names=["time", "aggregate"])
     df["time"] = pd.to_datetime(df["time"])
+    df["aggregate"] *= 1000 # convert to W
     df = df.set_index('time')
     df.sort_index(inplace=True)
     return df

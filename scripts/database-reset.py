@@ -17,23 +17,30 @@ DATA_PATH = './energy-knowledge-graph/data/metadata/residential_metadata.parquet
 # calculated loadprofiles from loadprofiles.py
 LOADPROFILES_PATH = './energy-knowledge-graph/data/loadprofiles/merged_loadprofiles.pkl'
 
+CONSUMPTION_DATA = './energy-knowledge-graph/data/metadata/consumption_data.pkl'
+
 def load_data(conn:Connection):
 
     df = pd.read_parquet(DATA_PATH)
     loadprofiles = pd.read_pickle(LOADPROFILES_PATH)
+    consumption = pd.read_pickle(CONSUMPTION_DATA)
     print("Populating database...")
     # iterate over rows in dataframe
     for _, row in tqdm(df.iterrows()):
-        # sanity check
-        if "ECDUY" in row['name'] :
-            continue
+        print(row['name'])
+        # for debugging purposes
+        # if "ECDUY" in row['name'] or "HUE" in row["name"] or "REFIT" in row["name"] or "UCIML" in row["name"] or "HES" in row["name"] or "ECO" in row["name"]or "LERTA" in row["name"] or "UKDALE" in row["name"] or "DRED" in row["name"]:
+        #     continue
         if row['name'] not in loadprofiles:
             print("No loadprofile for: ", row['name'])
             continue
         # print(row['name'])
-        id = get_or_create_household_id(conn, row.to_dict())
+        id = get_or_create_household_id(conn, row.to_dict(), consumption[row['name']]["aggregate"]["daily"])
         for device in loadprofiles[row['name']]:
-            get_or_create_device_id(conn, device, id , loadprofiles[row['name']])
+            if device == "aggregate":
+                get_or_create_device_id(conn, device, id , loadprofiles[row['name']], consumption[row['name']][device]["daily"], None)
+            else:
+                get_or_create_device_id(conn, device, id , loadprofiles[row['name']], consumption[row['name']][device]["daily"], consumption[row['name']][device]["event"])
         
  
 

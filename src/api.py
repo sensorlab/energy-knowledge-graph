@@ -111,6 +111,7 @@ CREATE TABLE "households" (
 	"facing" varchar,
 	"rental_units" int,
 	"evs" int,
+    "consumption" float,                                   
 	CONSTRAINT "households_pk" PRIMARY KEY ("household_id")
 ) WITH (
   OIDS=FALSE
@@ -134,12 +135,15 @@ CREATE TABLE "locations" (
 	"wages" float,
 	"population_density" float,
 	"elevation" float,
-	"education_level" decimal(5,3)[],
+	"education_level_low" float,
+    "education_level_medium" float,
+    "education_level_high" float,
 	"electricity_price" float,
 	"gas_price" float,
 	"cdd" float,
 	"hdd" float,
 	"holidays" DATE[],
+    "carbon_intesity" float,
 	CONSTRAINT "locations_pk" PRIMARY KEY ("location_id")
 ) WITH (
   OIDS=FALSE
@@ -154,6 +158,8 @@ CREATE TABLE "devices" (
 	"loadprofile_daily" float[] NOT NULL,
 	"loadprofile_weekly" float[] NOT NULL,
 	"loadprofile_monthly" float[] NOT NULL,
+    "daily_consumption" float,
+    "event_consumption" float,                                
 	CONSTRAINT "device_pk" PRIMARY KEY ("device_id")
 ) WITH (
   OIDS=FALSE
@@ -201,8 +207,8 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     ''')
 
     insert_location_sql = text('''
-        INSERT INTO locations (weather_id, continent, country, country_code, region, city, street, timezone, latitude, longitude, gdp, wages, population_density, elevation, education_level, electricity_price, gas_price, cdd, hdd, holidays)
-        VALUES (:weather_id, :continent, :country, :country_code, :region, :city, :street, :timezone, :latitude, :longitude, :gdp, :wages, :population_density, :elevation, :education_level, :electricity_price, :gas_price, :cdd, :hdd, :holidays)
+        INSERT INTO locations (weather_id, continent, country, country_code, region, city, street, timezone, latitude, longitude, gdp, wages, population_density, elevation, education_level_low, education_level_medium, education_level_high, electricity_price, gas_price, cdd, hdd, holidays, carbon_intesity)
+        VALUES (:weather_id, :continent, :country, :country_code, :region, :city, :street, :timezone, :latitude, :longitude, :gdp, :wages, :population_density, :elevation, :education_level_low, :education_level_medium, :education_level_high, :electricity_price, :gas_price, :cdd, :hdd, :holidays, :carbon_intesity)
         RETURNING location_id;
     ''')
 
@@ -224,14 +230,21 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     
     # get location data
     lat, lon, country = household['lat'], household['lon'], household['country']
+    city = household.get('city', None)
     if lat is None or lon is None or isnan(lat) or isnan(lon):
         location_data = create_location_dict(country, household["first_reading"], 0)
     else:
         location_data = create_location_dict(country, household["first_reading"], 1, lat, lon)
+    # special case if we have city info from somwhere else but we dont have accurate coordinates
+    if location_data["city"] is None:
+        location_data["city"] = city
+    
+    # cast average wages to int
+    if location_data["wages"] is not None:
+        location_data["wages"] = int(location_data["wages"])
 
     # get weather data TODO for now just fill with null
     weather_id = conn.execute(insert_weather_sql, dict(yearly=None, hourly=None)).scalar_one()
-
     # Create entry in DB
     location_id = conn.execute(insert_location_sql,
                                 dict(
@@ -249,12 +262,15 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
         wages=location_data["wages"], 
         population_density=location_data["population_density"], 
         elevation=location_data["elevation"], 
-        education_level=location_data["education_level"], 
+        education_level_low=location_data["education_level"][0], 
+        education_level_medium=location_data["education_level"][0],
+        education_level_high=location_data["education_level"][0],
         electricity_price=location_data["electricity_price"], 
         gas_price=location_data["gas_price"], 
         cdd=location_data["CDD"], 
         hdd=location_data["HDD"], 
-        holidays=location_data["public_holidays"])
+        holidays=location_data["public_holidays"],
+        carbon_intesity=location_data["carbon_intesity"])
                                 ).scalar_one()
 
 
@@ -269,7 +285,7 @@ def query_osm_metadata(lat:float, lon:float) -> dict:
     return res.json()
 
 
-def get_or_create_household_id(conn: Connection, household: dict) -> int:
+def get_or_create_household_id(conn: Connection, household: dict, consumption : float) -> int:
     """Currently there is no way to validate duplication of the entries."""
 
     query_household_sql = text('''
@@ -284,8 +300,8 @@ def get_or_create_household_id(conn: Connection, household: dict) -> int:
         return household_id
 
     insert_household_sql = text('''
-        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs)
-        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs)
+        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs, consumption)
+        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs, :consumption)
         RETURNING household_id;
     ''')
 
@@ -313,6 +329,11 @@ def get_or_create_household_id(conn: Connection, household: dict) -> int:
     else:
         household["EVs"] = None
 
+    # Convert consumption to float if it is not None
+    if consumption is not None:
+        consumption = float(consumption)
+
+
     # Create entry in DB
     household_id = conn.execute(insert_household_sql, dict(
         location_id=location_id,
@@ -323,7 +344,8 @@ def get_or_create_household_id(conn: Connection, household: dict) -> int:
         occupancy=household["occupancy"],
         facing=household["facing"],
         rental_units=household["rental_units"],
-        evs=household["EVs"]
+        evs=household["EVs"],
+        consumption=consumption
         )).scalar_one()
     
     
@@ -331,16 +353,21 @@ def get_or_create_household_id(conn: Connection, household: dict) -> int:
 
 
 
-def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:dict) -> int:
+def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:dict, daily_consumption:float, event_consumption:float) -> int:
     insert_device_sql = text('''
-        INSERT INTO devices (household_id, name, loadprofile_daily, loadprofile_weekly, loadprofile_monthly)
-        VALUES (:household_id, :name, :loadprofile_daily, :loadprofile_weekly, :loadprofile_monthly)
+        INSERT INTO devices (household_id, name, loadprofile_daily, loadprofile_weekly, loadprofile_monthly, daily_consumption, event_consumption)
+        VALUES (:household_id, :name, :loadprofile_daily, :loadprofile_weekly, :loadprofile_monthly, :daily_consumption, :event_consumption)
         RETURNING device_id;
     ''')
 
     query_device_sql = text('''
         SELECT device_id FROM devices WHERE household_id = :household_id AND name = :name
     ''')
+
+    if daily_consumption is not None:
+        daily_consumption = float(daily_consumption)
+    if event_consumption is not None:
+        event_consumption = float(event_consumption)
 
     # Does entry already exist? If it does, use it, otherwise create new one.
     devices = conn.execute(query_device_sql, dict(household_id=household_id, name=device)).scalars().all()
@@ -357,6 +384,9 @@ def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:
         loadprofile_daily = data[device]["daily"].flatten().astype(float).tolist(),
         loadprofile_weekly = data[device]["weekly"].flatten().astype(float).tolist(),
         loadprofile_monthly = data[device]["monthly"].flatten().astype(float).tolist(),
+        daily_consumption = daily_consumption,
+        event_consumption = event_consumption
+
         
         )).scalar_one()
     return device_id

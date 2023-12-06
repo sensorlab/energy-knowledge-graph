@@ -175,6 +175,17 @@ def get_country_code(country):
     return pc.country_name_to_country_alpha3(country)
 
 
+
+def get_carbon_intesity(code : str):
+    """Returns the carbon intensity for a given country code"""
+    df  = pd.read_csv(DATA_PATH+"Energy/carbon-intensity-electricity.csv")
+    df = df[df["Year"]==2021].drop(columns=["Year", "Entity"])
+    df = df.set_index("Code")
+    
+    return float(df.loc[code].values[0])
+
+
+
 # get education level for given country and year
 def get_education_level(country: str, year: int) -> float:
     df = pd.read_csv(DATA_PATH + "Population/Education/adult_education_levels.csv")
@@ -333,6 +344,7 @@ def create_location_dict(country: str, date, accuracy=1, lat=None, lon=None) -> 
         cooling_degree_days = get_cooling_and_heating_degree_days(country, date.year)[0]
         heating_degree_days = get_cooling_and_heating_degree_days(country, date.year)[1]
         public_holidays = get_public_holidays(country, date.year)    
+        carbon_intesity = get_carbon_intesity(country_code)
 
     elif accuracy == 0:
         continent = country_to_continent(country)
@@ -353,6 +365,7 @@ def create_location_dict(country: str, date, accuracy=1, lat=None, lon=None) -> 
         cooling_degree_days = get_cooling_and_heating_degree_days(country, date.year)[0]
         heating_degree_days = get_cooling_and_heating_degree_days(country, date.year)[1]
         public_holidays = get_public_holidays(country, date.year)   
+        carbon_intesity = get_carbon_intesity(country_code)
 
     data = {
         "continent": continent,
@@ -374,6 +387,7 @@ def create_location_dict(country: str, date, accuracy=1, lat=None, lon=None) -> 
         "CDD": cooling_degree_days,
         "HDD": heating_degree_days,
         "public_holidays": public_holidays,
+        "carbon_intesity": carbon_intesity,
     }
 
     return data

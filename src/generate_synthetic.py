@@ -6,7 +6,6 @@ import numpy as np
 import random
 import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
-import concurrent.futures
 from helper import preprocess_string
 
 

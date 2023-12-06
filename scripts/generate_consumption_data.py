@@ -5,25 +5,29 @@ from tqdm import tqdm
 import pickle
 import argparse
 import concurrent.futures
+
 def average_daily_consumption(df: pd.DataFrame):
     """Returns the average daily consumption of a device in kWh."""
+    
+    if df.empty:
+        return 0
     df = df.copy()
-    # convert to kWh
     time_deltas = df.index.to_series().diff().dropna()
     median_time_delta = time_deltas.median()
     sampling_rate = median_time_delta.total_seconds()/3600
     df/=1000
     df *= sampling_rate
-    # resample to daily
     df = df.resample('1D').sum()
 
-    # check if dataframe is empty and return 0 if it is
+    
+    return df.values.mean()    
+
+
+def average_on_off_event(df: pd.DataFrame, h):
+    """Returns the average on and off event of a device in kWh."""
+    # check if df is empty
     if df.empty:
         return 0
-    # return mean of daily consumption
-    return df.values.mean()    
-def average_on_off_event(df: pd.DataFrame):
-    """Returns the average on and off event of a device in kWh."""
     df_orig = df.copy()
     time_deltas = df.index.to_series().diff().dropna()
     median_time_delta = time_deltas.median()
@@ -45,6 +49,7 @@ def average_on_off_event(df: pd.DataFrame):
 
 
     # Adjust for edge cases (e.g., if the series starts or ends with an 'on' state)
+ 
     if df['state'].iloc[0] == 1:
         on_starts.insert(0, df.index[0])
     if df['state'].iloc[-1] == 1:
@@ -68,7 +73,7 @@ def average_on_off_event(df: pd.DataFrame):
         merged_on_ends = [on_ends[0]]  # Initialize with the first 'end' event
     except:
         return 0
-    
+
 
     for i in range(1, len(on_starts)):
         start_index = df.index.get_loc(on_starts[i])
@@ -113,18 +118,19 @@ def average_on_off_event(df: pd.DataFrame):
     
 # Function to process each dataset
 def process_dataset(dataset_path):
-
     house_data_dict = {}
     data = pd.read_pickle(dataset_path)
     for h in data.keys():
         house_data = {}
         df = data[h]
-        # for aggregate data calculate only daily consumption
+
         for d in df.keys():
+            # for aggregate process only daily consumption
             if "aggregate" in d:
-                house_data[d] = {"daily": average_daily_consumption(df[d])}
+                house_data[d] = {"daily": average_daily_consumption(df[d].copy())}
             else:
-                house_data[d] = {"daily": average_daily_consumption(df[d]), "event": average_on_off_event(df[d])}
+                house_data[d] = {"daily": average_daily_consumption(df[d].copy()), "event": average_on_off_event(df[d].copy(),h)}
+       
         house_data_dict[h] = house_data
     del data
     return house_data_dict
@@ -134,11 +140,15 @@ def main(DATA_PATH, SAVE_PATH):
     # limit to half of cpu cores
     cpu_count = int(os.cpu_count() / 2)
     
-    # get all dataset paths
-    dataset_paths = [os.path.join(DATA_PATH, d) for d in os.listdir(DATA_PATH)]
 
-    # process each dataset in parallel
+    # get all dataset paths
+    dataset_paths =[]
+    for d in  os.listdir(DATA_PATH):
+        if d.endswith(".pkl"):
+            dataset_paths.append(os.path.join(DATA_PATH, d))
+    
     consumption_data = {}
+    # process each dataset in parallel and save results to dictionary
     with tqdm(total=len(dataset_paths), desc="Processing datasets", unit="dataset") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
             futures = {executor.submit(process_dataset, dataset_path): dataset_path for dataset_path in dataset_paths}
@@ -150,17 +160,15 @@ def main(DATA_PATH, SAVE_PATH):
 
     
 
-    # save consumption data
     with open(os.path.join(SAVE_PATH, "consumption_data.pkl"), 'wb') as f:
         pickle.dump(consumption_data, f, pickle.HIGHEST_PROTOCOL)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Calculate consumption data.')
+    parser.add_argument('--data_path', type=str, help='Path to data folder.', default="")
 
-    parser.add_argument('--data_path', type=str, help='Path to data folder.', default="../data/watts_test/")
-
-    parser.add_argument('--save_path', type=str, help='Path to save folder.', default="../data/metadata/")
+    parser.add_argument('--save_path', type=str, help='Path to save folder.', default="")
 
     args = parser.parse_args()
 

@@ -70,14 +70,14 @@ def query_wikidata_coordinates(latitude : float, longitude : float, label : str,
             if distance < min_distance:
                 min_distance = distance
                 closest_city = r
-        return closest_city
+        return closest_city["city"]["value"]
     # sort the results by the ratio of the match and return the best match
     matched_cities.sort(key=lambda x: x[0], reverse=True)
-    return matched_cities[0][1]
+    return matched_cities[0][1]["city"]["value"]
 
 
 
-def query_graphDB(endpoint : str):
+def query_graphDB_cities(endpoint : str):
     """Query the energy knowledge graph for the cities and their coordinates"""
     query_my_data = """
     PREFIX schema: <https://schema.org/>
@@ -107,9 +107,36 @@ def query_graphDB(endpoint : str):
     sparlq_graphdb.setReturnFormat(JSON)
     results_Graphdb = sparlq_graphdb.query().convert()
 
+    for r in results_Graphdb["results"]["bindings"]:
+        print(r["cityName"]["value"], r["longitude"]["value"], r["latitude"]["value"])
+
     return results_Graphdb 
 
+def query_graphdb_countries(endpoint):
+    query_countries = """
+    PREFIX voc: <http://vocabulary.example.org/>
+    PREFIX saref: <https://saref.etsi.org/core/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX schema: <https://schema.org/>
+    SELECT DISTINCT ?country WHERE {
+    ?country rdf:type schema:Country . 
+    
+    }
+    """
+    
+    sparql_graphdb = SPARQLWrapper(endpoint)
+    sparql_graphdb.setQuery(query_countries)
+    sparql_graphdb.setReturnFormat(JSON)
 
+    results = sparql_graphdb.query().convert()
+    uris = {}
+    for uri in results["results"]["bindings"]:
+        k =  uri["country"]["value"].split("/")[-1].replace("%20", " ")
+        # special case for the US
+        if k == "United States":
+            k = "United States of America"
+        uris[k] = uri["country"]["value"]
+    return uris
 
 def get_dbpedia_results(latitude : float, longitude : float):
     # dbpedia query to get the cities in a 50km radius of the given coordinates
@@ -208,39 +235,106 @@ def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, 
                 min_distance = distance
                 closest_city = r
 
-        return closest_city
+        return closest_city["city"]["value"]
     # sort the results by the ratio of the match and return the best match
     matched_cities.sort(key=lambda x: x[0], reverse=True)
-    return matched_cities[0][1]
+    return matched_cities[0][1]["city"]["value"]
+def query_wikidata_countries(country: str):
+    """
+    Query Wikidata for the country of a city given its city wikidata entity id
+    """   
+    # query_wikidata_countries =f"""PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+    # PREFIX wd: <http://www.wikidata.org/entity/>
+    # PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    # PREFIX bd: <http://www.bigdata.com/rdf#>
+
+    # SELECT ?city ?cityLabel ?country ?countryLabel
+    # WHERE {{
+    # wd:{city} rdfs:label ?cityLabel ;  # City (Montreal)
+    #         wdt:P17 ?country .         # Country of the city
+    # ?country rdfs:label ?countryLabel .
+    
+    # FILTER(LANG(?cityLabel) = "en" && LANG(?countryLabel) = "en").
+    # }}
+    # """
+    query_wikidata_countries = f"""
+    SELECT ?country WHERE {{
+    ?country wdt:P31 wd:Q6256; # instance of a country
+            rdfs:label "{country}"@en. # country name in English
+    }}
+
+    """
+        
+    sparql_wdata = SPARQLWrapper("https://query.wikidata.org/sparql")
+
+    sparql_wdata.setQuery(query_wikidata_countries)
+
+    sparql_wdata.setReturnFormat(JSON)
+
+    results = sparql_wdata.query().convert()
+
+    return results["results"]["bindings"][0]["country"]["value"]
 
 
+def query_dbpedia_countries(country : str):
+    query = f"""
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX dbo: <http://dbpedia.org/ontology/>
+    PREFIX dbp: <http://dbpedia.org/property/>
+
+    SELECT ?country WHERE {{
+    ?country a dbo:Country ;
+            rdfs:label "{country}"@en .
+    }}
+    LIMIT 1
+    """
+    sparql_dbpedia = SPARQLWrapper("http://dbpedia.org/sparql")
+    sparql_dbpedia.setQuery(query)
+    sparql_dbpedia.setReturnFormat(JSON)
+    results = sparql_dbpedia.query().convert()
+    return results["results"]["bindings"][0]["country"]["value"]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process energy graph data.")
 
-    parser.add_argument("--energy_endpoint", default="http://localhost:7200/repositories/test", type=str, help="Sparql enpoint for the energy KG")
+    parser.add_argument("--energy_endpoint", default="http://193.2.205.14:7200/repositories/EnergyGraph_mixed", type=str, help="Sparql enpoint for the energy KG")
     parser.add_argument("--path_to_save", default="matches.nt", type=str, help="Path to save the matches")
 
     args = parser.parse_args() 
 
     # query the energy knowledge graph for the cities and their coordinates
-    results_Graphdb = query_graphDB(args.energy_endpoint)
+    results_Graphdb_cities = query_graphDB_cities(args.energy_endpoint)
+    result_Graphdb_countries = query_graphdb_countries(args.energy_endpoint)
+
+
     matches= []
     # iterate over the results and query Wikidata and DBpedia for each city
-    for c in results_Graphdb["results"]["bindings"]:
+    for c in results_Graphdb_cities["results"]["bindings"]:
         label = c["cityName"]["value"]
+        # if label != "Montreal":
+        #     continue
         longitude = float(c["longitude"]["value"])
         latitude = float(c["latitude"]["value"])
         print(label, longitude, latitude)
-        result_wikidata = (c,query_wikidata_coordinates(latitude, longitude, label))
-        result_dbpedia = (c,query_dbpedia_coordinates(latitude, longitude, label))
-        matches.append(result_wikidata)
+        result_dbpedia = (c["City"]["value"], query_dbpedia_coordinates(latitude, longitude, label))
+        result_wikidata = (c["City"]["value"], query_wikidata_coordinates(latitude, longitude, label))
         matches.append(result_dbpedia)
+        matches.append(result_wikidata)
+    from time import sleep
+    sleep(5)
+    # iterate over the results and query Wikidata for each country
+    for c in result_Graphdb_countries:
+        print(c)
+        result_wikidata_countries = (result_Graphdb_countries[c], query_wikidata_countries(c))
+        result_dbpedia_countries = (result_Graphdb_countries[c], query_dbpedia_countries(c))
+        matches.append(result_wikidata_countries)
+        matches.append(result_dbpedia_countries)
 
     triples = []
     # generate the triples for the matches
     for m in matches:
-        s = "<"+m[0]["City"]["value"] +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+m[1]["city"]["value"] +"> .\n"
+        s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
+        print(s)
         triples.append(s)
     # save the triples
     with open(args.path_to_save, "w") as f:

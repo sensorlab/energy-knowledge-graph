@@ -138,6 +138,7 @@ CREATE TABLE "locations" (
 	"education_level_low" float,
     "education_level_medium" float,
     "education_level_high" float,
+    "education_category" varchar,                                
 	"electricity_price" float,
 	"gas_price" float,
 	"cdd" float,
@@ -207,8 +208,8 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     ''')
 
     insert_location_sql = text('''
-        INSERT INTO locations (weather_id, continent, country, country_code, region, city, street, timezone, latitude, longitude, gdp, wages, population_density, elevation, education_level_low, education_level_medium, education_level_high, electricity_price, gas_price, cdd, hdd, holidays, carbon_intesity)
-        VALUES (:weather_id, :continent, :country, :country_code, :region, :city, :street, :timezone, :latitude, :longitude, :gdp, :wages, :population_density, :elevation, :education_level_low, :education_level_medium, :education_level_high, :electricity_price, :gas_price, :cdd, :hdd, :holidays, :carbon_intesity)
+        INSERT INTO locations (weather_id, continent, country, country_code, region, city, street, timezone, latitude, longitude, gdp, wages, population_density, elevation, education_level_low, education_level_medium, education_level_high, education_category, electricity_price, gas_price, cdd, hdd, holidays, carbon_intesity)
+        VALUES (:weather_id, :continent, :country, :country_code, :region, :city, :street, :timezone, :latitude, :longitude, :gdp, :wages, :population_density, :elevation, :education_level_low, :education_level_medium, :education_level_high, :education_category, :electricity_price, :gas_price, :cdd, :hdd, :holidays, :carbon_intesity)
         RETURNING location_id;
     ''')
 
@@ -263,8 +264,9 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
         population_density=location_data["population_density"], 
         elevation=location_data["elevation"], 
         education_level_low=location_data["education_level"][0], 
-        education_level_medium=location_data["education_level"][0],
-        education_level_high=location_data["education_level"][0],
+        education_level_medium=location_data["education_level"][1],
+        education_level_high=location_data["education_level"][2],
+        education_category=location_data["education_level"][3],
         electricity_price=location_data["electricity_price"], 
         gas_price=location_data["gas_price"], 
         cdd=location_data["CDD"], 

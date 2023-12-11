@@ -199,9 +199,14 @@ def get_education_level(country: str, year: int) -> float:
     # ages 25-64
     # % of population with below upper secondary education, % of population with upper secondary, % of population with tertiary education
     try:
-        return [df.loc[country_code].values[0][1],df.loc[country_code].values[2][1],  df.loc[country_code].values[1][1]]
+        education_lvls = [df.loc[country_code].values[0][1],df.loc[country_code].values[2][1],  df.loc[country_code].values[1][1]]
+        max_value = max(education_lvls)
+        max_index = education_lvls.index(max_value)
+        mapping = {0: "LOW", 1: "MEDIUM", 2: "HIGH"}
+
+        return [df.loc[country_code].values[0][1],df.loc[country_code].values[2][1],  df.loc[country_code].values[1][1], mapping[max_index]]
     except:
-        return [None, None, None]
+        return [None, None, None, None]
     
 # returns the semester for given date for gas and electricity prices
 def get_semester(date: date):

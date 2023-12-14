@@ -1,4 +1,4 @@
-
+from typing import Tuple, Any, List
 import pandas as pd
 import os
 from tqdm import tqdm
@@ -7,7 +7,7 @@ from concurrent.futures import ProcessPoolExecutor
 from helper_functions import *
 
 
-def read_and_preprocess_df(path):
+def read_and_preprocess_df(path: str) -> pd.DataFrame:
     df = pd.read_csv(path, header=None, names=["timestamp", "value"])
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     # set timestamp as index
@@ -16,11 +16,11 @@ def read_and_preprocess_df(path):
     # resample to 7s and forward fill up to 35s
     df = df.resample("7s").ffill(limit=7).dropna()
 
-
     return df
 
+
 # get house name and appliance name from file name
-def parse_name(file_name : str):
+def parse_name(file_name: str) -> Tuple[str, str]:
     file_name = file_name.split("_")
     house_name = file_name[0].replace("home", "IDEAL_")
     appliance_name = file_name[3]
@@ -30,24 +30,28 @@ def parse_name(file_name : str):
     if appliance_name == "electric-appliance":
         appliance_name = file_name[4].split(".")[0]
     return house_name, appliance_name
+
+
 # process a single house
-def process_house(house, file_list, data_path):
+def process_house(house: Any, file_list: List[str], data_path: str) -> Tuple[Any, dict]:
     house_data = {}
     for file in file_list:
         _, label, df = process_file(file, data_path)
         house_data[label] = df
     return house, house_data
+
+
 # process a single file for a house
-def process_file(file,data_path):
+def process_file(file: str, data_path: str) -> Tuple[str, str, pd.DataFrame]:
     house, label = parse_name(file)
     return house, label, read_and_preprocess_df(data_path + "data_merged/" + file)
 
 
-def unpack_and_process(p):
+def unpack_and_process(p: tuple) -> Tuple[str, str, pd.DataFrame]:
     return process_house(*p)
 
-def parse_IDEAL(data_path: str, save_path : str):
 
+def parse_IDEAL(data_path: str, save_path: str) -> None:
     data_dict = {}
     files_grouped_by_home = defaultdict(list)
     # get files for electricity consumption
@@ -61,15 +65,14 @@ def parse_IDEAL(data_path: str, save_path : str):
 
     print("Processing houses...")
     # here we use half of the cpu cores to process the data you can change this if you want
-    cpu_count = int(os.cpu_count()/2)
+    cpu_count = int(os.cpu_count() // 2)
     # process the houses in parallel
     with ProcessPoolExecutor(max_workers=cpu_count) as executor, tqdm(total=total_houses, desc="Processing houses", unit="house") as t:
         args = ((house, files_grouped_by_home[house], data_path) for house in files_grouped_by_home)
-        
+
         for house_name, house_data in executor.map(unpack_and_process, args):
             data_dict[house_name] = house_data
             t.update(1)
 
     # save the data to a dictonary
     save_to_pickle(data_dict, save_path)
-

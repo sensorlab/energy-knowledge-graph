@@ -1,9 +1,9 @@
 import pandas as pd
 import os
-from helper_functions import *
+from helper_functions import save_to_pickle
 
 
-def parse_name(file_name: str):
+def parse_name(file_name: str) -> str:
     """
     Parse the file name to get the house name
     """
@@ -14,11 +14,11 @@ def parse_name(file_name: str):
     return "HEART" + "_" + appliance_name[5:]
 
 
-def parse_HEART(data_path : str, save_path : str):
+def parse_HEART(data_path: str, save_path: str) -> None:
     data_dict = {}
     for file in os.listdir(data_path):
         if file.endswith(".csv"):
-            # 
+            #
             df = pd.read_csv(data_path + file)
             df.drop(columns=["router"], inplace=True)
             # convert unix timestamp to datetime
@@ -26,18 +26,17 @@ def parse_HEART(data_path : str, save_path : str):
             # set datetime as index and drop unnecessary columns
             df = df.set_index("Timestamp").drop(columns=["dw", "wm"])
             df.sort_index(inplace=True)
-            
+
             df.rename(columns={"Value": "aggregate"}, inplace=True)
 
             df.dropna(inplace=True)
             # create a dictionary of dataframes for each device
             devices_dict = {}
             for device in df.columns:
-                    devices_dict[device] = pd.DataFrame(df[device])
+                devices_dict[device] = pd.DataFrame(df[device])
+
             # add the device dictionary to the data dictionary
             data_dict[parse_name(file)] = devices_dict
 
-
-    #save to pickle
+    # save to pickle
     save_to_pickle(data_dict, save_path)
-

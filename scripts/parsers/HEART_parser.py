@@ -2,7 +2,13 @@ import pandas as pd
 import os
 from helper_functions import *
 
-
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts
+# households: 4
+# submetered: yes
+# Location: Greece
+# Source: https://zenodo.org/records/7997198
 def parse_name(file_name: str):
     """
     Parse the file name to get the house name

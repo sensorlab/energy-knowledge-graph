@@ -2,7 +2,14 @@ import pandas as pd
 import os
 
 from helper_functions import save_to_pickle
-
+######################DATASET INFO#########################################
+# sampling rate: 15min
+# unit: watts
+# households: 114
+# no submeter data
+# Location: USA
+# Source: https://traces.cs.umass.edu/index.php/smart/smart
+# Note: This is the SMART apartments dataset and we currently do not use this dataset anywhere in the project.
 
 # read the file and set time as index
 def process_file(file_path):

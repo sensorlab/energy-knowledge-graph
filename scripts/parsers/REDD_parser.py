@@ -6,7 +6,13 @@ import pandas as pd
 
 from helper_functions import save_to_pickle
 
-
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts
+# households: 6
+# submetered
+# Location: USA (Massachusetts)
+# Source: https://people.csail.mit.edu/mattjj/papers/kddsust2011.pdf
 def load_redd_dataset(path):
     try:
         dataset = DataSet(path)

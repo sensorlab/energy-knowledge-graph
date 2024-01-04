@@ -2,7 +2,13 @@ import pandas as pd
 
 from helper_functions import save_to_pickle
 
-
+######################DATASET INFO#########################################
+# sampling rate: 1min
+# unit: watts
+# households: 1
+# submetered: no
+# Location: France
+# Source: https://doi.org/10.24432/C58K54
 def preprocess_dataframe(df):
     df = df.copy()
     df.set_index("timestamp", inplace=True)

@@ -2,6 +2,14 @@ import pandas as pd
 from helper_functions import save_to_pickle
 import os
 
+######################DATASET INFO#########################################
+# sampling rate: 8s
+# unit: watts
+# households: 20
+# submetered
+# Location: United Kingdom
+# Source: https://pureportal.strath.ac.uk/en/datasets/refit-electrical-load-measurements-cleaned
+
 # appliance names for each house
 appliances = [
         'aggregate, fridge, chest freezer, upright freezer, tumble dryer, washing machine, dishwasher, computer site, television site, electric heater',

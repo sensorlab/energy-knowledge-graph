@@ -1,5 +1,12 @@
 import pandas as pd
 from helper_functions import save_to_pickle
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts 
+# households: 1
+# submetered
+# Location: Netherlands
+# Source: https://www.st.ewi.tudelft.nl/~akshay/dred/
 
 def parse_DRED(data_path : str, save_path : str):
     df = pd.read_csv(data_path+"All_data.csv", skiprows=1).drop(columns=["unknown"])

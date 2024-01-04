@@ -2,6 +2,15 @@ import os
 import pandas as pd
 from helper_functions import *
 
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts
+# households: 15
+# Only on household 8
+# Location: Germany
+# Source: https://www.nature.com/articles/s41597-021-00963-2
+
+
 def parse_id(file_name : str) -> int:
     return int(file_name.split('_')[1])
 

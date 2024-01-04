@@ -6,6 +6,13 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from helper_functions import *
 
+######################DATASET INFO#########################################
+# sampling rate: 7s
+# unit: watts
+# households: 255
+# some households are submetered
+# Location: United Kingdom
+# Source: https://www.nature.com/articles/s41597-021-00921-y
 
 def read_and_preprocess_df(path):
     df = pd.read_csv(path, header=None, names=["timestamp", "value"])

@@ -1,5 +1,12 @@
 import pandas as pd
 from helper_functions import save_to_pickle
+######################DATASET INFO#########################################
+# sampling rate: 1min
+# unit: kWh
+# households: 11
+# submetered
+# Location: Germany
+# Source: https://data.open-power-system-data.org/household_data/2020-04-15
 
 
 # https://data.open-power-system-data.org/household_data/

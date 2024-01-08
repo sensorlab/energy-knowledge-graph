@@ -1,3 +1,4 @@
+from typing import Tuple
 import os
 import pandas as pd
 from collections import defaultdict
@@ -17,27 +18,23 @@ import multiprocessing
 
 
 def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-  
     df.drop(columns=["reactive_power"], inplace=True)
     # convert unix timestamp to datetime and set as index
-    df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms").dt.tz_localize('UTC', ambiguous="infer").dt.tz_convert('Asia/Seoul')
-    
+    df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms").dt.tz_localize("UTC", ambiguous="infer").dt.tz_convert("Asia/Seoul")
+
     df.set_index("timestamp", inplace=True)
     df.sort_index(inplace=True)
 
     # handle duplicate timestamps
-    df = df[~df.index.duplicated(keep='first')]
+    df = df[~df.index.duplicated(keep="first")]
 
-   
-
-
- 
     # resample to 1 second
     df = df.resample("1S").sum()
 
     return df
 
-def parse_name(file_name: str):
+
+def parse_name(file_name: str) -> str:
     """
     Parse the name of the file to get the device name"
     """
@@ -48,16 +45,15 @@ def parse_name(file_name: str):
 
     if file_name == "total":
         file_name = "aggregate"
- 
 
     return file_name
 
 
-def process_house(house_path, queue):
+def process_house(house_path, queue) -> Tuple(str, dict):
     house = os.path.basename(house_path)  # Extract house name from the path
     house_dict = defaultdict(list)
     house_name = "ENERTALK_" + str(int(house))
-    
+
     for day in os.listdir(house_path):
         day_path = os.path.join(house_path, day)
         for device in os.listdir(day_path):
@@ -69,26 +65,24 @@ def process_house(house_path, queue):
     for key in house_dict:
         df = pd.concat(house_dict[key], axis=0)
         # remove duplicate timestamps
-        df = df[~df.index.duplicated(keep='first')]
+        df = df[~df.index.duplicated(keep="first")]
         house_dict[key] = df
 
     queue.put(1)  # Indicate that one house has been processed
     return house_name, house_dict
 
 
-
-def parse_ENERTALK(data_path, save_path):
-
+def parse_ENERTALK(data_path: str, save_path: str) -> None:
     data_dict = {}
     # data_path = "./Energy_graph/data/temp/ENERTALK/"
     house_paths = [os.path.join(data_path, house) for house in os.listdir(data_path)]
     queue = multiprocessing.Manager().Queue()
     # use process pool to parallelize using half the available cores
-    cpu_count = int(os.cpu_count()/2)
+    cpu_count = int(os.cpu_count() // 2)
     with tqdm(total=len(house_paths), desc="Processing houses", unit="house") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
             futures = [executor.submit(process_house, house_path, queue) for house_path in house_paths]
-            
+
             # Update progress bar based on queue
             for _ in concurrent.futures.as_completed(futures):
                 progress_bar.update(queue.get())
@@ -96,8 +90,5 @@ def parse_ENERTALK(data_path, save_path):
             for future in futures:
                 house_name, house_dict = future.result()
                 data_dict[house_name] = house_dict
-
-
-
 
     save_to_pickle(data_dict, save_path)

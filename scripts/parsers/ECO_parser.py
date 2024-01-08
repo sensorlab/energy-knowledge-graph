@@ -13,14 +13,14 @@ from helper_functions import save_to_pickle
 # Source: https://vs.inf.ethz.ch/res/show.html?what=eco-data
 
 # read data from ECO convert to kWh and save to dictionary
-def get_house_data(file_path: str, device_mapping: dict):
+def get_house_data(file_path: str, device_mapping: dict) -> None:
     file_path_device = file_path + "/PLUGS"
     file_path_SM = file_path + "/SM"
     # dict to store appliance and aggregate consumption data
     house_data = {}
     # read device data
     for device in os.listdir(file_path_device):
-        path = file_path_device +"/"+ device
+        path = file_path_device + "/" + device
         device_df = pd.DataFrame()
         # get device name from map
         device_name = device_mapping[int(device)]
@@ -28,18 +28,17 @@ def get_house_data(file_path: str, device_mapping: dict):
             continue
         for f in os.listdir(path):
             if f.endswith(".csv"):
-                df = pd.read_csv(path+"/"+f, header=None)
+                df = pd.read_csv(path + "/" + f, header=None)
                 if len(df) != 86400:
                     print(device_name, f, len(df))
                 date_index = pd.date_range(start=f.split(".")[0], periods=len(df), freq="1S")
                 df["date"] = date_index
                 df = df.set_index("date")
-                
-                df[df==-1] = 0  
+
+                df[df == -1] = 0
                 df.rename(columns={0: device_name}, inplace=True)
                 device_df = pd.concat([device_df, df], axis=0)
-        
-        
+
         device_df.sort_index(inplace=True)
         house_data[device_name] = device_df
 
@@ -51,7 +50,7 @@ def get_house_data(file_path: str, device_mapping: dict):
             df = pd.read_csv(os.path.join(file_path_SM, f), header=None)
             df.drop(df.columns[1:], axis=1, inplace=True)
             df.columns = ["aggregate"]
-            date_index = pd.date_range(start=f.split(".")[0], periods=len(df), freq='S')
+            date_index = pd.date_range(start=f.split(".")[0], periods=len(df), freq="S")
             df.set_index(date_index, inplace=True)
 
             # ignore days with missing data
@@ -59,15 +58,11 @@ def get_house_data(file_path: str, device_mapping: dict):
                 total_df = pd.concat([total_df, df], axis=0)
     house_data["aggregate"] = total_df
 
-
     return house_data
 
 
-
-
-# return a dictionary of number to device name mapping for given house 
-def get_device_map(house: str):
-
+# return a dictionary of number to device name mapping for given house
+def get_device_map(house: str) -> dict:
     # number to device name mapping
     device_map_house1 = {
         1: "Fridge",
@@ -95,7 +90,6 @@ def get_device_map(house: str):
     }
 
     device_map_house3 = {
-
         1: "Tablet",
         2: "Freezer",
         3: "Coffee machine",
@@ -152,25 +146,19 @@ def get_device_map(house: str):
     else:
         print("Invalid house name")
         return None
-        
-# 
-def parse_ECO(file_path: str, path_to_save: str):
 
-        
+
+#
+def parse_ECO(file_path: str, path_to_save: str) -> None:
     houses_data = {}
 
     for house in os.listdir(file_path):
         mapping = get_device_map(house)
-        name = "ECO_"+house[-1]
-        houses_data[name] = get_house_data(file_path+"/"+house, mapping)
-
+        name = "ECO_" + house[-1]
+        houses_data[name] = get_house_data(file_path + "/" + house, mapping)
 
     save_to_pickle(houses_data, path_to_save)
 
 
-
 if __name__ == "__main__":
     parse_ECO("data/ECO", "data/ECO_parsed.pkl")
-
-
-

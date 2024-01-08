@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from helper_functions import  save_to_pickle
+
 ######################DATASET INFO#########################################
 # sampling rate: 7s
 # unit: watts
@@ -10,9 +11,9 @@ from helper_functions import  save_to_pickle
 # Source: https://github.com/ETSSmartRes/HES-Dataset
 
 # read data from HES convert to kWh and save to dictionary
-def parse_HES(data_path, save_path):
+def parse_HES(data_path: str, save_path: str) -> None:
     device_dict = pd.read_pickle(data_path + "HES_processed.pkl")
-        
+
     # Initialize an empty list to store device dataframes
     house_data = {}
 
@@ -29,36 +30,31 @@ def parse_HES(data_path, save_path):
         # Reset the index (to handle any potential index related issues)
         device_df = device_df.reset_index()
         # Rename the columns to include the device name for uniqueness
-        device_df.columns = ['date', device]
+        device_df.columns = ["date", device]
         device_df["date"] = device_df["date"].dt.to_timestamp()
         device_df["date"] = pd.to_datetime(device_df["date"])
         # set index to date and sort
-        device_df.set_index('date', inplace=True)
+        device_df.set_index("date", inplace=True)
         device_df.sort_index(inplace=True)
-
-  
 
         # Add the current device dataframe to the dict of dataframes
         dfs[device] = device_df
 
+    house_data["HES_1"] = dfs
 
-    house_data['HES_1'] = dfs
-
-
-    df_total = pd.Series(dtype='float64')
+    df_total = pd.Series(dtype="float64")
 
     # calculate total energy consumption
-    for device in house_data['HES_1']:
-        df_total = df_total.add(house_data['HES_1'][device][device], fill_value=0)
+    for device in house_data["HES_1"]:
+        df_total = df_total.add(house_data["HES_1"][device][device], fill_value=0)
 
-        
     # rename the column to 'aggregate'
-    df_total = df_total.rename('aggregate')
+    df_total = df_total.rename("aggregate")
 
     # add the aggregate to the house data
-    house_data['HES_1']['aggregate'] = pd.DataFrame(df_total)
+    house_data["HES_1"]["aggregate"] = pd.DataFrame(df_total)
 
-    save_to_pickle(house_data, save_path)    
+    save_to_pickle(house_data, save_path)
 
 
 if __name__ == "__main__":

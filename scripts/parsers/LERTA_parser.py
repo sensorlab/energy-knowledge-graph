@@ -1,4 +1,4 @@
-import os 
+import os
 import pandas as pd
 from helper_functions import save_to_pickle
 
@@ -12,12 +12,13 @@ from helper_functions import save_to_pickle
 # Source: https://zenodo.org/records/5608475
 
 # read file set date as index and convert to kWh
-def process_file(path : str) -> pd.DataFrame:
+def process_file(path: str) -> pd.DataFrame:
     df = pd.read_csv(path).set_index("Time")
     df.index = pd.to_datetime(df.index)
     df.sort_index(inplace=True)
 
     return df
+
 
 # parse house name from file name
 def parse_name(file_name: str) -> str:
@@ -27,7 +28,7 @@ def parse_name(file_name: str) -> str:
     return name
 
 
-def parse_LERTA(data_path : str, save_path : str):
+def parse_LERTA(data_path: str, save_path: str) -> None:
     houses_data = {}
     for house in os.listdir(data_path):
         if house.endswith(".csv"):

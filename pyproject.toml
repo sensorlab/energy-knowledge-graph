@@ -1,4 +1,39 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "src"
+authors = [
+    { name = "Vid Hanzel" },
+    { name = "Gregor Cerar", email = "gregor.cerar@ijs.si" }
+]
+readme = "README.md"
+requires-python = ">=3.9"
+version = "0.1.0"
+license = { file = "LICENSE" }
+dynamic = ["dependencies"]
+
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+#optional-dependencies = {
+#    tensorflow = { file = ["requirements.tensorflow.txt"] },
+#}
+
 [tool.black]
-line-length = 119
+# length set to 1000 to not mess with line length. Otherwise I suggest length 119.
+line-length = 1000
 target-version = ['py39']
 include = '\.pyi?$'
+
+[tool.isort]
+atomic = true
+profile = "black"
+line_length = 1000
+skip_gitignore = true
+combine_as_imports = true
+known_first_party = ["src"]
+
+[tool.pylint.format]
+max-line-length = "1000"

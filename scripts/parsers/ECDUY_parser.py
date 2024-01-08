@@ -5,6 +5,13 @@ import os
 from tqdm import tqdm
 from collections import defaultdict
 from helper_functions import save_to_pickle
+######################DATASET INFO#########################################
+# sampling rate: 15min
+# unit: kWh
+# households: 110953
+# no submeter data
+# Location: Uruguay
+# Source: https://www.nature.com/articles/s41597-022-01122-x
 
 # DATA_PATH = ""
 

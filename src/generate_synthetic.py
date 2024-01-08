@@ -9,9 +9,12 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from helper import preprocess_string
 
 
-def sample_normal_within_range(mu=7, sigma=5, a=1, b=35, n=1):
+
+
+def sample_normal_within_range(mu=7, sigma=5, a=1, b=35):
+    """Sample from a normal distribution within a range of values in the given interval [a, b] with a given mean and standard deviation"""
     samples = []
-    while len(samples) < n:
+    while len(samples) == 0:
         value = round(np.random.normal(mu, sigma))
         if a <= value <= b:
             samples.append(value)
@@ -35,7 +38,9 @@ def process_dataset(dataset, path, time_window, upper_bound, max_gap):
     return devices_processed_local
 
 
-def process_data(df: pd.DataFrame, time_window, upper_bound, max_gap) -> list:
+def process_data(df: pd.DataFrame, time_window, upper_bound, max_gap) -> list:   
+    """Process the data by resampling it to 8s and filling the gaps with the nearest value and then splitting it into windows of size time_window. If there is a gap of more than max_gap skip the window. If there are more than 15 gaps of upper_bound or more skip the window. If the device is always off skip the window.
+    Args: time_window: size of the window in rows (8s)  upper_bound: upper bound for the gap in seconds max_gap: max gap in seconds"""
     df = df.resample("8S").fillna(method="nearest", limit=4)
     df.fillna(0, inplace=True)
     # handle negatve values

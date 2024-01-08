@@ -6,6 +6,13 @@ from nilmtk import DataSet
 import pandas as pd
 
 from helper_functions import save_to_pickle
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts
+# households: 1
+# submetered
+# Location: India
+# Source: https://iawe.github.io/
 
 
 def load_dataset(path: str) -> list:

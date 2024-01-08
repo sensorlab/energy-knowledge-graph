@@ -3,6 +3,15 @@ import os
 from helper_functions import save_to_pickle
 
 
+
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts
+# households: 4
+# submetered: yes
+# Location: Greece
+# Source: https://zenodo.org/records/7997198
+
 def parse_name(file_name: str) -> str:
     """
     Parse the file name to get the house name

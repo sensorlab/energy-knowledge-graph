@@ -1,7 +1,14 @@
 import pandas as pd
 import os
-from helper_functions import save_to_pickle
+from helper_functions import  save_to_pickle
 
+######################DATASET INFO#########################################
+# sampling rate: 7s
+# unit: watts
+# households: 1
+# submetered: yes
+# Location: Canada
+# Source: https://github.com/ETSSmartRes/HES-Dataset
 
 # read data from HES convert to kWh and save to dictionary
 def parse_HES(data_path: str, save_path: str) -> None:

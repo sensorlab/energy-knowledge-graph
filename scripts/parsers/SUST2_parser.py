@@ -2,6 +2,13 @@ import pandas as pd
 import os
 from helper_functions import save_to_pickle
 
+######################DATASET INFO#########################################
+# sampling rate: 2s
+# unit: watts
+# households: 1
+# submetered: yes
+# Location: Portugal
+# Source: https://osf.io/jcn2q/
 
 def parse_name(file_name: str) -> str:
     """

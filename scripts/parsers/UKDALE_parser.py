@@ -5,6 +5,13 @@ import yaml
 
 from helper_functions import save_to_pickle
 
+######################DATASET INFO#########################################
+# sampling rate: 6s
+# unit: watts
+# households: 5
+# submetered: yes
+# Location: United Kingdom
+# Source: https://jack-kelly.com/data/
 
 # gets the number of the device from the filename
 def getNumber(device: str) -> int:

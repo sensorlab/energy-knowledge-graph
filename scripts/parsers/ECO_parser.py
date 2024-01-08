@@ -4,6 +4,13 @@ import pickle
 from functools import reduce
 from helper_functions import save_to_pickle
 
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts
+# households: 6
+# submetered: yes
+# Location: Switzerland
+# Source: https://vs.inf.ethz.ch/res/show.html?what=eco-data
 
 # read data from ECO convert to kWh and save to dictionary
 def get_house_data(file_path: str, device_mapping: dict) -> None:

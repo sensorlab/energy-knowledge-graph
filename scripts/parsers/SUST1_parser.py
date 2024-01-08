@@ -2,6 +2,13 @@ from helper_functions import *
 import os
 import pandas as pd
 
+######################DATASET INFO#########################################
+# sampling rate: 1min
+# unit: watts
+# households: 50
+# no submeter data
+# Location: Portugal
+# Source: https://osf.io/2ac8q/
 
 def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
     """

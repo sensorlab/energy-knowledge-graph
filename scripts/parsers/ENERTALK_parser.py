@@ -8,6 +8,15 @@ from helper_functions import save_to_pickle
 import multiprocessing
 
 
+######################DATASET INFO#########################################
+# sampling rate: 1s
+# unit: watts
+# households: 22
+# submetered: yes
+# Location: South Korea
+# Source: https://www.nature.com/articles/s41597-019-0212-5
+
+
 def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df.drop(columns=["reactive_power"], inplace=True)
     # convert unix timestamp to datetime and set as index

@@ -3,6 +3,14 @@ import pandas as pd
 from helper_functions import save_to_pickle
 
 
+######################DATASET INFO#########################################
+# sampling rate: 6s
+# unit: watts
+# households: 4
+# no submeter appliance data
+# Location: Poland
+# Source: https://zenodo.org/records/5608475
+
 # read file set date as index and convert to kWh
 def process_file(path: str) -> pd.DataFrame:
     df = pd.read_csv(path).set_index("Time")

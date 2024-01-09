@@ -1,7 +1,9 @@
 import pandas as pd
 from helper_functions import save_to_pickle
+from pathlib import Path
 ######################DATASET INFO#########################################
 # sampling rate: 1s
+# length: 6 months
 # unit: watts 
 # households: 1
 # submetered
@@ -10,7 +12,9 @@ from helper_functions import save_to_pickle
 
 
 def parse_DRED(data_path: str, save_path: str) -> None:
-    df = pd.read_csv(data_path + "All_data.csv", skiprows=1).drop(columns=["unknown"])
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+    df = pd.read_csv(data_path / "All_data.csv", skiprows=1).drop(columns=["unknown"])
 
     # rename time column and mains to aggregate
     df = df.rename(columns={"Unnamed: 0": "time", "mains": "aggregate"})

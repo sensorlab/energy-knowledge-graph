@@ -1,9 +1,11 @@
 import pandas as pd
 import os
 from helper_functions import  save_to_pickle
+from pathlib import Path
 
 ######################DATASET INFO#########################################
 # sampling rate: 7s
+# length: 5 months
 # unit: watts
 # households: 1
 # submetered: yes
@@ -12,7 +14,10 @@ from helper_functions import  save_to_pickle
 
 # read data from HES convert to kWh and save to dictionary
 def parse_HES(data_path: str, save_path: str) -> None:
-    device_dict = pd.read_pickle(data_path + "HES_processed.pkl")
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+
+    device_dict = pd.read_pickle(data_path / "HES_processed.pkl")
 
     # Initialize an empty list to store device dataframes
     house_data = {}
@@ -58,6 +63,7 @@ def parse_HES(data_path: str, save_path: str) -> None:
 
 
 if __name__ == "__main__":
+    # for debugging purposes
     data_path = "../../data/HES/HES.pkl"
     save_path = "../../data/HES/HES_processed.pkl"
     parse_HES(data_path, save_path)

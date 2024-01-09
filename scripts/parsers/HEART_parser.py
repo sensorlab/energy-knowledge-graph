@@ -1,11 +1,13 @@
 import pandas as pd
 import os
 from helper_functions import save_to_pickle
+from pathlib import Path
 
 
 
 ######################DATASET INFO#########################################
 # sampling rate: 1s
+# length: 1 month
 # unit: watts
 # households: 4
 # submetered: yes
@@ -24,11 +26,13 @@ def parse_name(file_name: str) -> str:
 
 
 def parse_HEART(data_path: str, save_path: str) -> None:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
     data_dict = {}
     for file in os.listdir(data_path):
         if file.endswith(".csv"):
             #
-            df = pd.read_csv(data_path + file)
+            df = pd.read_csv(data_path / file)
             df.drop(columns=["router"], inplace=True)
             # convert unix timestamp to datetime
             df["Timestamp"] = pd.to_datetime(df["Timestamp"], unit="ms").dt.tz_localize("UTC").dt.tz_convert("Europe/Athens")

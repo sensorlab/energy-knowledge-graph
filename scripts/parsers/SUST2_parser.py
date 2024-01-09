@@ -1,9 +1,11 @@
 import pandas as pd
 import os
+from pathlib import Path
 from helper_functions import save_to_pickle
 
 ######################DATASET INFO#########################################
 # sampling rate: 2s
+# length: 96 days
 # unit: watts
 # households: 1
 # submetered: yes
@@ -21,11 +23,13 @@ def parse_name(file_name: str) -> str:
 
 
 def parse_SUST2(data_path: str, save_path: str) -> None:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
     # aggregate consumption data
     df_aggregate = pd.DataFrame()
-    for file in os.listdir(data_path + "aggregate"):
+    for file in os.listdir(data_path / "aggregate"):
         if file.endswith(".csv"):
-            df_aggregate = pd.concat([df_aggregate, (pd.read_csv(data_path + "aggregate/" + file))])
+            df_aggregate = pd.concat([df_aggregate, (pd.read_csv(data_path / "aggregate/" / file))])
 
     # set timestamp as idnex
     df_aggregate["timestamp"] = pd.to_datetime(df_aggregate["timestamp"])
@@ -44,9 +48,9 @@ def parse_SUST2(data_path: str, save_path: str) -> None:
     data_dict = {"aggregate": df_aggregate}
 
     # appliance consumption data
-    for file in os.listdir(data_path + "appliances/"):
+    for file in os.listdir(data_path / "appliances/"):
         if file.endswith(".csv"):
-            df = pd.read_csv(data_path + "appliances/" + file)
+            df = pd.read_csv(data_path / "appliances/" / file)
             df["timestamp"] = pd.to_datetime(df["timestamp"])
 
             df.set_index("timestamp", inplace=True)

@@ -5,6 +5,7 @@ from helper_functions import save_to_pickle
 
 ######################DATASET INFO#########################################
 # sampling rate: 1s
+# length: 3.5 years
 # unit: watts
 # households: 15
 # Only on household 8

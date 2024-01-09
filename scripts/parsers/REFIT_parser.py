@@ -1,9 +1,11 @@
 import pandas as pd
 from helper_functions import save_to_pickle
 import os
+from pathlib import Path
 
 ######################DATASET INFO#########################################
 # sampling rate: 8s
+# length: 2 years
 # unit: watts
 # households: 20
 # submetered
@@ -61,9 +63,11 @@ def parse_name(name: str) -> int:
 
 
 def parse_REFIT(data_path: str, save_path: str) -> dict:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
     # read data
 
-    data_path = data_path + "CLEAN_REFIT_081116/"
+    data_path = data_path / "CLEAN_REFIT_081116/"
 
     # store house data in a dictionary keyed by house name and valued by a dictionary of appliances
     data = {}
@@ -74,7 +78,7 @@ def parse_REFIT(data_path: str, save_path: str) -> dict:
         # No device data for house 14
         if house_number == 14:
             continue
-        df = process_dataframe(pd.read_csv(data_path + file), house_number)
+        df = process_dataframe(pd.read_csv(data_path / file), house_number)
 
         name = "REFIT_" + str(house_number)
 

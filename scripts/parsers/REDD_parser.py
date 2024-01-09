@@ -2,18 +2,20 @@ import warnings
 warnings.simplefilter(action="ignore", category=FutureWarning)
 from nilmtk import DataSet
 import pandas as pd
+from pathlib import Path
 from helper_functions import save_to_pickle
 
 
 ######################DATASET INFO#########################################
 # sampling rate: 1s
+# length: 1 month
 # unit: watts
 # households: 6
 # submetered
 # Location: USA (Massachusetts)
 # Source: https://people.csail.mit.edu/mattjj/papers/kddsust2011.pdf
 
-def load_redd_dataset(path: str) -> list:
+def load_redd_dataset(path: Path) -> list:
     try:
         dataset = DataSet(path)
 
@@ -66,7 +68,10 @@ def data_preparation(dataset: list) -> dict:
 
 
 def parse_REDD(data_path: str, save_path: str) -> None:
-    dataset = load_redd_dataset(data_path + "redd.h5")
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+
+    dataset = load_redd_dataset(data_path / "redd.h5")
     prepared_data = data_preparation(dataset)
 
     # resample the data to 7s and fill the missing values with the previous value and convert to kWh

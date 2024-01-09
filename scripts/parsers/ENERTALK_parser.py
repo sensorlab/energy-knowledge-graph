@@ -1,4 +1,3 @@
-from typing import Tuple
 import os
 import pandas as pd
 from collections import defaultdict
@@ -6,10 +5,12 @@ import concurrent.futures
 from tqdm import tqdm
 from helper_functions import save_to_pickle
 import multiprocessing
+from pathlib import Path
 
 
 ######################DATASET INFO#########################################
 # sampling rate: 1s
+# length: 4 months
 # unit: watts
 # households: 22
 # submetered: yes
@@ -49,7 +50,9 @@ def parse_name(file_name: str) -> str:
     return file_name
 
 
-def process_house(house_path, queue) -> Tuple(str, dict):
+def process_house(house_path, queue) -> tuple[str, dict]:
+    house_path: Path = Path(house_path).resolve()
+    assert house_path.exists(), f"Path '{house_path}' does not exist!"
     house = os.path.basename(house_path)  # Extract house name from the path
     house_dict = defaultdict(list)
     house_name = "ENERTALK_" + str(int(house))

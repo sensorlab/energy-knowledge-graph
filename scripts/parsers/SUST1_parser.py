@@ -1,9 +1,11 @@
 from helper_functions import *
 import os
 import pandas as pd
+from pathlib import Path
 
 ######################DATASET INFO#########################################
 # sampling rate: 1min
+# length: 3.1 years
 # unit: watts
 # households: 50
 # no submeter data
@@ -23,16 +25,18 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def parse_SUST1(data_path: str, save_path: str) -> None:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
     data = {}
     for house in range(1, 51):
         name = "SUST1_" + str(house)
         tmp = {"aggregate": pd.DataFrame()}
         data[name] = tmp
-    data_path = data_path + "aggregate/"
+    data_path = data_path / "aggregate/"
     for folder in os.listdir(data_path):
-        for file in os.listdir(data_path + folder):
+        for file in os.listdir(data_path / folder):
             if file.endswith(".csv"):
-                df = pd.read_csv(data_path + folder + "/" + file)
+                df = pd.read_csv(data_path / folder / file)
                 # drop rows with missing data
                 df = df[df["miss_flag"] == 0]
                 # convert timestamp to datetime

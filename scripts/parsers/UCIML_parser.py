@@ -1,10 +1,11 @@
 import pandas as pd
-
+from pathlib import Path
 from helper_functions import save_to_pickle
 
 
 ######################DATASET INFO#########################################
 # sampling rate: 1min
+# length: 4 years
 # unit: watts
 # households: 1
 # submetered: no
@@ -21,6 +22,8 @@ def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def parse_UCIML(data_path: str, save_path: str) -> None:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
     household = pd.read_parquet(data_path)
     df = preprocess_dataframe(household)
     houses = {}

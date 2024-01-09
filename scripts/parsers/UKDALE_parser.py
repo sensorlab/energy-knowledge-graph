@@ -1,12 +1,13 @@
 import pandas as pd
 import os
 import yaml
-
+from pathlib import Path
 
 from helper_functions import save_to_pickle
 
 ######################DATASET INFO#########################################
 # sampling rate: 6s
+# length: 4.3 years
 # unit: watts
 # households: 5
 # submetered: yes
@@ -19,7 +20,7 @@ def getNumber(device: str) -> int:
 
 
 # preproces the file by reading it, converting the timestamp to datetime and setting it as index
-def preproces_file(file_path: str) -> pd.DataFrame:
+def preproces_file(file_path: Path) -> pd.DataFrame:
     df = pd.read_csv(file_path, header=None, sep=" ")
     df[0] = pd.to_datetime(df[0], unit="s")
     df = df.set_index(0)
@@ -28,7 +29,7 @@ def preproces_file(file_path: str) -> pd.DataFrame:
 
 
 # processes a house by reading all the files in the house folder and saving dfs for each device and returning them as a dictionary
-def process_house(house_path: str, meta_path: str) -> dict:
+def process_house(house_path: Path, meta_path: Path) -> dict:
     data = {}
     # read the labels file to get the names of the columns
     with open(meta_path) as file:
@@ -43,7 +44,7 @@ def process_house(house_path: str, meta_path: str) -> dict:
         appliance_type = appliance["type"]
         original_name_to_type[original_name] = appliance_type
 
-    lables = pd.read_csv(house_path + "labels.dat", header=None, sep=" ")[1].values
+    lables = pd.read_csv(house_path / "labels.dat", header=None, sep=" ")[1].values
     for device in os.listdir(house_path):
         if device.endswith(".dat"):
             if "channel" in device and "button" not in device:
@@ -53,13 +54,15 @@ def process_house(house_path: str, meta_path: str) -> dict:
                     name = original_name_to_type[lables[number - 1]]
                 else:
                     name = lables[number - 1]
-                df = preproces_file(house_path + device)
+                df = preproces_file(house_path / device)
                 data[name] = df
 
     return data
 
 
 def parse_UKDALE(data_path: str, save_path: str) -> None:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
     # dictionary of houses, each house is a dictionary of devices
     houses_data = {}
     for house in os.listdir(data_path):
@@ -69,6 +72,6 @@ def parse_UKDALE(data_path: str, save_path: str) -> None:
             # skip due to lacking device submeter data(devices grouped together) and in general only 5 submeters
             if name == "UKDALE_4":
                 continue
-            houses_data[name] = process_house(data_path + "/" + house + "/", data_path + f"metadata/building{number}.yaml")
+            houses_data[name] = process_house(data_path / house , data_path / f"metadata/building{number}.yaml")
 
     save_to_pickle(houses_data, save_path)

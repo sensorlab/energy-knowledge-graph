@@ -1,8 +1,10 @@
 import pandas as pd
-from helper_functions import watts2kwh, save_to_pickle
+from pathlib import Path
+from helper_functions import save_to_pickle
 
 ######################DATASET INFO#########################################
 # sampling rate: 1 hour
+# length: 3 years
 # unit: kWh
 # households: 28
 # no submeter data
@@ -16,6 +18,9 @@ def to_dict(df: pd.DataFrame) -> dict:
 
 
 def parse_HUE(data_path: str, save_path: str) -> None:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+
     residentials = pd.read_parquet(data_path).set_index("timestamp")
     # Wh -> kWh
     residentials["energy"] = residentials["energy"] / 1000

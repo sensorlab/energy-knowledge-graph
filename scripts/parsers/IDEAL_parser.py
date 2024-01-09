@@ -5,16 +5,18 @@ from tqdm import tqdm
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from helper_functions import *
+from pathlib import Path
 
 ######################DATASET INFO#########################################
 # sampling rate: 7s
+# length: 2 years
 # unit: watts
 # households: 255
 # some households are submetered
 # Location: United Kingdom
 # Source: https://www.nature.com/articles/s41597-021-00921-y
 
-def read_and_preprocess_df(path: str) -> pd.DataFrame:
+def read_and_preprocess_df(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path, header=None, names=["timestamp", "value"])
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     # set timestamp as index
@@ -40,7 +42,7 @@ def parse_name(file_name: str) -> Tuple[str, str]:
 
 
 # process a single house
-def process_house(house: Any, file_list: List[str], data_path: str) -> Tuple[Any, dict]:
+def process_house(house: Any, file_list: List[str], data_path: Path) -> Tuple[Any, dict]:
     house_data = {}
     for file in file_list:
         _, label, df = process_file(file, data_path)
@@ -49,9 +51,9 @@ def process_house(house: Any, file_list: List[str], data_path: str) -> Tuple[Any
 
 
 # process a single file for a house
-def process_file(file: str, data_path: str) -> Tuple[str, str, pd.DataFrame]:
+def process_file(file: str, data_path: Path) -> Tuple[str, str, pd.DataFrame]:
     house, label = parse_name(file)
-    return house, label, read_and_preprocess_df(data_path + "data_merged/" + file)
+    return house, label, read_and_preprocess_df(data_path / "data_merged/" / file)
 
 
 def unpack_and_process(p: tuple) -> Tuple[str, str, pd.DataFrame]:
@@ -59,10 +61,12 @@ def unpack_and_process(p: tuple) -> Tuple[str, str, pd.DataFrame]:
 
 
 def parse_IDEAL(data_path: str, save_path: str) -> None:
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
     data_dict = {}
     files_grouped_by_home = defaultdict(list)
     # get files for electricity consumption
-    files = [file for file in os.listdir(data_path + "data_merged/") if ("electric-appliance" in file or "electric-mains" in file) and "home223" not in file]
+    files = [file for file in os.listdir(data_path / "data_merged/") if ("electric-appliance" in file or "electric-mains" in file) and "home223" not in file]
     # group files by house
     for file in files:
         house, _ = parse_name(file)

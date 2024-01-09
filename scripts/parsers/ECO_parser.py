@@ -2,10 +2,12 @@ import pandas as pd
 import os
 import pickle
 from functools import reduce
+from pathlib import Path
 from helper_functions import save_to_pickle
 
 ######################DATASET INFO#########################################
 # sampling rate: 1s
+# length: 8 months
 # unit: watts
 # households: 6
 # submetered: yes
@@ -14,13 +16,16 @@ from helper_functions import save_to_pickle
 
 # read data from ECO convert to kWh and save to dictionary
 def get_house_data(file_path: str, device_mapping: dict) -> None:
-    file_path_device = file_path + "/PLUGS"
-    file_path_SM = file_path + "/SM"
+    file_path: Path = Path(file_path).resolve()
+    assert file_path.exists(), f"Path '{file_path}' does not exist!"
+
+    file_path_device = file_path / "PLUGS"
+    file_path_SM = file_path / "SM"
     # dict to store appliance and aggregate consumption data
     house_data = {}
     # read device data
     for device in os.listdir(file_path_device):
-        path = file_path_device + "/" + device
+        path = file_path_device / device
         device_df = pd.DataFrame()
         # get device name from map
         device_name = device_mapping[int(device)]
@@ -28,7 +33,7 @@ def get_house_data(file_path: str, device_mapping: dict) -> None:
             continue
         for f in os.listdir(path):
             if f.endswith(".csv"):
-                df = pd.read_csv(path + "/" + f, header=None)
+                df = pd.read_csv(path / f, header=None)
                 if len(df) != 86400:
                     print(device_name, f, len(df))
                 date_index = pd.date_range(start=f.split(".")[0], periods=len(df), freq="1S")
@@ -150,12 +155,13 @@ def get_device_map(house: str) -> dict:
 
 #
 def parse_ECO(file_path: str, path_to_save: str) -> None:
+    file_path: Path = Path(file_path).resolve()
     houses_data = {}
 
     for house in os.listdir(file_path):
         mapping = get_device_map(house)
         name = "ECO_" + house[-1]
-        houses_data[name] = get_house_data(file_path + "/" + house, mapping)
+        houses_data[name] = get_house_data(file_path / house, mapping)
 
     save_to_pickle(houses_data, path_to_save)
 

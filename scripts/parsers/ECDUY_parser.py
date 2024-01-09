@@ -1,5 +1,5 @@
 from concurrent.futures import ProcessPoolExecutor
-
+from pathlib import Path
 import pandas as pd
 import os
 from tqdm import tqdm
@@ -7,6 +7,7 @@ from collections import defaultdict
 from helper_functions import save_to_pickle
 ######################DATASET INFO#########################################
 # sampling rate: 15min
+# length: 1.8 years
 # unit: kWh
 # households: 110953
 # no submeter data
@@ -18,6 +19,9 @@ from helper_functions import save_to_pickle
 
 def process_file(file_path: str) -> dict:
     # file_path = os.path.join(DATA_PATH, 'consumption_data', file)
+
+    file_path: Path = Path(file_path).resolve()
+    assert file_path.exists(), f"Path '{file_path}' does not exist!"
 
     df = pd.read_csv(file_path)
     # pivot the dataframe so that each column is a different house with timestamps as the index and the values are the consumption
@@ -36,6 +40,10 @@ def process_file(file_path: str) -> dict:
 
 
 def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 11, n_jobs: int = 32) -> None:
+    
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+
     # set the global data path variable
     global DATA_PATH
     DATA_PATH = data_path

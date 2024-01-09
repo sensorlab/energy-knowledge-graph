@@ -1,7 +1,9 @@
 import pandas as pd
+from pathlib import Path
 from helper_functions import save_to_pickle
 ######################DATASET INFO#########################################
 # sampling rate: 1min
+# length: 2.5 years
 # unit: kWh
 # households: 11
 # submetered
@@ -11,7 +13,9 @@ from helper_functions import save_to_pickle
 
 # https://data.open-power-system-data.org/household_data/
 def parse_DEKN(data_path: str, save_path: str) -> None:
-    df = pd.read_csv(data_path + "household_data_1min_singleindex_filtered.csv")
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+    df = pd.read_csv(data_path / "household_data_1min_singleindex_filtered.csv")
 
     # drop unnecessary columns
     df = df.drop(columns=["utc_timestamp", "interpolated"])

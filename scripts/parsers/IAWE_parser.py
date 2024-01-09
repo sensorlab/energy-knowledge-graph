@@ -4,10 +4,12 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 
 from nilmtk import DataSet
 import pandas as pd
+from pathlib import Path
 
 from helper_functions import save_to_pickle
 ######################DATASET INFO#########################################
 # sampling rate: 1s
+# length: 73 days
 # unit: watts
 # households: 1
 # submetered
@@ -15,7 +17,8 @@ from helper_functions import save_to_pickle
 # Source: https://iawe.github.io/
 
 
-def load_dataset(path: str) -> list:
+def load_dataset(path: Path) -> list:
+ 
     try:
         dataset = DataSet(path)
 
@@ -66,7 +69,9 @@ def data_preparation(dataset: list) -> dict:
 
 
 def parse_IAWE(data_path: str, save_path: str) -> None:
-    dataset = load_dataset(data_path + "iawe.h5")
+    data_path: Path = Path(data_path).resolve()
+    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+    dataset = load_dataset(data_path / "iawe.h5")
     prepared_data = data_preparation(dataset)
 
     for house in prepared_data:

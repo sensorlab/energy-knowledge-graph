@@ -1,9 +1,17 @@
+
+
+
+######################################################NOT USED AT THE MOMENT AND ALSO NOT TESTED######################################################
+
+
+
 import pandas as pd
 import os
 
 from helper_functions import save_to_pickle
 ######################DATASET INFO#########################################
 # sampling rate: 15min
+# length: 3 years
 # unit: watts
 # households: 114
 # no submeter data

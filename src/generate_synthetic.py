@@ -5,13 +5,14 @@ import pickle
 import numpy as np
 import random
 import argparse
+from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from helper import preprocess_string
 
 
 
 
-def sample_normal_within_range(mu=7, sigma=5, a=1, b=35):
+def sample_normal_within_range(mu=7, sigma=5, a=1, b=35) -> int:
     """Sample from a normal distribution within a range of values in the given interval [a, b] with a given mean and standard deviation"""
     samples = []
     while len(samples) == 0:
@@ -21,15 +22,18 @@ def sample_normal_within_range(mu=7, sigma=5, a=1, b=35):
     return np.array(samples)[0]
 
 
-def process_dataset(dataset, path, time_window, upper_bound, max_gap):
+def process_dataset(dataset : str, path : Path, time_window : int, upper_bound : int, max_gap: int) -> dict:
     devices_processed_local = {}
     if not dataset.endswith(".pkl"):
         return devices_processed_local
-    data = pd.read_pickle(path + dataset)
+    data = pd.read_pickle(path / dataset)
+    # iterate over households in dataset
     for house in data:
         for device in data[house]:
+            # ignore aggregate as we only need to preprocess devices
             if device == "aggregate":
                 continue
+            # rename devices to uniform names
             name = preprocess_string(device)
             if name not in devices_processed_local:
                 devices_processed_local[name] = []
@@ -38,7 +42,7 @@ def process_dataset(dataset, path, time_window, upper_bound, max_gap):
     return devices_processed_local
 
 
-def process_data(df: pd.DataFrame, time_window, upper_bound, max_gap) -> list:   
+def process_data(df: pd.DataFrame, time_window : int, upper_bound : int, max_gap : int) -> list:   
     """Process the data by resampling it to 8s and filling the gaps with the nearest value and then splitting it into windows of size time_window. If there is a gap of more than max_gap skip the window. If there are more than 15 gaps of upper_bound or more skip the window. If the device is always off skip the window.
     Args: time_window: size of the window in rows (8s)  upper_bound: upper bound for the gap in seconds max_gap: max gap in seconds"""
     df = df.resample("8S").fillna(method="nearest", limit=4)
@@ -68,7 +72,7 @@ def process_data(df: pd.DataFrame, time_window, upper_bound, max_gap) -> list:
     return windows
 
 
-def get_device_windows(path: str, time_window, upper_bound, max_gap):
+def get_device_windows(path: Path, time_window : int, upper_bound : int, max_gap : int) -> dict:
     devices_processed = {}
     datasets = os.listdir(path)
 
@@ -90,11 +94,11 @@ def get_device_windows(path: str, time_window, upper_bound, max_gap):
     return devices_processed
 
 
-def process_dataset(dataset, path, time_window, upper_bound, max_gap):
+def process_dataset(dataset : str, path : Path, time_window : int, upper_bound : int, max_gap : int) -> dict:
     devices_processed_local = {}
     if not dataset.endswith(".pkl"):
         return devices_processed_local
-    data = pd.read_pickle(path + dataset)
+    data = pd.read_pickle(path / dataset)
     for house in data:
         for device in data[house]:
             if device == "aggregate":
@@ -108,7 +112,8 @@ def process_dataset(dataset, path, time_window, upper_bound, max_gap):
 
 
 # sum(devices) = aggregate
-def generate_syn_ideal(devices_processed, num_windows, device_list):
+def generate_syn_ideal(devices_processed : dict, num_windows : int, device_list : list) -> list:
+    """Generate synthetic data where the sum of the devices is equal to the aggregate consumption"""
     windows = []
     for i in tqdm(range(num_windows)):
         # get number of devices sampled from normal distribution
@@ -156,7 +161,8 @@ def generate_syn_ideal(devices_processed, num_windows, device_list):
 
 
 # sum(devices) < aggregate
-def generate_syn_unmetered(devices_processed, num_windows, device_list):
+def generate_syn_unmetered(devices_processed : dict, num_windows : int, device_list : list) -> list:
+    """Generate synthetic data where the sum of the devices is less than the aggregate consumption (there are unmetered devices)"""
     windows = []
     for i in tqdm(range(num_windows)):
         # get number of devices sampled from normal distribution
@@ -217,7 +223,8 @@ def generate_syn_unmetered(devices_processed, num_windows, device_list):
     return windows
 
 
-def create_training_data(windows, labels):
+def create_training_data(windows : list, labels : list) -> list:
+    """Create training data from the windows"""
     X_Y_test = []
 
     for window in tqdm(windows):
@@ -242,23 +249,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process energy graph data.")
 
     # Argument for the path to the base folder
-    parser.add_argument("--path_to_base", type=str, default=".", help="Path to base folder (default: `.`)")
+    parser.add_argument("--workdir", type=str, default=".", help="Path to base folder (default: `.`)")
 
     # Argument for time window
-    parser.add_argument("--time_window", type=int, default=2700, help="Time window in seconds (default: 2700)")
+    parser.add_argument("--time-window", type=int, default=2700, help="Time window in seconds (default: 2700)")
 
     # Argument for number of windows
-    parser.add_argument("--num_windows", type=int, default=100_000, help="Number of windows to generate (default: 100000)")
+    parser.add_argument("--num-windows", type=int, default=100_000, help="Number of windows to generate (default: 100000)")
 
     # Argument for upper bound
-    parser.add_argument("--upper_bound", type=int, default=32, help="Upper bound in seconds (default: 32)")
+    parser.add_argument("--upper-bound", type=int, default=32, help="Upper bound in seconds (default: 32)")
 
     # Argument for max gap
-    parser.add_argument("--max_gap", type=int, default=3600, help="Max gap in seconds (default: 3600)")
+    parser.add_argument("--max-gap", type=int, default=3600, help="Max gap in seconds (default: 3600)")
 
     # Argument for synthetic type
     choices = ("ideal", "unmetered", "both")
-    parser.add_argument("--syn_type", type=str, choices=choices, default="ideal", help="Type of synthetic data to generate (default: ideal)")
+    parser.add_argument("--syn-type", type=str, choices=choices, default="ideal", help="Type of synthetic data to generate (default: ideal)")
 
     parser.add_argument("--seed", type=int, required=False, default=0, help="Set random seed for reproducibility (default: 0)")
 
@@ -267,11 +274,16 @@ if __name__ == "__main__":
     # Set random seed for reproducibility
     np.random.seed(args.seed)
 
+
     # Initialize paths
-    path_to_base = args.path_to_base
-    path = path_to_base + "/data/processed_watts/"
-    labels_path = path_to_base + "/data/labels_new.pkl"
-    save_path = path_to_base + "/data/training_data/synthetic/"
+    path_to_base : Path = Path(args.workdir).resolve()
+    assert path_to_base.exists(), f"Path '{path_to_base}' does not exist!"
+    path = path_to_base / "data/processed_watts/"
+    assert path.exists(), f"Path '{path}' does not exist!"
+    labels_path = path_to_base / "data/labels_new.pkl"
+    assert labels_path.exists(), f"Path '{labels_path}' does not exist!"
+    save_path = path_to_base / "data/training_data/synthetic/"
+    assert save_path.exists(), f"Path '{save_path}' does not exist!"
 
     labels = pd.read_pickle(labels_path)
 
@@ -305,15 +317,15 @@ if __name__ == "__main__":
         X_Y_ideal = create_training_data(windows_ideal, labels)
         X_Y_unmetered = create_training_data(windows_unmetered, labels)
 
-        with open(save_path + f"/X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_ideal.pkl", "wb") as f:
+        with open(save_path / f"X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_ideal.pkl", "wb") as f:
             pickle.dump(X_Y_ideal, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-        with open(save_path + f"/X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_unmetered.pkl", "wb") as f:
+        with open(save_path / f"X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_unmetered.pkl", "wb") as f:
             pickle.dump(X_Y_unmetered, f, protocol=pickle.HIGHEST_PROTOCOL)
         exit()
 
     # TODO: Handle invalid `syn_type` value
 
     X_Y = create_training_data(windows, labels)
-    with open(save_path + f"/X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_{args.syn_type}.pkl", "wb") as f:
+    with open(save_path / f"X_Y_wsize{time_window}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}_{args.syn_type}.pkl", "wb") as f:
         pickle.dump(X_Y, f, protocol=pickle.HIGHEST_PROTOCOL)

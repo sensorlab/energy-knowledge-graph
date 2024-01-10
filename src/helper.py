@@ -1,5 +1,5 @@
 import re
-
+import numpy as np
 def preprocess_string(string : str) -> str:
     string = string.lower().strip()
     string = re.sub(' +', ' ', string)
@@ -92,3 +92,17 @@ def preprocess_string(string : str) -> str:
     string = re.sub(' +', ' ', string)
     string = re.sub(r'\d+', '', string)
     return string.strip()
+
+
+# min-max normalization Xmin=0 
+def normalize(X):
+    max_value = 0
+
+    for x in X:
+        v = np.max(x)
+        if v > max_value:
+            max_value = v
+
+    if max_value == 0:
+        return X
+    return X / max_value

@@ -90,42 +90,17 @@ class Classifier_INCEPTION:
         output_layer = keras.layers.Dense(nb_classes, activation='sigmoid')(gap_layer)
 
         model = keras.models.Model(inputs=input_layer, outputs=output_layer)
-        # cross entropy loss ?
-        # model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=self.lr),
-        #               metrics=['accuracy', NUK.F1Score, NUK.WeightedF1Score(class_weighs_pre)])
+    
         model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=self.lr),
                       metrics=['accuracy', F1Score])
         
 
-        # file_path = self.output_directory + f'best_model_{self.iteration}.hdf5'
-
-        # model_checkpoint = keras.callbacks.ModelCheckpoint(filepath=file_path, monitor='loss',
-        #                                                    save_best_only=True)
-        # self.callbacks = [reduce_lr, early_stopping]
-
         return model
 
-    # def fit(self, x_train, y_train):
-       
 
-    #     if self.batch_size is None:
-    #         mini_batch_size = int(min(x_train.shape[0] / 10, 16))
-    #     else:
-    #         mini_batch_size = self.batch_size
-
-    #     self.model.fit(x_train, y_train, batch_size=mini_batch_size, epochs=self.nb_epochs,
-    #                               verbose=self.verbose, callbacks=self.callbacks, validation_split=0.1)
-
-
-    #     self.model.save(self.output_directory / f'model_{self.model_number}.hdf5')
-
-    #     keras.backend.clear_session()
-
-        # return None
-    
     def fit(self, x_train, y_train, callback, validation):
        
-        # x_val and y_val are only used to monitor the test loss and NOT for training
+       
 
         if self.batch_size is None:
             mini_batch_size = int(min(x_train.shape[0] / 10, 16))

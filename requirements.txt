@@ -8,7 +8,11 @@ pycountry_convert==0.7.2
 timezonefinder==6.2.0
 requests==2.31.0
 pyyaml==6.0
-nilmtk==0.4.0
+
+#nilmtk==0.4.0 doesnt work with pip run this instead
+#python3 -m pip install --no-deps git+https://github.com/nilmtk/nilmtk@master
+#python3 -m pip install --no-deps git+https://github.com/nilmtk/nilm_metadata@master
+
 
 # psycopg2
 pyarrow==14.0.2

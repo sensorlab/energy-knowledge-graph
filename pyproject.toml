@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "src"
 authors = [
-    { name = "Vid Hanzel" },
+    { name = "Vid Hanzel", email = "vid.hanzel@gmail.com" },
     { name = "Gregor Cerar", email = "gregor.cerar@ijs.si" }
 ]
 readme = "README.md"

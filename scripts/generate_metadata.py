@@ -6,14 +6,14 @@ import yaml
 import sys
 import argparse
 from io import StringIO
+from pathlib import Path
 
-
-DATA_PATH = "./energy-knowledge-graph/data/metadata/datasets/"
-SAVE_PATH = "./energy-knowledge-graph/data/metadata/"
+DATA_PATH : Path = Path("./energy-knowledge-graph/data/metadata/datasets/").resolve()
+SAVE_PATH : Path = Path("./energy-knowledge-graph/data/metadata/").resolve()
 
 def HUE_metadata():
     # read data
-    HUE_metadata = pd.read_parquet(DATA_PATH+"HUE_metadata.parquet")
+    HUE_metadata = pd.read_parquet(DATA_PATH / "HUE_metadata.parquet")
 
     # add name column
     HUE_metadata["name"] = "HUE_" + HUE_metadata["residential_id"].astype(str)
@@ -45,7 +45,7 @@ def HUE_metadata():
     return HUE_metadata
     
 def REFIT_metadata():
-    REFIT_metadata = pd.read_parquet(DATA_PATH+"refit_metadata.parquet")
+    REFIT_metadata = pd.read_parquet(DATA_PATH / "refit_metadata.parquet")
 
     # drop unnecessary columns and add name column
     REFIT_metadata.drop(columns=["tz", "location"], inplace=True)
@@ -67,7 +67,7 @@ def REFIT_metadata():
 
     # read actual data for first and last reading
     # TODO change path
-    data = pd.read_pickle(DATA_PATH+"REFIT.pkl")
+    data = pd.read_pickle(DATA_PATH / "REFIT.pkl")
     data.keys()
 
     # get first and last reading for each house
@@ -89,7 +89,7 @@ def REFIT_metadata():
     return REFIT_metadata
 
 def UCIML_metadata():
-    data_uciml = pd.read_parquet(DATA_PATH+"uciml_household.parquet")
+    data_uciml = pd.read_parquet(DATA_PATH / "uciml_household.parquet")
     # 2006-12-16
     # drop unnecessary columns
     data_uciml.drop(columns=["global_active_power", "global_reactive_power", "voltage", "global_intensity", "sub_metering_1", "sub_metering_2", "sub_metering_3", "unmetered"], inplace=True)
@@ -182,7 +182,7 @@ def LERTA_metadata():
    
 
     # read data
-    lerta = pd.read_pickle(DATA_PATH+"LERTA.pkl")
+    lerta = pd.read_pickle(DATA_PATH / "LERTA.pkl")
 
 
 
@@ -220,7 +220,7 @@ def LERTA_metadata():
 
 def UKDALE_metadata():
    
-    with open(DATA_PATH+"UKDALE/metadata/dataset.yaml", 'r') as file:
+    with open(DATA_PATH / "UKDALE/metadata/dataset.yaml", 'r') as file:
         data = yaml.safe_load(file)
 
     # get lat and lon from yaml file
@@ -231,10 +231,10 @@ def UKDALE_metadata():
 
     house_data = {}
     # go over all houses and get metadata
-    for file in os.listdir(DATA_PATH+"UKDALE/metadata/"):
+    for file in os.listdir(DATA_PATH / "UKDALE/metadata/"):
         if file.endswith(".yaml") and "building" in file:
             # print(file)
-            with open(DATA_PATH+"UKDALE/metadata/" + file, 'r') as stream:
+            with open(DATA_PATH / "UKDALE/metadata" / file, 'r') as stream:
                 try:
                     data = yaml.safe_load(stream)
                 except yaml.YAMLError as exc:
@@ -285,7 +285,7 @@ def DRED_metadata():
     return dred
 
 def REDD_metadata():
-    redd_data = pd.read_pickle(DATA_PATH+"REDD.pkl")
+    redd_data = pd.read_pickle(DATA_PATH / "REDD.pkl")
 
     redd = {}
 
@@ -318,7 +318,7 @@ def IAWE_metadata():
     return df
 
 def DEKN_metadata():
-    dekn = pd.read_pickle(DATA_PATH+"DEKN.pkl")
+    dekn = pd.read_pickle(DATA_PATH / "DEKN.pkl")
     data = {}
     for house in dekn:
         data[house] = {
@@ -361,7 +361,7 @@ def HEART_metadata():
 
 def SUST1_metadata():
     # drop unnecessary columns TODO UPDATE PATH
-    df = pd.read_csv(DATA_PATH+"demographics_SUST1.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
+    df = pd.read_csv(DATA_PATH / "demographics_SUST1.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
     # rename columns to match the other metadata
     df.rename(columns={"# People": "occupancy", "Type (A/H)": "house_type", "Start Measuring" : "first_reading", "End Measuring" : "last_reading", "SustData IID": "name"},inplace=True)
     # convert to datetime
@@ -421,7 +421,7 @@ def ENERTALK_metadata():
     return df
 
 def ECDUY_metadata():
-    data = pd.read_pickle(DATA_PATH + "ECDUY_metadata.pkl")
+    data = pd.read_pickle(DATA_PATH / "ECDUY_metadata.pkl")
     df = pd.DataFrame(data).T.reset_index(drop=True)
 
     df["country"] = "Uruguay"
@@ -434,7 +434,7 @@ def ECDUY_metadata():
 
 def IDEAL_metadata():
 
-    df = pd.read_csv(DATA_PATH+"IDEAL_metadata.csv")
+    df = pd.read_csv(DATA_PATH / "IDEAL_metadata.csv")
     df["name"] = "IDEAL_" + df["homeid"].astype(str)
 
     # get coordinates for each location
@@ -530,8 +530,8 @@ if __name__ == "__main__":
                         help='Save the result to parquet file if this argument is passed')
     args = parser.parse_args()
 
-    DATA_PATH = args.datapath
-    SAVE_PATH = args.savepath
+    DATA_PATH : Path = Path(args.datapath).resolve()
+    SAVE_PATH : Path = Path(args.savepath).resolve()
     generate_metadata(save=args.save)
 
     # python generate_metadata.py path/to/data path/to/save --save

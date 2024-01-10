@@ -7,6 +7,8 @@ from datetime import date
 import holidays
 import pycountry_convert as pc
 from timezonefinder import TimezoneFinder
+from pathlib import Path
+
 
 import warnings
 import os
@@ -22,7 +24,8 @@ tf = TimezoneFinder()
 # DATA_PATH = "./Energy_graph/data/metadata/"
 
 # local path
-DATA_PATH = "./energy-knowledge-graph/data/metadata/"
+DATA_PATH : Path = Path("./energy-knowledge-graph/data/metadata/").resolve()
+
 # get temperature, relative humidity, precipitation, cloudcover(%) from openmeteo api for given lat, lon and optional start and end date and return yearly and average day in a month data
 def get_weather_data(lat, lon, start_date="2010-01-01", end_date="2023-01-01"):
     url = f"https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={start_date}&end_date={end_date}&hourly=temperature_2m,relativehumidity_2m,precipitation,cloudcover&timezone=auto"
@@ -107,7 +110,7 @@ def average_day_of_the_month(df_hourly):
 
 # get GDP(PPP) for given country and year, the GDP is in 2017 USD 
 def get_country_GDP(country : str, year: int) -> float:
-    gpd_PPP =  pd.read_csv(DATA_PATH +"Wages/gdp-per-capita-worldbank.csv")
+    gpd_PPP =  pd.read_csv(DATA_PATH / "Wages/gdp-per-capita-worldbank.csv")
     df = gpd_PPP[gpd_PPP["Year"] == year].drop(columns=["Year", "Entity"])
 
     
@@ -127,7 +130,7 @@ def get_country_GDP(country : str, year: int) -> float:
 
 # get average wages for given country and year, the data is only available for OECD countries
 def get_average_wages(country: str, year: int) -> float:
-    wages = pd.read_csv(DATA_PATH + "Wages/average_wages_OECD.csv")
+    wages = pd.read_csv(DATA_PATH / "Wages/average_wages_OECD.csv")
     if year not in wages["TIME"].unique():
         print("get_average_wages: Data only in between 1991 and 2021")
         return None
@@ -150,7 +153,7 @@ def get_average_wages(country: str, year: int) -> float:
 def get_population_density(latitude : float, longitude: float) -> float:
         
     # Open the dataset
-    with rasterio.open(DATA_PATH+ "Population/Density_5min/gpw_v4_population_density_rev11_2020_2pt5_min.asc") as ds:
+    with rasterio.open(DATA_PATH / "Population/Density_5min/gpw_v4_population_density_rev11_2020_2pt5_min.asc") as ds:
 
         # Convert your latitude and longitude to dataset's coordinate system
         x, y = transform('EPSG:4326', ds.crs, [longitude], [latitude])
@@ -178,7 +181,7 @@ def get_country_code(country):
 
 def get_carbon_intesity(code : str):
     """Returns the carbon intensity for a given country code"""
-    df  = pd.read_csv(DATA_PATH+"Energy/carbon-intensity-electricity.csv")
+    df  = pd.read_csv(DATA_PATH / "Energy/carbon-intensity-electricity.csv")
     df = df[df["Year"]==2021].drop(columns=["Year", "Entity"])
     df = df.set_index("Code")
     
@@ -188,7 +191,7 @@ def get_carbon_intesity(code : str):
 
 # get education level for given country and year
 def get_education_level(country: str, year: int) -> float:
-    df = pd.read_csv(DATA_PATH + "Population/Education/adult_education_levels.csv")
+    df = pd.read_csv(DATA_PATH / "Population/Education/adult_education_levels.csv")
   
     # drop unnecessary columns and set index to country code
     df = df[df["TIME"] == year].drop(columns=["TIME", "Flag Codes", "MEASURE", "FREQUENCY", "INDICATOR"]).set_index("LOCATION")
@@ -218,7 +221,7 @@ def get_semester(date: date):
 # get electricity price for given country and date the price is in PPS per kWh and data is biannual
 def get_electricity_price(country: str, date: date) -> float:
     
-    df = pd.read_csv(DATA_PATH + "Energy/Electricity_prices_EEA.csv")
+    df = pd.read_csv(DATA_PATH / "Energy/Electricity_prices_EEA.csv")
     df.drop(columns=["LAST UPDATE", "freq", "product","OBS_FLAG", "DATAFLOW", "currency", "tax", "unit"])
     # average electricity prices in PPS per kWh for diffrent yearly consumption levels
     df_grouped = df.groupby(['geo', 'TIME_PERIOD'])['OBS_VALUE'].mean()
@@ -234,7 +237,7 @@ def get_electricity_price(country: str, date: date) -> float:
 # get gas price for given country and date the price is in PPS per kWh and data is biannual
 def get_gas_price(country: str, date: date) -> float:
     
-    df = pd.read_csv(DATA_PATH + "Energy/Gas_prices_EEA.csv")
+    df = pd.read_csv(DATA_PATH / "Energy/Gas_prices_EEA.csv")
 
     df= df.drop(columns=["DATAFLOW", "LAST UPDATE", "freq", "product", "nrg_cons", "unit", "tax", "currency", "OBS_FLAG"])
     df = df.set_index(["geo", "TIME_PERIOD"])
@@ -271,7 +274,7 @@ def get_gas_price(country: str, date: date) -> float:
 
 # https://ec.europa.eu/eurostat/cache/metadata/en/nrg_chdd_esms.htm
 def get_cooling_and_heating_degree_days(country : str, year: int) -> float:
-    df = pd.read_csv(DATA_PATH + "Energy/Heating_cooling_index.csv")
+    df = pd.read_csv(DATA_PATH / "Energy/Heating_cooling_index.csv")
 
     # drop useless columns
     df.drop(columns=["DATAFLOW", "LAST UPDATE","unit", "freq", "OBS_FLAG"], inplace=True)

@@ -5,6 +5,7 @@ import pickle
 import sys
 import concurrent.futures
 import multiprocessing
+from pathlib import Path
 
 # watts to kWh given data frequency as a fraction of an hour (e.g. 0.5 for half-hourly data)
 def watts2kwh(df, data_frequency):
@@ -66,8 +67,8 @@ if __name__ == "__main__":
         sys.exit(1)
     elif len(sys.argv) == 3:
         print("Processing data from " + sys.argv[1] + " and saving to " + sys.argv[2])
-        data_path = sys.argv[1]
-        save_folder = sys.argv[2]
+        data_path = Path(sys.argv[1]).resolve()
+        save_folder = Path(sys.argv[2]).resolve()
 
     dataset_paths = [dataset for dataset in os.listdir(data_path) if dataset.endswith('.pkl')]
     queue = multiprocessing.Manager().Queue()
@@ -87,7 +88,7 @@ if __name__ == "__main__":
                 progress_bar.update(1)  # update progress bar
 
 
-    with open(save_folder + "/" +"merged_loadprofiles.pkl", 'wb') as f:
+    with open(save_folder / "merged_loadprofiles.pkl", 'wb') as f:
         pickle.dump(data_dict, f, pickle.HIGHEST_PROTOCOL)
         
 

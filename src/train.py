@@ -43,9 +43,12 @@ def train():
     base.mkdir(parents=True, exist_ok=True)
 
     X, y , labels = read_data(config.DATA_PATH, config.LABELS_PATH) # set paths
+
+    # for testing purposes as full dataset takes 5min per epoch
     # X = X[:1000]
     # y = y[:1000]
 
+    # save config to json
     config.save_config()
 
     NmDevices = len(labels) # number of devices(classes)
@@ -79,6 +82,7 @@ def train():
 
     # train model
     for i in range(config.NUM_MODELS):
+        # create csv logger callback to log training progress
         csv_logger = tf.keras.callbacks.CSVLogger(base/ "logs" / f"model_{i}.csv" , separator=",", append=False)
         model = Classifier_INCEPTION(
             output_directory=base / f"model/",

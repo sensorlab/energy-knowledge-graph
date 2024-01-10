@@ -23,8 +23,8 @@ def eval():
         # skip init file and jupyter notebook checkpoints
         if "init" in f or "ipynb" in f:
             continue
-        # for older models with custom metrics
-        # model = tf.keras.models.load_model(model_path / "model"/f, custom_objects={'F1Score': F1Score, "WeightedF1": WeightedF1Score})
+
+            
         model = tf.keras.models.load_model(model_path / "model"/f, custom_objects={'F1Score': F1Score})
 
         models.append(model)

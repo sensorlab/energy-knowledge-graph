@@ -130,6 +130,8 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+test.ipynb
+
 # IPython
 profile_default/
 ipython_config.py
@@ -258,7 +260,18 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+# Zip files
+*.zip
 # Windows shortcuts
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,visualstudiocode,python
+
+# ignore turtle files and N-TRIPLE files
+*.ttl
+*.nt
+
+# ignore device txt files
+
+house_devices.txt
+lables.txt

@@ -1,8 +1,29 @@
-numpy
-scipy
-pandas
-matplotlib
+numpy==1.23.5
+scipy==1.9.3
+pandas==1.5.2
+matplotlib==3.6.2
+rasterio==1.3.8
+holidays==0.29
+pycountry_convert==0.7.2
+timezonefinder==6.2.0
+requests==2.31.0
+pyyaml==6.0
 
-psycopg2
-pyarrow
-python-dotenv
+#nilmtk==0.4.0 doesnt work with pip run this instead
+#python3 -m pip install --no-deps git+https://github.com/nilmtk/nilmtk@master
+#python3 -m pip install --no-deps git+https://github.com/nilmtk/nilm_metadata@master
+
+
+# psycopg2
+pyarrow==14.0.2
+python-dotenv==1.0.0
+
+scikit-learn==1.1.3
+tqdm==4.66.1
+
+SQLAlchemy==2.0.18
+
+SPARQLWrapper==2.0.0
+fuzzywuzzy==0.18.0
+geopy==2.4.1
+rdflib==7.0.0

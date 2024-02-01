@@ -2,21 +2,47 @@ from dotenv import load_dotenv
 from src.api import ensure_tables
 from os import environ
 import sqlalchemy as sa
-from sqlalchemy import text
+from sqlalchemy import text ,inspect
 from sqlalchemy.engine import Connection
 from sqlalchemy_utils import database_exists, create_database
 import pandas as pd
-
+from src.enrich_data import create_location_dict, create_weather_dict
 from src.api import get_or_create_location_id, get_or_create_device_id, get_or_create_household_id
+from tqdm import tqdm
+# Change path to data
 
-def load_hue_dataset(conn:Connection):
-    df = pd.read_parquet('./data/residential-metadata.parquet')
+# generated metadata from generate_metadata.py
+DATA_PATH = './energy-knowledge-graph/data/metadata/residential_metadata.parquet'
 
-    df.drop(6, inplace=True) # Drop household without location information
+# calculated loadprofiles from loadprofiles.py
+LOADPROFILES_PATH = './energy-knowledge-graph/data/loadprofiles/merged_loadprofiles.pkl'
 
-    for _, row in df.iterrows():
-        get_or_create_household_id(conn, row.to_dict())
+CONSUMPTION_DATA = './energy-knowledge-graph/data/metadata/consumption_data.pkl'
 
+def load_data(conn:Connection):
+
+    df = pd.read_parquet(DATA_PATH)
+    loadprofiles = pd.read_pickle(LOADPROFILES_PATH)
+    consumption = pd.read_pickle(CONSUMPTION_DATA)
+    print("Populating database...")
+    # iterate over rows in dataframe
+    for _, row in tqdm(df.iterrows()):
+        print(row['name'])
+        # for debugging purposes
+        # if "ECDUY" in row['name'] or "HUE" in row["name"] or "REFIT" in row["name"] or "UCIML" in row["name"] or "HES" in row["name"] or "ECO" in row["name"]or "LERTA" in row["name"] or "UKDALE" in row["name"] or "DRED" in row["name"]:
+        #     continue
+        if row['name'] not in loadprofiles:
+            print("No loadprofile for: ", row['name'])
+            continue
+        # print(row['name'])
+        id = get_or_create_household_id(conn, row.to_dict(), consumption[row['name']]["aggregate"]["daily"])
+        for device in loadprofiles[row['name']]:
+            if device == "aggregate":
+                get_or_create_device_id(conn, device, id , loadprofiles[row['name']], consumption[row['name']][device]["daily"], None)
+            else:
+                get_or_create_device_id(conn, device, id , loadprofiles[row['name']], consumption[row['name']][device]["daily"], consumption[row['name']][device]["event"])
+        
+ 
 
 
 
@@ -28,27 +54,36 @@ def main():
     engine = sa.create_engine(DATABASE_URL, echo=False, future=True)
 
     if not database_exists(engine.url):
+        print("Creating database...")
         create_database(engine.url)
 
 
     with engine.connect() as conn:
         # Cleanup existing tables
-        conn.execute(text('DROP TABLE IF EXISTS devices'))
-        conn.execute(text('DROP TABLE IF EXISTS households'))
-        conn.execute(text('DROP TABLE IF EXISTS locations'))
+        conn.execute(text('DROP TABLE IF EXISTS devices CASCADE'))
+        conn.execute(text('DROP TABLE IF EXISTS households CASCADE'))
+        conn.execute(text('DROP TABLE IF EXISTS locations CASCADE'))
+        conn.execute(text('DROP TABLE IF EXISTS weather CASCADE'))
+        # save changes
+        conn.commit()
+
+
 
     with engine.connect() as conn:
+        # create tables
         ensure_tables(conn)
+        conn.commit()
 
-        load_hue_dataset(conn)
+        # populate dataset
+        load_data(conn)
 
+        # save changes
+        conn.commit()
+        print("Done")
 
-    with engine.begin() as conn:
-        print('Locations:', conn.execute(text('SELECT COUNT(1) FROM locations')).scalar_one())
-        print('Households:', conn.execute(text('SELECT COUNT(1) FROM households')).scalar_one())
-
-        print('Locations:', conn.execute(text('SELECT * FROM locations')).all())
-
+        
+    
+        
 
 if __name__ == '__main__':
     main()

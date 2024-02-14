@@ -5,9 +5,17 @@ from tqdm import tqdm
 import pickle
 import argparse
 import concurrent.futures
+from pathlib import Path
 
-def average_daily_consumption(df: pd.DataFrame):
-    """Returns the average daily consumption of a device in kWh."""
+def average_daily_consumption(df: pd.DataFrame) -> float:
+    """
+    Calculate the average daily consumption of a device in kWh
+    ### Parameters
+    `df` : should be in the form datetime index and column should contain device consumption readings in watts
+
+    ### Returns
+    `float` : average daily consumption in kWh
+    """
     
     if df.empty:
         return 0
@@ -23,8 +31,14 @@ def average_daily_consumption(df: pd.DataFrame):
     return df.values.mean()    
 
 
-def average_on_off_event(df: pd.DataFrame, h):
-    """Returns the average on and off event of a device in kWh."""
+def average_on_off_event(df: pd.DataFrame) -> float:
+    """
+    Calculate the average on/off event consumption of a device in kWh
+    ### Parameters
+    `df` : should be in the form datetime index and column should contain device consumption readings in watts
+    ### Returns
+    `float` : average on/off event consumption in kWh
+    """
     # check if df is empty
     if df.empty:
         return 0
@@ -135,8 +149,14 @@ def process_dataset(dataset_path):
     del data
     return house_data_dict
 
-def main(DATA_PATH, SAVE_PATH):
-
+def generate_consumption_data(DATA_PATH : Path, SAVE_PATH : Path, datasets : list[str]) -> None:
+    """
+    Generate consumption data for a list of datasets and save to a pickle file
+    ### Parameters
+    `data_path` : Path to the folder containing parsed datasets
+    `save_path` : Path to the folder to save the consumption data
+    `datasets` : List of datasets to process example: ["REFIT", "ECO"] will process only REFIT and ECO
+    """
     # limit to half of cpu cores
     cpu_count = int(os.cpu_count() / 2)
     
@@ -144,6 +164,8 @@ def main(DATA_PATH, SAVE_PATH):
     # get all dataset paths
     dataset_paths =[]
     for d in  os.listdir(DATA_PATH):
+        if d.split(".")[0] not in datasets:
+            continue
         if d.endswith(".pkl"):
             dataset_paths.append(os.path.join(DATA_PATH, d))
     
@@ -166,7 +188,7 @@ def main(DATA_PATH, SAVE_PATH):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Calculate consumption data.')
-    parser.add_argument('--data_path', type=str, help='Path to data folder.', default="")
+    parser.add_argument('--data_path', type=str, help='Path to data folder containing parsed datsets.', default="")
 
     parser.add_argument('--save_path', type=str, help='Path to save folder.', default="")
 
@@ -174,4 +196,4 @@ if __name__ == "__main__":
 
     DATA_PATH = args.data_path
     SAVE_PATH = args.save_path
-    main(DATA_PATH, SAVE_PATH)
+    generate_consmption_data(DATA_PATH, SAVE_PATH)

@@ -3,7 +3,7 @@ import os
 import pickle
 from functools import reduce
 from pathlib import Path
-from helper_functions import save_to_pickle
+from src.helper import save_to_pickle
 
 ######################DATASET INFO#########################################
 # sampling rate: 1s

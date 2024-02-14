@@ -4,7 +4,7 @@ import os
 from tqdm import tqdm
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
-from helper_functions import *
+from src.helper import *
 from pathlib import Path
 
 ######################DATASET INFO#########################################

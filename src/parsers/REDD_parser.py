@@ -1,28 +1,26 @@
 import warnings
-
 warnings.simplefilter(action="ignore", category=FutureWarning)
-
 from nilmtk import DataSet
 import pandas as pd
 from pathlib import Path
+from src.helper import save_to_pickle
 
-from helper_functions import save_to_pickle
+
 ######################DATASET INFO#########################################
 # sampling rate: 1s
-# length: 73 days
+# length: 1 month
 # unit: watts
-# households: 1
+# households: 6
 # submetered
-# Location: India
-# Source: https://iawe.github.io/
+# Location: USA (Massachusetts)
+# Source: https://people.csail.mit.edu/mattjj/papers/kddsust2011.pdf
 
-
-def load_dataset(path: Path) -> list:
- 
+def load_redd_dataset(path: Path) -> list:
     try:
         dataset = DataSet(path)
 
         samples = []
+        # iterate over buildings and devices
         for building_idx, building in dataset.buildings.items():
             aggregate = next(building.elec.mains()[1].load()) + next(building.elec.mains()[1].load())
             for meter in building.elec.all_meters():
@@ -30,9 +28,14 @@ def load_dataset(path: Path) -> list:
                 assert len(data) == 1
 
                 assert len(meter.appliances) < 2
-
-                # TODO: Poglej s kje jemlje sample Jakob.
-                sample = (building_idx, list([a.type["type"] for a in meter.appliances]), data, meter.good_sections(), aggregate)
+                # store the good sections of the data for each device and aggregate
+                sample = (
+                    building_idx,
+                    list([a.type["type"] for a in meter.appliances]),
+                    data,
+                    meter.good_sections(),
+                    aggregate,
+                )
 
                 samples.append(sample)
 
@@ -43,10 +46,11 @@ def load_dataset(path: Path) -> list:
         raise e
 
 
+# format the data into a dictionary of dictionaries and concat the dataframes
 def data_preparation(dataset: list) -> dict:
     out_data = {}
     for idx, appliances, data, good_sections, aggregate in dataset:
-        name = "IAWE_{}".format(idx)
+        name = "REDD_{}".format(idx)
         if name not in out_data:
             out_data[name] = {"aggregate": aggregate}
         if not appliances:
@@ -58,25 +62,22 @@ def data_preparation(dataset: list) -> dict:
             continue
         samples = [data[good.start : good.end] for good in good_sections]
         print(name, appliance, len(samples))
-        # X[appliance].extend(samples)
-        df = pd.concat(samples, axis=0)
         out_data[name][appliance] = pd.concat(samples, axis=0)
-
-    # for appliance, samples in X.items():
-    #     print(appliance, len(samples))
 
     return out_data
 
 
-def parse_IAWE(data_path: str, save_path: str) -> None:
+def parse_REDD(data_path: str, save_path: str) -> None:
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
-    dataset = load_dataset(data_path / "iawe.h5")
+
+    dataset = load_redd_dataset(data_path / "redd.h5")
     prepared_data = data_preparation(dataset)
 
+    # resample the data to 7s and fill the missing values with the previous value and convert to kWh
     for house in prepared_data:
         for meter in prepared_data[house]:
-            df = pd.DataFrame(prepared_data[house][meter]["power"]["active"])
-            prepared_data[house][meter] = df
+            df = prepared_data[house][meter]
+            prepared_data[house][meter] = df.resample("7s").ffill(limit=1).fillna(0)
 
     save_to_pickle(prepared_data, save_path)

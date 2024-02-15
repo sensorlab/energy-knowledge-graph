@@ -75,8 +75,15 @@ def parse_IDEAL(data_path: str, save_path: str) -> None:
     total_houses = len(files_grouped_by_home)
 
     print("Processing houses...")
-    # here we use half of the cpu cores to process the data you can change this if you want
-    cpu_count = int(os.cpu_count() // 2)
+    cpu_count = int(os.cpu_count() // 8)
+    if os.cpu_count() < 16:
+        cpu_count = os.cpu_count() // 2
+
+    # no need for more than 32 processes for this dataset
+    if cpu_count > 32:
+        cpu_count = 32
+    
+
     # process the houses in parallel
     with ProcessPoolExecutor(max_workers=cpu_count) as executor, tqdm(total=total_houses, desc="Processing houses", unit="house") as t:
         args = ((house, files_grouped_by_home[house], data_path) for house in files_grouped_by_home)

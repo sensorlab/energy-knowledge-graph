@@ -143,7 +143,7 @@ def process_dataset(dataset_path):
             if "aggregate" in d:
                 house_data[d] = {"daily": average_daily_consumption(df[d].copy())}
             else:
-                house_data[d] = {"daily": average_daily_consumption(df[d].copy()), "event": average_on_off_event(df[d].copy(),h)}
+                house_data[d] = {"daily": average_daily_consumption(df[d].copy()), "event": average_on_off_event(df[d].copy())}
        
         house_data_dict[h] = house_data
     del data
@@ -157,8 +157,13 @@ def generate_consumption_data(DATA_PATH : Path, SAVE_PATH : Path, datasets : lis
     `save_path` : Path to the folder to save the consumption data
     `datasets` : List of datasets to process example: ["REFIT", "ECO"] will process only REFIT and ECO
     """
-    # limit to half of cpu cores
-    cpu_count = int(os.cpu_count() / 2)
+    if os.cpu_count() < len(datasets):
+        cpu_count = os.cpu_count()/2
+
+    else:
+        cpu_count = len(datasets)
+
+
     
 
     # get all dataset paths
@@ -193,7 +198,27 @@ if __name__ == "__main__":
     parser.add_argument('--save_path', type=str, help='Path to save folder.', default="")
 
     args = parser.parse_args()
+    datasets = [
+        "REFIT",
+        "ECO",
+        "HES",
+        "UK-DALE",
+        "HUE",
+        "LERTA",
+        "UCIML",
+        "DRED",
+        "REDD",
+        "IAWE",
+        "DEKN",
+        "SUST1",
+        "SUST2",
+        "HEART",
+        "ENERTALK",
+        "DEDDIAG",
+        "IDEAL",
+        "ECDUY"
+    ]
 
     DATA_PATH = args.data_path
     SAVE_PATH = args.save_path
-    generate_consmption_data(DATA_PATH, SAVE_PATH)
+    generate_consumption_data(DATA_PATH, SAVE_PATH, datasets)

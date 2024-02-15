@@ -65,7 +65,7 @@ def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -
         "ENERTALK": parse_ENERTALK,
         "DEDDIAG": parse_DEDDIAG,
         "IDEAL": parse_IDEAL,
-        "ECD-UY": parse_ECDUY,
+        "ECDUY": parse_ECDUY,
     }
     
 
@@ -120,78 +120,3 @@ if __name__ == "__main__":
 
 
     parse_datasets(data_path, save_folder, datasets)
-
-    ########################################################################
-
-
-    # # path to all the data on the compute machine
-    # data_path = "../../shared/Energy_graph_datasets/raw/"
-
-    # # folder to save the preprocessed data
-    # save_folder = "../data/testing"
-
-
-    # old code for debugging TODO REMOVE
-    # for dataset in tqdm(os.listdir(data_path)):
-        
-    #     print("Processing " + dataset + ".... ")
-    #     if dataset == "SMART":
-    #         # continue
-    #         parse_SMART(data_path / dataset , save_folder / (dataset + ".pkl"))
-    #     elif dataset == "REFIT":
-    #         # continue
-    #         parse_REFIT(data_path / dataset, save_folder / (dataset + ".pkl"))
-    #     elif dataset == "ECO":
-    #         # continue
-    #         parse_ECO(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "HES":
-    #         # continue
-    #         parse_HES(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "UK-DALE":
-    #         # continue
-    #         parse_UKDALE(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "HUE":
-    #         # continue
-    #         parse_HUE(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "LERTA":
-    #         # continue
-    #         parse_LERTA(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "UCIML":
-    #         # continue
-    #         parse_UCIML(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "DRED":
-    #         # continue
-    #         parse_DRED(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "REDD":
-    #         # continue
-    #         parse_REDD(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "IAWE":
-    #         # continue
-    #         parse_IAWE(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "DEKN":
-    #         # continue
-    #         parse_DEKN(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "SUST1":
-    #         # continue
-    #         parse_SUST1(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "SUST2":
-    #         # continue
-    #         parse_SUST2(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "HEART":
-    #         # continue
-    #         parse_HEART(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "ENERTALK":
-    #         # continue
-    #         parse_ENERTALK(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "DEDDIAG":
-    #         # continue
-    #         parse_DEDDIAG(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "IDEAL":
-    #         # continue
-    #         parse_IDEAL(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     elif dataset == "ECD-UY":
-    #         # continue
-    #         parse_ECDUY(data_path / dataset , save_folder / ( dataset + ".pkl"))
-    #     else:
-    #         print("Dataset not found: " + dataset)
-    #         # sys.exit(1)

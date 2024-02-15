@@ -24,7 +24,7 @@ tf = TimezoneFinder()
 # DATA_PATH = "./Energy_graph/data/metadata/"
 
 # local path
-DATA_PATH : Path = Path("./energy-knowledge-graph/data/metadata/").resolve()
+DATA_PATH : Path = Path("./data/metadata/").resolve()
 
 # get temperature, relative humidity, precipitation, cloudcover(%) from openmeteo api for given lat, lon and optional start and end date and return yearly and average day in a month data
 def get_weather_data(lat, lon, start_date="2010-01-01", end_date="2023-01-01"):

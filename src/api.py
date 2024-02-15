@@ -314,19 +314,19 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
     location_id = get_or_create_location_id(conn, household)
 
     # Convert occupancy to int if it is not NaN
-    if not isnan(household["occupancy"]):
+    if household["occupancy"] is not None and not isnan(household["occupancy"]):
         household["occupancy"] = int(household["occupancy"])
     else:
         household["occupancy"] = None
 
-    # Convert rental_units to int if it is not NaN
-    if not isnan(household["rental_units"]):
+    # Convert rental_units to int if it is not None and not NaN
+    if household["rental_units"] is not None and not isnan(household["rental_units"]):
         household["rental_units"] = int(household["rental_units"])
     else:
         household["rental_units"] = None
 
-    # Convert evs to int if it is not NaN
-    if not isnan(household["EVs"]):
+    # Convert evs to int if it is not None and not NaN
+    if household["EVs"] is not None and not isnan(household["EVs"]):
         household["EVs"] = int(household["EVs"])
     else:
         household["EVs"] = None

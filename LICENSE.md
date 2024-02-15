@@ -1,6 +1,6 @@
 # BSD 3-Clause License
 
-Copyright (c) 2024, Vid Hanzel
+Copyright (c) 2024, Vid Hanzel, Carolina Fortuna, Blaz Bertalanic, Gregor Cerar
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

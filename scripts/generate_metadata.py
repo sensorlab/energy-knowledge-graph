@@ -3,15 +3,14 @@ import os
 import numpy as np
 from datetime import date
 import yaml
-import sys
 import argparse
 from io import StringIO
 from pathlib import Path
 
-DATA_PATH : Path = Path("./energy-knowledge-graph/data/metadata/datasets/").resolve()
-SAVE_PATH : Path = Path("./energy-knowledge-graph/data/metadata/").resolve()
+# DATA_PATH : Path = Path("./energy-knowledge-graph/data/metadata/datasets/").resolve()
+# SAVE_PATH : Path = Path("./energy-knowledge-graph/data/metadata/").resolve()
 
-def HUE_metadata():
+def HUE_metadata(DATA_PATH : Path):
     # read data
     HUE_metadata = pd.read_parquet(DATA_PATH / "HUE_metadata.parquet")
 
@@ -44,7 +43,7 @@ def HUE_metadata():
     
     return HUE_metadata
     
-def REFIT_metadata():
+def REFIT_metadata(DATA_PATH : Path):
     REFIT_metadata = pd.read_parquet(DATA_PATH / "refit_metadata.parquet")
 
     # drop unnecessary columns and add name column
@@ -88,7 +87,7 @@ def REFIT_metadata():
 
     return REFIT_metadata
 
-def UCIML_metadata():
+def UCIML_metadata(DATA_PATH : Path):
     data_uciml = pd.read_parquet(DATA_PATH / "uciml_household.parquet")
     # 2006-12-16
     # drop unnecessary columns
@@ -178,7 +177,7 @@ def ECO_metadata():
     return ECO_metadata
 
 
-def LERTA_metadata():
+def LERTA_metadata(DATA_PATH : Path):
    
 
     # read data
@@ -218,7 +217,7 @@ def LERTA_metadata():
 
     return LERTA_metadata
 
-def UKDALE_metadata():
+def UKDALE_metadata(DATA_PATH : Path):
    
     with open(DATA_PATH / "UKDALE/metadata/dataset.yaml", 'r') as file:
         data = yaml.safe_load(file)
@@ -284,7 +283,7 @@ def DRED_metadata():
     dred = pd.DataFrame(dred, index=[0])
     return dred
 
-def REDD_metadata():
+def REDD_metadata(DATA_PATH : Path):
     redd_data = pd.read_pickle(DATA_PATH / "REDD.pkl")
 
     redd = {}
@@ -317,7 +316,7 @@ def IAWE_metadata():
     df = pd.DataFrame(iawe, index=[0])
     return df
 
-def DEKN_metadata():
+def DEKN_metadata(DATA_PATH : Path):
     dekn = pd.read_pickle(DATA_PATH / "DEKN.pkl")
     data = {}
     for house in dekn:
@@ -334,7 +333,6 @@ def DEKN_metadata():
     return dekn
 
 def HEART_metadata():
-    data = {}
 
     data = {
         "HEART_7"  : {
@@ -359,7 +357,7 @@ def HEART_metadata():
     heart.reset_index(drop=True, inplace=True)
     return heart
 
-def SUST1_metadata():
+def SUST1_metadata(DATA_PATH : Path):
     # drop unnecessary columns TODO UPDATE PATH
     df = pd.read_csv(DATA_PATH / "demographics_SUST1.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
     # rename columns to match the other metadata
@@ -420,7 +418,7 @@ def ENERTALK_metadata():
     df["country"] = "South Korea"
     return df
 
-def ECDUY_metadata():
+def ECDUY_metadata(DATA_PATH : Path):
     data = pd.read_pickle(DATA_PATH / "ECDUY_metadata.pkl")
     df = pd.DataFrame(data).T.reset_index(drop=True)
 
@@ -432,7 +430,7 @@ def ECDUY_metadata():
 
 
 
-def IDEAL_metadata():
+def IDEAL_metadata(DATA_PATH : Path):
 
     df = pd.read_csv(DATA_PATH / "IDEAL_metadata.csv")
     df["name"] = "IDEAL_" + df["homeid"].astype(str)
@@ -463,76 +461,117 @@ def IDEAL_metadata():
 
     return df
 
-def generate_metadata(save=True):
-    """Generate metadata for all datasets and save to parquet file if save is True"""
-    # generate metadata for all datasets
-    HUE_meta = HUE_metadata()
-    REFIT_meta = REFIT_metadata()
-    UCIML_meta = UCIML_metadata()
-    HES_meta = HES_metadata()
-    ECO_meta = ECO_metadata()
-    LERTA_meta = LERTA_metadata()
-    UKDALE_meta = UKDALE_metadata()
-    DRED_meta = DRED_metadata()
-    REDD_meta = REDD_metadata()
-    IAWE_meta = IAWE_metadata()
-    DEKN_meta = DEKN_metadata()
-    HEART_meta = HEART_metadata()
-    SUST_meta = pd.concat([SUST1_metadata(), SUST2_metadata()], ignore_index=True, axis=0)
-    DEDDIAG_meta = DEDDIAG_metadata()
-    ENERTALK_meta = ENERTALK_metadata()
-    ECDUY_meta = ECDUY_metadata()
-    IDEAL_meta = IDEAL_metadata()
+def generate_metadata(data_path : Path, save_path : Path, datasets : list[str])-> pd.DataFrame:
+    """
+    Generate metadata for all datasets and save to parquet file
 
+    ### Parameters
+    - `data_path` : path to the `metadata/datasets` folder
+    - `save_path` : path to the folder where the metadata parquet file will be stored
+    - `datasets` : List of datasets to process as a list of strings containing the dataset names
+    """
+    # all the metadata columns
+    columns = ['name', 'first_reading', 'last_reading', 'house_type', 'facing',
+       'rental_units', 'EVs', 'country', 'lat', 'lon', 'AC', 'heating',
+       'occupancy', 'construction_year', 'house_size', 'city']
+    metadata = pd.DataFrame(columns=columns)
+
+    DATA_PATH : Path = data_path.resolve()
+    SAVE_PATH : Path = save_path.resolve()
+    
+    metadata_functions = {
+        "HUE": HUE_metadata(DATA_PATH),
+        "REFIT": REFIT_metadata(DATA_PATH),
+        "UCIML": UCIML_metadata(DATA_PATH),
+        "HES": HES_metadata(),
+        "ECO": ECO_metadata(),
+        "LERTA": LERTA_metadata(DATA_PATH),
+        "UKDALE": UKDALE_metadata(DATA_PATH),
+        "DRED": DRED_metadata(),
+        "REDD": REDD_metadata(DATA_PATH),
+        "IAWE": IAWE_metadata(),
+        "DEKN": DEKN_metadata(DATA_PATH),
+        "HEART": HEART_metadata(),
+        "SUST1": SUST1_metadata(DATA_PATH),
+        "SUST2": SUST2_metadata(),
+        "DEDDIAG": DEDDIAG_metadata(),
+        "ENERTALK": ENERTALK_metadata(),
+        "ECDUY": ECDUY_metadata(DATA_PATH),
+        "IDEAL": IDEAL_metadata(DATA_PATH),
+    }
+    metadata_dfs = [metadata]
+    for dataset in datasets:
+        metadata_dfs.append(metadata_functions[dataset])
+
+    # # generate metadata for all datasets
+    # HUE_meta = HUE_metadata()
+    # REFIT_meta = REFIT_metadata()
+    # UCIML_meta = UCIML_metadata()
+    # HES_meta = HES_metadata()
+    # ECO_meta = ECO_metadata()
+    # LERTA_meta = LERTA_metadata()
+    # UKDALE_meta = UKDALE_metadata()
+    # DRED_meta = DRED_metadata()
+    # REDD_meta = REDD_metadata()
+    # IAWE_meta = IAWE_metadata()
+    # DEKN_meta = DEKN_metadata()
+    # HEART_meta = HEART_metadata()
+    # SUST_meta = pd.concat([SUST1_metadata(), SUST2_metadata()], ignore_index=True, axis=0)
+    # DEDDIAG_meta = DEDDIAG_metadata()
+    # ENERTALK_meta = ENERTALK_metadata()
+    # ECDUY_meta = ECDUY_metadata()
+    # IDEAL_meta = IDEAL_metadata()
+    
     # concat all metadata
     metadata = pd.concat(
-        [
-        HUE_meta,
-        REFIT_meta,
-        UCIML_meta,
-        HES_meta,
-        ECO_meta,
-        LERTA_meta,
-        UKDALE_meta,
-        DRED_meta,
-        REDD_meta,
-        IAWE_meta,
-        DEKN_meta,
-        HEART_meta,
-        SUST_meta,
-        DEDDIAG_meta,
-        ENERTALK_meta,
-        ECDUY_meta,
-        IDEAL_meta
-        ],
-         ignore_index=True, axis=0)
+        metadata_dfs,
+        ignore_index=True,
+        axis=0
+        )
     metadata.reset_index(inplace=True, drop=True)
 
     # convert first and last reading to datetime
     metadata["first_reading"] = pd.to_datetime(metadata["first_reading"])
     metadata["last_reading"] = pd.to_datetime(metadata["last_reading"])
   
-    # save to parquet
-    if save:
-        metadata.to_parquet(SAVE_PATH + "residential_metadata.parquet")
 
-    return metadata
+    metadata.to_parquet(SAVE_PATH / "residential_metadata.parquet")
+
+    
                 
 
 if __name__ == "__main__":
-    """Generate metadata for all datasets and save to parquet file if --save is passed as argument"""
+    """Generate metadata for all datasets and save to parquet file"""
     parser = argparse.ArgumentParser(description='Process data path and save path.')
-    parser.add_argument('datapath', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/datasets/',
+    parser.add_argument('data_path', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/datasets/',
                         help='Path to the data')
-    parser.add_argument('savepath', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/',
+    parser.add_argument('save_path', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/',
                         help='Path to save the results')
-    parser.add_argument('--save', action='store_true', 
-                        help='Save the result to parquet file if this argument is passed')
     args = parser.parse_args()
 
-    DATA_PATH : Path = Path(args.datapath).resolve()
-    SAVE_PATH : Path = Path(args.savepath).resolve()
-    generate_metadata(save=args.save)
+    datasets = [
+            "REFIT",
+            "ECO",
+            "HES",
+            "UK-DALE",
+            "HUE",
+            "LERTA",
+            "UCIML",
+            "DRED",
+            "REDD",
+            "IAWE",
+            "DEKN",
+            "SUST1",
+            "SUST2",
+            "HEART",
+            "ENERTALK",
+            "DEDDIAG",
+            "IDEAL",
+            "ECDUY"
+    ]
+    # DATA_PATH : Path = Path(args.datapath).resolve()
+    # SAVE_PATH : Path = Path(args.savepath).resolve()
+    generate_metadata(args.data_path, args.save_path, datasets)
 
     # python generate_metadata.py path/to/data path/to/save --save
 

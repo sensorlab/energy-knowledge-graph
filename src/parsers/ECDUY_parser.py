@@ -4,6 +4,7 @@ import pandas as pd
 import os
 from tqdm import tqdm
 from collections import defaultdict
+import gc
 from src.helper import save_to_pickle
 ######################DATASET INFO#########################################
 # sampling rate: 15min
@@ -74,6 +75,7 @@ def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 6, n_jobs: int
         for result in results:
             for key, value in result.items():
                 data[key]["aggregate"].extend(value["aggregate"])
+        gc.collect()
 
     # Convert defaultdict back to a normal dictionary
     data = dict(data)

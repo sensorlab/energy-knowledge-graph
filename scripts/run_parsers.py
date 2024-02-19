@@ -2,14 +2,15 @@ import os
 from tqdm import tqdm
 import sys
 import argparse
+import shutil
+import gc
+
 # labelled datasets
 from src.parsers.REFIT_parser import parse_REFIT
 from src.parsers.ECO_parser import parse_ECO
 from src.parsers.HES_parser import parse_HES
 from src.parsers.UKDALE_parser import parse_UKDALE
 from src.parsers.DRED_parser import parse_DRED
-# from src.parsers.REDD_parser import parse_REDD
-# from src.parsers.IAWE_parser import parse_IAWE
 from src.parsers.DEKN_parser import parse_DEKN
 from src.parsers.SUST2_parser import parse_SUST2
 from src.parsers.HEART_parser import parse_HEART
@@ -23,7 +24,6 @@ from src.parsers.IDEAL_parser import parse_IDEAL
 from src.parsers.ECDUY_parser import parse_ECDUY
 from src.parsers.HUE_parser import parse_HUE
 from src.parsers.LERTA_parser import parse_LERTA
-from src.parsers.SMART_parser import parse_SMART
 from src.parsers.UCIML_parser import parse_UCIML
 from src.parsers.SUST1_parser import parse_SUST1
 
@@ -51,13 +51,11 @@ def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -
         "REFIT": parse_REFIT,
         "ECO": parse_ECO,
         "HES": parse_HES,
-        "UK-DALE": parse_UKDALE,
+        "UKDALE": parse_UKDALE,
         "HUE": parse_HUE,
         "LERTA": parse_LERTA,
         "UCIML": parse_UCIML,
         "DRED": parse_DRED,
-        # "REDD": parse_REDD,
-        # "IAWE": parse_IAWE,
         "DEKN": parse_DEKN,
         "SUST1": parse_SUST1,
         "SUST2": parse_SUST2,
@@ -71,8 +69,15 @@ def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -
 
 
     for dataset in tqdm(os.listdir(data_path)):
-        print(f"Processing {dataset}.... ")
         if dataset not in datasets:
+            continue
+        print(f"Processing {dataset}.... ")
+        # avoid parsing with NILMTK and just copy provided pickle files
+        if dataset == "REDD":
+            shutil.copy2(data_path / dataset / "REDD.pkl", save_folder / "REDD.pkl")
+            continue
+        if dataset == "IAWE":
+            shutil.copy2(data_path / dataset / "IAWE.pkl", save_folder / "IAWE.pkl")
             continue
         # Get the appropriate parsing function from the dictionary
         parse_function = parse_functions.get(dataset)
@@ -81,6 +86,7 @@ def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -
             parse_function(data_path / dataset , save_folder / (dataset + ".pkl"))
         else:
             print(f"Dataset not found: {dataset}")
+        gc.collect()
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 # CHECK INCEPTION TIME IMPLEMENTATION 
-from NUK import F1Score
+# from NUK import F1Score
 import tensorflow as tf
 from tensorflow import keras
 
@@ -92,7 +92,7 @@ class Classifier_INCEPTION:
         model = keras.models.Model(inputs=input_layer, outputs=output_layer)
     
         model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=self.lr),
-                      metrics=['accuracy', F1Score])
+                      metrics=['accuracy'])
         
 
         return model
@@ -121,7 +121,7 @@ class Classifier_INCEPTION:
 
     def predict(self, x_test):
         model_path = self.output_directory / f'model_{self.model_number}.hdf5'
-        model = keras.models.load_model(model_path, custom_objects={'F1Score': F1Score})
+        model = keras.models.load_model(model_path)
         model = keras.models.load_model(model_path)
         y_pred = model.predict(x_test, batch_size=self.batch_size)
 

@@ -2,6 +2,8 @@ import re
 import numpy as np
 import pandas as pd
 import pickle
+import os
+from pathlib import Path
 
 def preprocess_string(string : str) -> str:
     string = string.lower().strip()
@@ -116,6 +118,33 @@ def watts2kwh(df: pd.Series, data_frequency: float) -> pd.Series:
     df = df / 1000 * data_frequency
     return df
 
+def generate_labels(data_path: Path, save_folder: Path, datasets: list[str]):
+    """
+    Generate labels for the given datasets and save to a pickle file in the save folder
+    ### Parameters
+    `data_path` : Path to the parsed data
+    `save_folder` : Path to the save folder
+    `datasets` : List of datasets to generate labels for, example: ["REFIT", "ECO"] will generate only for REFIT and ECO
+    """
+    print("Generating labels...")
+    labels = set()
+    for dataset in datasets:
+        data = pd.read_pickle(data_path / dataset)
+        for h in data:
+            for k in data[h]:
+                if "aggregate" in k:
+                    continue
+                labels.add(preprocess_string(k))
+
+    # convert to list
+    labels = list(labels)
+    
+    # save with pickle
+    with open(save_folder / "labels.pkl", "wb") as handle:
+        pickle.dump(labels, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    return labels
+    
 
 # save a dictionary to a pickle file
 def save_to_pickle(dict: dict, filename: str):

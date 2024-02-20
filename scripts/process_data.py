@@ -4,6 +4,8 @@ from generate_metadata import generate_metadata
 from generate_consumption_data import generate_consumption_data
 from database_reset import reset_database
 from generate_training_data import generate_training_data
+from src.remove_devices import remove_devices
+
 import argparse
 from pathlib import Path
 import gc
@@ -36,6 +38,9 @@ if __name__ == "__main__":
     training_data_folder: Path = Path("./data/training_data/").resolve()
     if not training_data_folder.exists():
         training_data_folder.mkdir()
+
+    # folder to save cleaned raw data with removed devices
+    training_data_cleaned_folder: Path = Path("./data/training_data/raw/").resolve()
 
 
     steps = [
@@ -87,7 +92,7 @@ if __name__ == "__main__":
     "metadata": lambda: generate_metadata(metadata_path, generated_metadata_path, datasets) ,
     "consumption-data" : lambda: generate_consumption_data(parsed_data_path, consumption_data_path, datasets),      
     "db-reset" : lambda : reset_database(generated_metadata_path/"residential_metadata.parquet", loadprofiles_path/"merged_loadprofiles.pkl", consumption_data_path/"consumption_data.pkl", datasets),
-    "training-data" : lambda : generate_training_data(parsed_data_path, training_data_folder, training_datsets),
+    "training-data" : lambda : (remove_devices(parsed_data_path, training_data_cleaned_folder, training_datsets), generate_training_data(training_data_cleaned_folder, training_data_folder, training_datsets)),
     }
     for step in steps:
         functions[step]()

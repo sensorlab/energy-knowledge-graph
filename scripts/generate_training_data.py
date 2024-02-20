@@ -7,8 +7,8 @@ import random
 import argparse
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
+
 from src.helper import preprocess_string, generate_labels
-from pathlib import Path
 
 
 
@@ -213,6 +213,8 @@ def create_tuples(windows : list, labels : list) -> list:
 
     return X_Y_test
 
+
+
 def generate_training_data(data_path : Path, save_path : Path, datasets : list, window_size=2688 , num_windows=100000, upper_bound=32, max_gap=3600):
     """
     Generate training data from the parsed data and save it to a pickle file
@@ -232,6 +234,8 @@ def generate_training_data(data_path : Path, save_path : Path, datasets : list, 
         if not datasets[i].endswith(".pkl"):
             datasets[i] = datasets[i] + ".pkl"
     
+    
+
     upper_bound = pd.Timedelta(seconds=upper_bound)
     max_gap = pd.Timedelta(seconds=max_gap)
     # generate labels from the parsed data and save to a pickle file

@@ -45,7 +45,13 @@ def load_data(conn:Connection, df : pd.DataFrame, loadprofiles : dict, consumpti
             print("No loadprofile for: ", row['name'])
             continue
         # print(row['name'])
-        id = get_or_create_household_id(conn, row.to_dict(), consumption[row['name']]["aggregate"]["daily"])
+        labeled = False
+        for d in loadprofiles[row['name']]:
+            if d != "aggregate":
+                labeled = True
+                break
+
+        id = get_or_create_household_id(conn, row.to_dict(), consumption[row['name']]["aggregate"]["daily"], labeled)
         for device in loadprofiles[row['name']]:
             if device == "aggregate":
                 get_or_create_device_id(conn, device, id , loadprofiles[row['name']], consumption[row['name']][device]["daily"], None)

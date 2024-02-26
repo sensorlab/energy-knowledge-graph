@@ -122,7 +122,6 @@ class Classifier_INCEPTION:
     def predict(self, x_test):
         model_path = self.output_directory / f'model_{self.model_number}.hdf5'
         model = keras.models.load_model(model_path)
-        model = keras.models.load_model(model_path)
         y_pred = model.predict(x_test, batch_size=self.batch_size)
 
         return y_pred

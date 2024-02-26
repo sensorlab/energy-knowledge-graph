@@ -5,9 +5,9 @@ from generate_consumption_data import generate_consumption_data
 from database_reset import reset_database
 from generate_training_data import generate_training_data
 from src.remove_devices import remove_devices
-from add_predicted_devices import add_predicted_devices
-from label_datasets import get_predicted_appliances
 
+from label_datasets import get_predicted_appliances
+from add_predicted_devices import add_predicted_devices
 
 import argparse
 from pathlib import Path
@@ -83,6 +83,12 @@ if __name__ == "__main__":
             "add-predicted-devices"
     ]
         
+    if "predict-devices" in steps:
+        from label_datasets import get_predicted_appliances
+    
+    if "add-predicted-devices" in steps:
+        from add_predicted_devices import add_predicted_devices
+        
     datasets = [
         "REFIT",
         "ECO",
@@ -129,7 +135,7 @@ if __name__ == "__main__":
     "consumption-data" : lambda: generate_consumption_data(parsed_data_path, consumption_data_path, datasets),      
     "db-reset" : lambda : reset_database(generated_metadata_path/"residential_metadata.parquet", loadprofiles_path/"merged_loadprofiles.pkl", consumption_data_path/"consumption_data.pkl", datasets),
     "training-data" : lambda : (remove_devices(parsed_data_path, training_data_cleaned_folder, training_datsets), generate_training_data(training_data_cleaned_folder, training_data_folder, training_datsets)),
-    "predict-devices" : lambda : get_predicted_appliances(parsed_data_path, model_path, labels_path, predicted_appliances_path, predict_datasets),
+    "predict-devices" : lambda : (get_predicted_appliances(parsed_data_path, model_path, labels_path, predicted_appliances_path, predict_datasets)),
     "add-predicted-devices" : lambda : add_predicted_devices(predicted_appliances_path, graph_endpoint=knowledge_graph_endpoint)
 
     }

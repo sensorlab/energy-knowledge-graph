@@ -62,7 +62,7 @@ def load_data(conn:Connection, df : pd.DataFrame, loadprofiles : dict, consumpti
 
 
 
-def reset_database(data_path : Path, loadprofiles_path : Path, consumption_data : Path, datasets: list[str]) -> None:
+def reset_database(data_path : Path, loadprofiles_path : Path, consumption_data : Path, datasets: list[str], db_url : str) -> None:
     """
     Reset the database specified in the .env file and populate it with data from the given paths
 
@@ -87,7 +87,7 @@ def reset_database(data_path : Path, loadprofiles_path : Path, consumption_data 
     loadprofiles = pd.read_pickle(loadprofiles_path)
     consumption = pd.read_pickle(consumption_data)
 
-    DATABASE_URL = environ['DATABASE_URL']
+    DATABASE_URL = db_url
     assert DATABASE_URL, 'DATABASE_URL is required.'
     engine = sa.create_engine(DATABASE_URL, echo=False, future=True)
 

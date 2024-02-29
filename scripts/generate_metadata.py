@@ -357,6 +357,7 @@ def HEART_metadata():
     heart.reset_index(drop=True, inplace=True)
     return heart
 
+
 def SUST1_metadata(DATA_PATH : Path):
     # drop unnecessary columns TODO UPDATE PATH
     df = pd.read_csv(DATA_PATH / "demographics_SUST1.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
@@ -461,6 +462,30 @@ def IDEAL_metadata(DATA_PATH : Path):
 
     return df
 
+def PRECON_metadata(DATA_PATH : Path):
+    metadata = pd.read_csv(DATA_PATH/"Metadata_PRECON.csv")
+
+    data = {}
+    for i in range(0,42):
+        data[f"PRECON_{i+1}"] = {
+            "name" : f"PRECON_{i+1}",
+            "first_reading" : date(2018, 6, 1),
+            "last_reading" : date(2019, 5, 31),
+            "house_type" : "house",   
+            "country" : "Pakistan",
+            "city" : "Lahore",
+            "lat" : 31.582045,
+            "lon" : 74.329376,
+            "occupancy" : metadata.loc[i, "Permanent_Residents"],
+            "construction_year" : metadata.loc[i, "Building_Year"], 
+            "house_size" : metadata.loc[i, "Property_Area_sqft"] / 10.764,
+            "AC" : 0 if metadata.loc[i, "No_of_ACs"] == 0 else 1,
+
+        }
+    df = pd.DataFrame(data).T
+    df.reset_index(inplace=True, drop=True)
+    return df
+
 def generate_metadata(data_path : Path, save_path : Path, datasets : list[str])-> pd.DataFrame:
     """
     Generate metadata for all datasets and save to parquet file
@@ -498,6 +523,7 @@ def generate_metadata(data_path : Path, save_path : Path, datasets : list[str])-
         "ENERTALK": ENERTALK_metadata(),
         "ECDUY": ECDUY_metadata(DATA_PATH),
         "IDEAL": IDEAL_metadata(DATA_PATH),
+        "PRECON": PRECON_metadata(DATA_PATH)
     }
     metadata_dfs = [metadata]
     for dataset in datasets:

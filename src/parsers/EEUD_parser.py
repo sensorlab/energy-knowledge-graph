@@ -15,6 +15,7 @@ def parse_EEUD(data_path : Path, save_path : Path):
     data = {}
     for file in tqdm(os.listdir(data_path)):
         name = "EEUD_"+file.split(".")[0][1:]
+        print(name)
         if file.endswith(".csv"):
             # special cases because files are not in a consistent format
             if name == "EEUD_20" or name == "EEUD_17" or name == "EEUD_19" or name =="EEUD_22" or name == "EEUD_23" or name == "EEUD_18" or name =="EEUD_16":
@@ -47,7 +48,7 @@ def parse_EEUD(data_path : Path, save_path : Path):
                 device_name = c.split("(")[0].strip().lower()
                 if device_name == "main":
                     device_name = "aggregate"
-                print(c, device_name, name)
+                print(c, device_name)
                 curr_data[device_name] = pd.DataFrame(df[c])
                 
 
@@ -79,12 +80,14 @@ def parse_EEUD(data_path : Path, save_path : Path):
                 dfs.append(curr_df)
             # concat the dataframes
             df = pd.concat(dfs, axis=0)
+            curr_data = {}
             for c in df.columns:
                 device_name = c.split("(")[0].strip().lower()
                 if device_name == "main":
                     device_name = "aggregate"
+                print(c, device_name)    
                 curr_data[device_name] = pd.DataFrame(df[c])
-            data[name] = df
+            data[name] = curr_data
     # save with pickle
     with open(save_path, 'wb') as f:
         pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)

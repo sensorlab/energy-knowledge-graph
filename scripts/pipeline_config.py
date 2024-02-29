@@ -76,7 +76,10 @@ DATASETS = [
     "ENERTALK",
     "DEDDIAG",
     "IDEAL",
-    "ECDUY"
+    "ECDUY",
+    "PRECON",
+    "EEUD"
+
 ]   
 
 # datasets used for training

@@ -19,6 +19,7 @@ from src.parsers.DEDDIAG_parser import parse_DEDDIAG
 
 # Mixed datasets
 from src.parsers.IDEAL_parser import parse_IDEAL
+from src.parsers.EEUD_parser import parse_EEUD
 
 # Unlabelled datasets
 from src.parsers.ECDUY_parser import parse_ECDUY
@@ -26,6 +27,7 @@ from src.parsers.HUE_parser import parse_HUE
 from src.parsers.LERTA_parser import parse_LERTA
 from src.parsers.UCIML_parser import parse_UCIML
 from src.parsers.SUST1_parser import parse_SUST1
+from src.parsers.PRECON_parser import parse_PRECON
 
 from pathlib import Path
 
@@ -64,6 +66,8 @@ def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -
         "DEDDIAG": parse_DEDDIAG,
         "IDEAL": parse_IDEAL,
         "ECDUY": parse_ECDUY,
+        "PRECON": parse_PRECON,
+        "EEUD": parse_EEUD
     }
     
 

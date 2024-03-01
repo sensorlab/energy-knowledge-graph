@@ -873,7 +873,9 @@ def generate_metadata(data_path : Path, save_path : Path, datasets : list[str])-
         axis=0
         )
     metadata.reset_index(inplace=True, drop=True)
-
+    # convert construction year and house size to string
+    metadata["construction_year"] = metadata["construction_year"].astype(str)
+    metadata["house_size"] = metadata["house_size"].astype(str)
     # convert first and last reading to datetime
     metadata["first_reading"] = pd.to_datetime(metadata["first_reading"])
     metadata["last_reading"] = pd.to_datetime(metadata["last_reading"])

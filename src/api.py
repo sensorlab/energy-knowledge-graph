@@ -111,7 +111,8 @@ CREATE TABLE "households" (
 	"facing" varchar,
 	"rental_units" int,
 	"evs" int,
-    "consumption" float,                                   
+    "consumption" float,
+    "labeled" boolean,                                   
 	CONSTRAINT "households_pk" PRIMARY KEY ("household_id")
 ) WITH (
   OIDS=FALSE
@@ -287,7 +288,7 @@ def query_osm_metadata(lat:float, lon:float) -> dict:
     return res.json()
 
 
-def get_or_create_household_id(conn: Connection, household: dict, consumption : float) -> int:
+def get_or_create_household_id(conn: Connection, household: dict, consumption : float, labeled : bool) -> int:
     """Currently there is no way to validate duplication of the entries."""
 
     query_household_sql = text('''
@@ -302,8 +303,8 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         return household_id
 
     insert_household_sql = text('''
-        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs, consumption)
-        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs, :consumption)
+        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs, consumption, labeled)
+        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs, :consumption, :labeled)
         RETURNING household_id;
     ''')
 
@@ -314,19 +315,19 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
     location_id = get_or_create_location_id(conn, household)
 
     # Convert occupancy to int if it is not NaN
-    if not isnan(household["occupancy"]):
+    if household["occupancy"] is not None and not isnan(household["occupancy"]):
         household["occupancy"] = int(household["occupancy"])
     else:
         household["occupancy"] = None
 
-    # Convert rental_units to int if it is not NaN
-    if not isnan(household["rental_units"]):
+    # Convert rental_units to int if it is not None and not NaN
+    if household["rental_units"] is not None and not isnan(household["rental_units"]):
         household["rental_units"] = int(household["rental_units"])
     else:
         household["rental_units"] = None
 
-    # Convert evs to int if it is not NaN
-    if not isnan(household["EVs"]):
+    # Convert evs to int if it is not None and not NaN
+    if household["EVs"] is not None and not isnan(household["EVs"]):
         household["EVs"] = int(household["EVs"])
     else:
         household["EVs"] = None
@@ -347,7 +348,8 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         facing=household["facing"],
         rental_units=household["rental_units"],
         evs=household["EVs"],
-        consumption=consumption
+        consumption=consumption,
+        labeled=labeled
         )).scalar_one()
     
     

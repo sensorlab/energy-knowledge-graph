@@ -6,14 +6,25 @@ import sys
 import concurrent.futures
 import multiprocessing
 from pathlib import Path
+import argparse
 
-# watts to kWh given data frequency as a fraction of an hour (e.g. 0.5 for half-hourly data)
-def watts2kwh(df, data_frequency):
+def watts2kwh(df : pd.DataFrame, data_frequency : float) -> pd.DataFrame:
+    """
+        Convert watts to kWh for given data frequency 
+        ### Parameters
+        `df`: should be in the form datetime index and columns should contain device consumption readings in watts
+        `data_frequency` : the frequency of the data as a fraction of an hour (e.g. 0.5 for half-hourly data)
+    """
     df = df/1000 * data_frequency
     return df
 
 
-def calculate_loadprofiles(df):
+def calculate_loadprofiles(df : pd.DataFrame) -> dict:
+    """
+        Calculate the daily, weekly and monthly load profiles of a given device or household
+        ### Parameters
+        `df` : should be of the form [datetime index, value in watts]
+    """
     # resample to daily and hourly
     hourly = df.resample('H').sum()
     daily = df.resample('D').sum()
@@ -37,7 +48,14 @@ def calculate_loadprofiles(df):
     }
     return loadprofiles
 
-def process_dataset(dataset):
+def process_dataset(dataset : str, data_path : Path) -> dict:
+    """
+    Process a dataset and return the load profiles as a dictionary
+    ### Parameters
+    `dataset` : the name of the dataset
+    `data_path` : Path to the folder containing parsed datasets
+
+    """
     data_dict = pd.read_pickle(os.path.join(data_path, dataset))
     loadprofiles = {}
     for house in data_dict:
@@ -54,42 +72,73 @@ def process_dataset(dataset):
                 house_lp[device] = calculate_loadprofiles(watts2kwh(data_dict[house][device], sampling_rate))
             
         loadprofiles[house] = house_lp
+    # # save datset loadprofiles
+    # with open(os.path.join(save_path, dataset.split(".")[0] + "_loadprofiles.pkl"), 'wb') as f:
+    #     pickle.dump(loadprofiles, f, pickle.HIGHEST_PROTOCOL)
 
-    with open(os.path.join(save_folder, dataset.split(".")[0] + "_loadprofiles.pkl"), 'wb') as f:
-        pickle.dump(loadprofiles, f, pickle.HIGHEST_PROTOCOL)
+    return loadprofiles
 
-    return dataset.split(".")[0], loadprofiles
+def generate_loadprofiles(data_path : Path, save_path : Path, datasets : list[str]) -> None:
+    """
+    Generate load profiles for a list of datasets and save to a pickle file
+    ### Parameters
+    `data_path` : Path to the folder containing parsed datasets
+    `save_path` : Path to the folder to save the load profiles
+    `datasets` : List of datasets to process as a list of strings containing the dataset names
+    """
 
-if __name__ == "__main__":
+    dataset_paths = [dataset for dataset in os.listdir(data_path) if dataset.endswith('.pkl') and (dataset.split(".")[0] in datasets)]
 
-    if len(sys.argv) < 3:
-        print("Usage: python loadprofiles.py <path to data> <path to save folder>")
-        sys.exit(1)
-    elif len(sys.argv) == 3:
-        print("Processing data from " + sys.argv[1] + " and saving to " + sys.argv[2])
-        data_path = Path(sys.argv[1]).resolve()
-        save_folder = Path(sys.argv[2]).resolve()
+    cpu_count = int(os.cpu_count()//4)
 
-    dataset_paths = [dataset for dataset in os.listdir(data_path) if dataset.endswith('.pkl')]
-    queue = multiprocessing.Manager().Queue()
-
-
-
-    cpu_count = int(os.cpu_count()/2)
+    cpu_count = len(datasets) if cpu_count > len(datasets) else cpu_count
     data_dict = {}
     with tqdm(total=len(dataset_paths), desc="Processing datasets", unit="dataset") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
-            futures = [executor.submit(process_dataset, dataset) for dataset in dataset_paths]
+            futures = [executor.submit(process_dataset, dataset, data_path) for dataset in dataset_paths]
 
             for future in concurrent.futures.as_completed(futures):
-                dataset_name, dataset_loadprofile = future.result()
+                dataset_loadprofile = future.result()
                 data_dict.update(dataset_loadprofile)
 
                 progress_bar.update(1)  # update progress bar
 
-
-    with open(save_folder / "merged_loadprofiles.pkl", 'wb') as f:
+    # combined file containing all loadprofiles
+    with open(save_path / "merged_loadprofiles.pkl", 'wb') as f:
         pickle.dump(data_dict, f, pickle.HIGHEST_PROTOCOL)
-        
+            
 
 
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description='Process data and save load profiles.')
+    parser.add_argument('data_path', type=str, help='Path to the data folder containing parsed datasets.')
+    parser.add_argument('save_folder', type=str, help='Path to the folder where we want to save the loadprofiles')
+    args = parser.parse_args()
+
+    data_path = Path(args.data_path).resolve()
+    save_folder = Path(args.save_folder).resolve()
+    # datsets we want to generate loadprofiles for
+    datasets = [
+        "REFIT",
+        "ECO",
+        "HES",
+        "UK-DALE",
+        "HUE",
+        "LERTA",
+        "UCIML",
+        "DRED",
+        "REDD",
+        "IAWE",
+        "DEKN",
+        "SUST1",
+        "SUST2",
+        "HEART",
+        "ENERTALK",
+        "DEDDIAG",
+        "IDEAL",
+        "ECDUY"
+    ]
+
+    generate_loadprofiles(data_path, save_folder ,datasets)
+    

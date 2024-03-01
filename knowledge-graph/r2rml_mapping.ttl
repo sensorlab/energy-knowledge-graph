@@ -1,0 +1,1017 @@
+@prefix brick:    <https://brickschema.org/schema/Brick#> .
+@prefix csvw:     <http://www.w3.org/ns/csvw#> .
+@prefix data:     <http://mydata.example.org/> .
+@prefix dc:       <http://purl.org/dc/elements/1.1/> .
+@prefix dcam:     <http://purl.org/dc/dcam/> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dcmitype: <http://purl.org/dc/dcmitype/> .
+@prefix dcterms:  <http://purl.org/dc/terms/> .
+@prefix doap:     <http://usefulinc.com/ns/doap#> .
+@prefix foaf:     <http://xmlns.com/foaf/0.1/> .
+@prefix geo:      <http://www.opengis.net/ont/geosparql#> .
+@prefix odrl:     <http://www.w3.org/ns/odrl/2/> .
+@prefix org:      <http://www.w3.org/ns/org#> .
+@prefix owl:      <http://www.w3.org/2002/07/owl#> .
+@prefix prof:     <http://www.w3.org/ns/dx/prof/> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+@prefix qb:       <http://purl.org/linked-data/cube#> .
+@prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix saref:    <https://saref.etsi.org/core/> .
+@prefix schema:   <https://schema.org/> .
+@prefix sh:       <http://www.w3.org/ns/shacl#> .
+@prefix skos:     <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa:     <http://www.w3.org/ns/sosa/> .
+@prefix ssn:      <http://www.w3.org/ns/ssn/> .
+@prefix time:     <http://www.w3.org/2006/time#> .
+@prefix vann:     <http://purl.org/vocab/vann/> .
+@prefix voc:      <http://vocabulary.example.org/> .
+@prefix void:     <http://rdfs.org/ns/void#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"continent\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:name ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-continent/{\"continent\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#class>
+                    schema:Place ;
+            <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"wages\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:averageWage ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#class>
+                    schema:Continent ;
+            <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-continent/{\"continent\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/public-locations-continent/{\"continent\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:containedInPlace ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hconsumption\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:dailyHouseholdEnergyConsumption ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#class>
+                    schema:City ;
+            <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-City/{\"city\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hrental_units\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:integer ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:numberOfRentalUnits ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"city\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:name ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-City/{\"city\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hfirst_reading\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:date ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:startDate ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"gdp\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:hasGDPOf ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/public-locations-country/{\"country\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:containedInPlace ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"daily_consumption\" AS \"daily_consumption\", v1.\"device_id\" AS \"device_id\", v1.\"event_consumption\" AS \"event_consumption\", v1.\"household_id\" AS \"household_id\", v1.\"loadprofile_daily\" AS \"loadprofile_daily\", v1.\"loadprofile_monthly\" AS \"loadprofile_monthly\", v1.\"loadprofile_weekly\" AS \"loadprofile_weekly\", v1.\"name\" AS \"name\"\nFROM \"devices\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"name\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:name ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-devices/{\"device_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"education_level_high\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:percentageOfHighEducation ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/education/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hevs\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:sizeOfEVBattery ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"daily_consumption\" AS \"daily_consumption\", v1.\"device_id\" AS \"device_id\", v1.\"event_consumption\" AS \"event_consumption\", v1.\"household_id\" AS \"household_id\", v1.\"loadprofile_daily\" AS \"loadprofile_daily\", v1.\"loadprofile_monthly\" AS \"loadprofile_monthly\", v1.\"loadprofile_weekly\" AS \"loadprofile_weekly\", v1.\"name\" AS \"name\"\nFROM \"devices\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"daily_consumption\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:dailyEnergyConsumption ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-devices/{\"device_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"longitude\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:longitude ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"gas_price\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:priceOfGas ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"latitude\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:latitude ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/public-locations/{\"hlocation_id\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:containedInPlace ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hname\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:name ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#class>
+                    voc:Education ;
+            <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/education/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"electricity_price\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:priceOfElectricity ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"daily_consumption\" AS \"daily_consumption\", v1.\"device_id\" AS \"device_id\", v1.\"event_consumption\" AS \"event_consumption\", v1.\"household_id\" AS \"household_id\", v1.\"loadprofile_daily\" AS \"loadprofile_daily\", v1.\"loadprofile_monthly\" AS \"loadprofile_monthly\", v1.\"loadprofile_weekly\" AS \"loadprofile_weekly\", v1.\"name\" AS \"name\"\nFROM \"devices\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"event_consumption\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:averageEventConsumption ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-devices/{\"device_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hlast_reading\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:date ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:endDate ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hhouse_type\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:accommodationCategory ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/public-locations-continent/{\"continent\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:containedInPlace ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-country/{\"country\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hfacing\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:isFacing ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"education_level_medium\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:percentageOfMediumEducation ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/education/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/public-devices/{\"ddevice_id\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:containsDevice ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#class>
+                    schema:House ;
+            <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/public-locations-City/{\"city\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:containedInPlace ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"population_density\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:populationDensity ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#class>
+                    schema:Country ;
+            <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-country/{\"country\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hoccupancy\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:integer ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:occupancy ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"country\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:name ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-country/{\"country\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/education/{\"location_id\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:hasEducationLevel ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"education_category\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:educationLevel ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/education/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"street\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:string ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:streetAddress ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"daily_consumption\" AS \"daily_consumption\", v1.\"device_id\" AS \"device_id\", v1.\"event_consumption\" AS \"event_consumption\", v1.\"household_id\" AS \"household_id\", v1.\"loadprofile_daily\" AS \"loadprofile_daily\", v1.\"loadprofile_monthly\" AS \"loadprofile_monthly\", v1.\"loadprofile_weekly\" AS \"loadprofile_weekly\", v1.\"name\" AS \"name\"\nFROM \"devices\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#class>
+                    saref:Device ;
+            <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-devices/{\"device_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#template>
+                              "http://mydata.example.org/public-locations-country/{\"country\"}" ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#IRI>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:containedInPlace ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations-City/{\"city\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"elevation\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              schema:elevation ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"education_level_low\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:percentageOfLowEducation ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/education/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v2.\"daily_consumption\" AS \"ddaily_consumption\", v2.\"device_id\" AS \"ddevice_id\", v2.\"event_consumption\" AS \"devent_consumption\", v1.\"consumption\" AS \"hconsumption\", v1.\"evs\" AS \"hevs\", v1.\"facing\" AS \"hfacing\", v1.\"first_reading\" AS \"hfirst_reading\", v1.\"house_type\" AS \"hhouse_type\", v1.\"household_id\" AS \"hhousehold_id\", v1.\"labeled\" AS \"hlabeled\", v1.\"last_reading\" AS \"hlast_reading\", v1.\"location_id\" AS \"hlocation_id\", v1.\"name\" AS \"hname\", v1.\"occupancy\" AS \"hoccupancy\", v1.\"rental_units\" AS \"hrental_units\"\nFROM \"households\" v1, \"devices\" v2\nWHERE v1.\"household_id\" = v2.\"household_id\"\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"hlabeled\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:boolean ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:isSubmetered ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-households/{\"hname\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .
+
+[ <http://www.w3.org/ns/r2rml#logicalTable>
+          [ <http://www.w3.org/ns/r2rml#sqlQuery>
+                    "SELECT v1.\"carbon_intesity\" AS \"carbon_intesity\", v1.\"cdd\" AS \"cdd\", v1.\"city\" AS \"city\", v1.\"continent\" AS \"continent\", v1.\"country\" AS \"country\", v1.\"country_code\" AS \"country_code\", v1.\"education_category\" AS \"education_category\", v1.\"education_level_high\" AS \"education_level_high\", v1.\"education_level_low\" AS \"education_level_low\", v1.\"education_level_medium\" AS \"education_level_medium\", v1.\"electricity_price\" AS \"electricity_price\", v1.\"elevation\" AS \"elevation\", v1.\"gas_price\" AS \"gas_price\", v1.\"gdp\" AS \"gdp\", v1.\"hdd\" AS \"hdd\", v1.\"holidays\" AS \"holidays\", v1.\"latitude\" AS \"latitude\", v1.\"location_id\" AS \"location_id\", v1.\"longitude\" AS \"longitude\", v1.\"population_density\" AS \"population_density\", v1.\"region\" AS \"region\", v1.\"street\" AS \"street\", v1.\"timezone\" AS \"timezone\", v1.\"wages\" AS \"wages\", v1.\"weather_id\" AS \"weather_id\"\nFROM \"locations\" v1\n" ] ;
+  <http://www.w3.org/ns/r2rml#predicateObjectMap>
+          [ <http://www.w3.org/ns/r2rml#objectMap>
+                    [ <http://www.w3.org/ns/r2rml#column>
+                              "\"carbon_intesity\"" ;
+                      <http://www.w3.org/ns/r2rml#datatype>
+                              xsd:float ;
+                      <http://www.w3.org/ns/r2rml#termType>
+                              <http://www.w3.org/ns/r2rml#Literal>
+                    ] ;
+            <http://www.w3.org/ns/r2rml#predicateMap>
+                    [ <http://www.w3.org/ns/r2rml#constant>
+                              voc:carbonIntensity ]
+          ] ;
+  <http://www.w3.org/ns/r2rml#subjectMap>
+          [ <http://www.w3.org/ns/r2rml#template>
+                    "http://mydata.example.org/public-locations/{\"location_id\"}" ;
+            <http://www.w3.org/ns/r2rml#termType>
+                    <http://www.w3.org/ns/r2rml#IRI>
+          ]
+] .

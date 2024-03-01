@@ -3,7 +3,7 @@ import pandas as pd
 from collections import defaultdict
 import concurrent.futures
 from tqdm import tqdm
-from helper_functions import save_to_pickle
+from src.helper import save_to_pickle
 import multiprocessing
 from pathlib import Path
 
@@ -80,8 +80,11 @@ def parse_ENERTALK(data_path: str, save_path: str) -> None:
     # data_path = "./Energy_graph/data/temp/ENERTALK/"
     house_paths = [os.path.join(data_path, house) for house in os.listdir(data_path)]
     queue = multiprocessing.Manager().Queue()
-    # use process pool to parallelize using half the available cores
-    cpu_count = int(os.cpu_count() // 2)
+    
+    # there is only 22 households no need to use more than 4 cores
+    cpu_count = 4
+    if os.cpu_count() < 4:
+        cpu_count = 1
     with tqdm(total=len(house_paths), desc="Processing houses", unit="house") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
             futures = [executor.submit(process_house, house_path, queue) for house_path in house_paths]

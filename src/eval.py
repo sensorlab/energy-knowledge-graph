@@ -6,7 +6,6 @@ import os
 import tensorflow as tf
 from sklearn import metrics
 
-from NUK import F1Score
 
 def eval():
 
@@ -25,7 +24,7 @@ def eval():
             continue
 
             
-        model = tf.keras.models.load_model(model_path / "model"/f, custom_objects={'F1Score': F1Score})
+        model = tf.keras.models.load_model(model_path / "model"/f)
 
         models.append(model)
 

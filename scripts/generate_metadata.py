@@ -3,15 +3,14 @@ import os
 import numpy as np
 from datetime import date
 import yaml
-import sys
 import argparse
 from io import StringIO
 from pathlib import Path
 
-DATA_PATH : Path = Path("./energy-knowledge-graph/data/metadata/datasets/").resolve()
-SAVE_PATH : Path = Path("./energy-knowledge-graph/data/metadata/").resolve()
+# DATA_PATH : Path = Path("./energy-knowledge-graph/data/metadata/datasets/").resolve()
+# SAVE_PATH : Path = Path("./energy-knowledge-graph/data/metadata/").resolve()
 
-def HUE_metadata():
+def HUE_metadata(DATA_PATH : Path):
     # read data
     HUE_metadata = pd.read_parquet(DATA_PATH / "HUE_metadata.parquet")
 
@@ -44,7 +43,7 @@ def HUE_metadata():
     
     return HUE_metadata
     
-def REFIT_metadata():
+def REFIT_metadata(DATA_PATH : Path):
     REFIT_metadata = pd.read_parquet(DATA_PATH / "refit_metadata.parquet")
 
     # drop unnecessary columns and add name column
@@ -88,7 +87,7 @@ def REFIT_metadata():
 
     return REFIT_metadata
 
-def UCIML_metadata():
+def UCIML_metadata(DATA_PATH : Path):
     data_uciml = pd.read_parquet(DATA_PATH / "uciml_household.parquet")
     # 2006-12-16
     # drop unnecessary columns
@@ -178,7 +177,7 @@ def ECO_metadata():
     return ECO_metadata
 
 
-def LERTA_metadata():
+def LERTA_metadata(DATA_PATH : Path):
    
 
     # read data
@@ -218,7 +217,7 @@ def LERTA_metadata():
 
     return LERTA_metadata
 
-def UKDALE_metadata():
+def UKDALE_metadata(DATA_PATH : Path):
    
     with open(DATA_PATH / "UKDALE/metadata/dataset.yaml", 'r') as file:
         data = yaml.safe_load(file)
@@ -284,7 +283,7 @@ def DRED_metadata():
     dred = pd.DataFrame(dred, index=[0])
     return dred
 
-def REDD_metadata():
+def REDD_metadata(DATA_PATH : Path):
     redd_data = pd.read_pickle(DATA_PATH / "REDD.pkl")
 
     redd = {}
@@ -317,7 +316,7 @@ def IAWE_metadata():
     df = pd.DataFrame(iawe, index=[0])
     return df
 
-def DEKN_metadata():
+def DEKN_metadata(DATA_PATH : Path):
     dekn = pd.read_pickle(DATA_PATH / "DEKN.pkl")
     data = {}
     for house in dekn:
@@ -334,7 +333,6 @@ def DEKN_metadata():
     return dekn
 
 def HEART_metadata():
-    data = {}
 
     data = {
         "HEART_7"  : {
@@ -359,7 +357,8 @@ def HEART_metadata():
     heart.reset_index(drop=True, inplace=True)
     return heart
 
-def SUST1_metadata():
+
+def SUST1_metadata(DATA_PATH : Path):
     # drop unnecessary columns TODO UPDATE PATH
     df = pd.read_csv(DATA_PATH / "demographics_SUST1.csv", delimiter=";").drop(columns=["Unnamed: 0", "# Adults", "# Children", "Rented?","Start Feedback", "End Feedback", "Contracted Power (kVA)"])
     # rename columns to match the other metadata
@@ -420,7 +419,7 @@ def ENERTALK_metadata():
     df["country"] = "South Korea"
     return df
 
-def ECDUY_metadata():
+def ECDUY_metadata(DATA_PATH : Path):
     data = pd.read_pickle(DATA_PATH / "ECDUY_metadata.pkl")
     df = pd.DataFrame(data).T.reset_index(drop=True)
 
@@ -432,7 +431,7 @@ def ECDUY_metadata():
 
 
 
-def IDEAL_metadata():
+def IDEAL_metadata(DATA_PATH : Path):
 
     df = pd.read_csv(DATA_PATH / "IDEAL_metadata.csv")
     df["name"] = "IDEAL_" + df["homeid"].astype(str)
@@ -463,76 +462,460 @@ def IDEAL_metadata():
 
     return df
 
-def generate_metadata(save=True):
-    """Generate metadata for all datasets and save to parquet file if save is True"""
-    # generate metadata for all datasets
-    HUE_meta = HUE_metadata()
-    REFIT_meta = REFIT_metadata()
-    UCIML_meta = UCIML_metadata()
-    HES_meta = HES_metadata()
-    ECO_meta = ECO_metadata()
-    LERTA_meta = LERTA_metadata()
-    UKDALE_meta = UKDALE_metadata()
-    DRED_meta = DRED_metadata()
-    REDD_meta = REDD_metadata()
-    IAWE_meta = IAWE_metadata()
-    DEKN_meta = DEKN_metadata()
-    HEART_meta = HEART_metadata()
-    SUST_meta = pd.concat([SUST1_metadata(), SUST2_metadata()], ignore_index=True, axis=0)
-    DEDDIAG_meta = DEDDIAG_metadata()
-    ENERTALK_meta = ENERTALK_metadata()
-    ECDUY_meta = ECDUY_metadata()
-    IDEAL_meta = IDEAL_metadata()
+def PRECON_metadata(DATA_PATH : Path):
+    metadata = pd.read_csv(DATA_PATH/"Metadata_PRECON.csv")
 
+    data = {}
+    for i in range(0,42):
+        data[f"PRECON_{i+1}"] = {
+            "name" : f"PRECON_{i+1}",
+            "first_reading" : date(2018, 6, 1),
+            "last_reading" : date(2019, 5, 31),
+            "house_type" : "house",   
+            "country" : "Pakistan",
+            "city" : "Lahore",
+            "lat" : 31.582045,
+            "lon" : 74.329376,
+            "occupancy" : metadata.loc[i, "Permanent_Residents"],
+            "construction_year" : metadata.loc[i, "Building_Year"], 
+            "house_size" : metadata.loc[i, "Property_Area_sqft"] / 10.764,
+            "AC" : 0 if metadata.loc[i, "No_of_ACs"] == 0 else 1,
+
+        }
+    df = pd.DataFrame(data).T
+    df.reset_index(inplace=True, drop=True)
+    return df
+def EEUD_metadata():
+    data = {
+        'EEUD_21': {
+            'name': 'EEUD_21',
+            'first_reading': date(2011, 7, 8),
+            'last_reading': date(2012, 7, 9),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 3,
+            "construction_year" : 1945,
+            "house_size" : 150,
+        },
+        'EEUD_14': {
+            'name': 'EEUD_14',
+            'first_reading': date(2011, 6, 23),
+            'last_reading': date(2012, 7, 9),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 2010,
+            "house_size" : 150,
+        },
+        'EEUD_13': {
+            'name': 'EEUD_13',
+            'first_reading': date(2011, 9, 9),
+            'last_reading': date(2012, 7, 17),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 2010,
+            "house_size" : 180,
+
+        },
+        'EEUD_9': {
+            'name': 'EEUD_9',
+            'first_reading': date(2009, 6, 26),
+            'last_reading': date(2010, 9, 21),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 1960,
+            "house_size" : 455,
+
+        },
+        'EEUD_7': {
+            'name': 'EEUD_7',
+            'first_reading': date(2009, 6, 29),
+            'last_reading': date(2010, 9, 27),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 1980,
+            "house_size" : 167,
+        },
+        'EEUD_15': {
+            'name': 'EEUD_15',
+            'first_reading': date(2011, 10, 15),
+            'last_reading': date(2012, 7, 9),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 1,
+            "construction_year" : 2000,
+            "house_size" : 185,
+        },
+        'EEUD_20': {
+            'name': 'EEUD_20',
+            'first_reading': date(2011, 7, 5),
+            'last_reading': date(2012, 6, 19),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 1970,
+            "house_size" : 125,
+        },
+        'EEUD_6': {
+            'name': 'EEUD_6',
+            'first_reading': date(2009, 6, 25),
+            'last_reading':
+              date(2010, 9, 20),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 3,
+            "construction_year" : 1980,
+            "house_size" : 130,
+
+        },
+        'EEUD_1': {
+            'name': 'EEUD_1',
+            'first_reading': date(2010, 3, 9),
+            'last_reading': date(2010, 9, 26),
+            "house_type" : "house",
+            "occupancy" : 3,
+            "construction_year" : 1980,
+            "house_size" : 204,
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+        
+        },
+        'EEUD_12': {
+            'name': 'EEUD_12',
+            'first_reading': date(2009, 6, 24),
+            'last_reading': date(2010, 9, 2),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 3,
+            "construction_year" : 1950,
+            "house_size" : 140,
+        },
+        'EEUD_8': {
+            'name': 'EEUD_8',
+            'first_reading': date(2009, 6, 25),
+            'last_reading': date(2010, 9, 21),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 3,
+            "construction_year" : 1930,
+            "house_size" : 111,
+        },
+        'EEUD_2': {
+            'name': 'EEUD_2',
+            'first_reading': date(2009, 6, 24),
+            'last_reading': date(2010, 7, 22),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 1,
+            "construction_year" : 1950,
+            "house_size" : 140,
+        },
+        'EEUD_5': {
+            'name': 'EEUD_5',
+            'first_reading': date(2009, 6, 24),
+            'last_reading': date(2010, 9, 21),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 1970,
+            "house_size" : 120,
+
+        },
+        'EEUD_11': {
+            'name': 'EEUD_11',
+            'first_reading': date(2009, 9, 2),
+            'last_reading': date(2010, 9, 15),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 3,
+            "construction_year" : 1960,
+            "house_size" : 102,
+        },
+        'EEUD_16': {
+            'name': 'EEUD_16',
+            'first_reading': date(2011, 6, 28),
+            'last_reading': date(2012, 7, 19),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 2000,
+            "house_size" : 155,
+        },
+        'EEUD_18': {
+            'name': 'EEUD_18',
+            'first_reading': date(2011, 6, 28),
+            'last_reading': date(2012, 7, 22),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 1990,
+            "house_size" : 130,
+
+        },
+        'EEUD_23': {
+            'name': 'EEUD_23',
+            'first_reading': date(2011, 7, 5),
+            'last_reading': date(2012, 7, 9),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 1990,
+            "house_size" : 180,
+        },
+        'EEUD_10': {
+            'name': 'EEUD_10',
+            'first_reading': date(2009, 7, 23),
+            'last_reading': date(2010, 9, 26),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 2000,
+            "house_size" : 195,
+        },
+        'EEUD_4': {
+            'name': 'EEUD_4',
+            'first_reading': date(2009, 4, 21),
+            'last_reading': date(2010, 9, 29),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 4,
+            "construction_year" : 1950,
+            "house_size" : 167,
+        },
+        'EEUD_3': {
+            'name': 'EEUD_3',
+            'first_reading': date(2009, 6, 26),
+            'last_reading': date(2010, 9, 20),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 1980,
+            "house_size" : 204,
+
+        },
+        'EEUD_22': {
+            'name': 'EEUD_22',
+            'first_reading': date(2011, 7, 25),
+            'last_reading': date(2012, 8, 2),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 2000,
+            "house_size" : 150,
+        },
+        'EEUD_19': {
+            'name': 'EEUD_19',
+            'first_reading': date(2011, 7, 5),
+            'last_reading': date(2012, 7, 23),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 1,
+            "construction_year" : 1970,
+            "house_size" : 125,
+
+        },
+        'EEUD_17': {
+            'name': 'EEUD_17',
+            'first_reading': date(2011, 6, 28),
+            'last_reading': date(2012, 7, 22),
+            "country" : "Canada",
+            "city" : "Ottawa",
+            "lat" : 45.424,
+            "lon" : -75.695,
+            "house_type" : "house",
+            "occupancy" : 2,
+            "construction_year" : 2010,
+            "house_size" : 180,
+
+        }
+    }
+    df = pd.DataFrame(data).T
+    df.reset_index(inplace=True, drop=True)
+    return df
+
+
+
+def generate_metadata(data_path : Path, save_path : Path, datasets : list[str])-> pd.DataFrame:
+    """
+    Generate metadata for all datasets and save to parquet file
+
+    ### Parameters
+    - `data_path` : path to the `metadata/datasets` folder
+    - `save_path` : path to the folder where the metadata parquet file will be stored
+    - `datasets` : List of datasets to process as a list of strings containing the dataset names
+    """
+    # all the metadata columns
+    columns = ['name', 'first_reading', 'last_reading', 'house_type', 'facing',
+       'rental_units', 'EVs', 'country', 'lat', 'lon', 'AC', 'heating',
+       'occupancy', 'construction_year', 'house_size', 'city']
+    metadata = pd.DataFrame(columns=columns)
+
+    DATA_PATH : Path = data_path.resolve()
+    SAVE_PATH : Path = save_path.resolve()
+    
+    metadata_functions = {
+        "HUE": HUE_metadata(DATA_PATH),
+        "REFIT": REFIT_metadata(DATA_PATH),
+        "UCIML": UCIML_metadata(DATA_PATH),
+        "HES": HES_metadata(),
+        "ECO": ECO_metadata(),
+        "LERTA": LERTA_metadata(DATA_PATH),
+        "UKDALE": UKDALE_metadata(DATA_PATH),
+        "DRED": DRED_metadata(),
+        "REDD": REDD_metadata(DATA_PATH),
+        "IAWE": IAWE_metadata(),
+        "DEKN": DEKN_metadata(DATA_PATH),
+        "HEART": HEART_metadata(),
+        "SUST1": SUST1_metadata(DATA_PATH),
+        "SUST2": SUST2_metadata(),
+        "DEDDIAG": DEDDIAG_metadata(),
+        "ENERTALK": ENERTALK_metadata(),
+        "ECDUY": ECDUY_metadata(DATA_PATH),
+        "IDEAL": IDEAL_metadata(DATA_PATH),
+        "PRECON": PRECON_metadata(DATA_PATH),
+        "EEUD": EEUD_metadata()
+    }
+    metadata_dfs = [metadata]
+    for dataset in datasets:
+        metadata_dfs.append(metadata_functions[dataset])
+
+    # # generate metadata for all datasets
+    # HUE_meta = HUE_metadata()
+    # REFIT_meta = REFIT_metadata()
+    # UCIML_meta = UCIML_metadata()
+    # HES_meta = HES_metadata()
+    # ECO_meta = ECO_metadata()
+    # LERTA_meta = LERTA_metadata()
+    # UKDALE_meta = UKDALE_metadata()
+    # DRED_meta = DRED_metadata()
+    # REDD_meta = REDD_metadata()
+    # IAWE_meta = IAWE_metadata()
+    # DEKN_meta = DEKN_metadata()
+    # HEART_meta = HEART_metadata()
+    # SUST_meta = pd.concat([SUST1_metadata(), SUST2_metadata()], ignore_index=True, axis=0)
+    # DEDDIAG_meta = DEDDIAG_metadata()
+    # ENERTALK_meta = ENERTALK_metadata()
+    # ECDUY_meta = ECDUY_metadata()
+    # IDEAL_meta = IDEAL_metadata()
+    
     # concat all metadata
     metadata = pd.concat(
-        [
-        HUE_meta,
-        REFIT_meta,
-        UCIML_meta,
-        HES_meta,
-        ECO_meta,
-        LERTA_meta,
-        UKDALE_meta,
-        DRED_meta,
-        REDD_meta,
-        IAWE_meta,
-        DEKN_meta,
-        HEART_meta,
-        SUST_meta,
-        DEDDIAG_meta,
-        ENERTALK_meta,
-        ECDUY_meta,
-        IDEAL_meta
-        ],
-         ignore_index=True, axis=0)
+        metadata_dfs,
+        ignore_index=True,
+        axis=0
+        )
     metadata.reset_index(inplace=True, drop=True)
 
     # convert first and last reading to datetime
     metadata["first_reading"] = pd.to_datetime(metadata["first_reading"])
     metadata["last_reading"] = pd.to_datetime(metadata["last_reading"])
   
-    # save to parquet
-    if save:
-        metadata.to_parquet(SAVE_PATH + "residential_metadata.parquet")
 
-    return metadata
+    metadata.to_parquet(SAVE_PATH / "residential_metadata.parquet")
+
+    
                 
 
 if __name__ == "__main__":
-    """Generate metadata for all datasets and save to parquet file if --save is passed as argument"""
+    """Generate metadata for all datasets and save to parquet file"""
     parser = argparse.ArgumentParser(description='Process data path and save path.')
-    parser.add_argument('datapath', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/datasets/',
+    parser.add_argument('data_path', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/datasets/',
                         help='Path to the data')
-    parser.add_argument('savepath', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/',
+    parser.add_argument('save_path', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/',
                         help='Path to save the results')
-    parser.add_argument('--save', action='store_true', 
-                        help='Save the result to parquet file if this argument is passed')
     args = parser.parse_args()
 
-    DATA_PATH : Path = Path(args.datapath).resolve()
-    SAVE_PATH : Path = Path(args.savepath).resolve()
-    generate_metadata(save=args.save)
+    datasets = [
+            "REFIT",
+            "ECO",
+            "HES",
+            "UK-DALE",
+            "HUE",
+            "LERTA",
+            "UCIML",
+            "DRED",
+            "REDD",
+            "IAWE",
+            "DEKN",
+            "SUST1",
+            "SUST2",
+            "HEART",
+            "ENERTALK",
+            "DEDDIAG",
+            "IDEAL",
+            "ECDUY"
+    ]
+    # DATA_PATH : Path = Path(args.datapath).resolve()
+    # SAVE_PATH : Path = Path(args.savepath).resolve()
+    generate_metadata(args.data_path, args.save_path, datasets)
 
     # python generate_metadata.py path/to/data path/to/save --save
 

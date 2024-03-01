@@ -4,7 +4,8 @@ import pandas as pd
 import os
 from tqdm import tqdm
 from collections import defaultdict
-from helper_functions import save_to_pickle
+import gc
+from src.helper import save_to_pickle
 ######################DATASET INFO#########################################
 # sampling rate: 15min
 # length: 1.8 years
@@ -39,8 +40,14 @@ def process_file(file_path: str) -> dict:
     return dict(temp_data)
 
 
-def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 11, n_jobs: int = 32) -> None:
-    
+def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 6, n_jobs: int = 32) -> None:
+    n_jobs = int(os.cpu_count() // 8)
+    if os.cpu_count() < 16:
+        n_jobs = os.cpu_count() // 2
+
+    # no need for more than 32 processes for this dataset
+    if n_jobs > 32:
+        n_jobs = 32
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
 
@@ -68,6 +75,7 @@ def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 11, n_jobs: in
         for result in results:
             for key, value in result.items():
                 data[key]["aggregate"].extend(value["aggregate"])
+        gc.collect()
 
     # Convert defaultdict back to a normal dictionary
     data = dict(data)

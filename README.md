@@ -48,7 +48,8 @@ In the [pipeline_config.py](./scripts/pipeline_config.py) file you can set the f
 - `DATASETS` - list of datasets to be preprocessed
 - `TRAINING_DATASETS` - list of datasets to be used to generate the training data
 - `PREDICT_DATASETS` - list of unlabelled datasets to run the pretrained model on
-- various paths for where to store the data and where to read the data from this is explained in    more detail in the [pipeline_config](./scripts/pipeline_config.py) file
+- `POSTGRES_URL` - the url for the postgres database to store the data
+- various paths for where to store the data and where to read the data from this is explained in more detail in the [pipeline_config](./scripts/pipeline_config.py) file
 
 
 The pipeline contains the following data processing steps:

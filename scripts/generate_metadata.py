@@ -53,7 +53,7 @@ def REFIT_metadata(DATA_PATH : Path):
 
     # reset index and drop unnecessary columns
     REFIT_metadata.reset_index(drop=True, inplace=True)
-    REFIT_metadata.drop(columns=["house","appliances"], inplace=True)
+    REFIT_metadata.drop(columns=["house","appliances", "house_size"], inplace=True)
 
     # move name to start of df
     col = REFIT_metadata.pop("name")

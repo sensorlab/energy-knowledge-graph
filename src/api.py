@@ -112,7 +112,8 @@ CREATE TABLE "households" (
 	"rental_units" int,
 	"evs" int,
     "consumption" float,
-    "labeled" boolean,                                   
+    "labeled" boolean,                        
+    "house_size" float,           
 	CONSTRAINT "households_pk" PRIMARY KEY ("household_id")
 ) WITH (
   OIDS=FALSE
@@ -303,8 +304,8 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         return household_id
 
     insert_household_sql = text('''
-        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs, consumption, labeled)
-        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs, :consumption, :labeled)
+        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs, consumption, house_size, labeled)
+        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs, :consumption, :house_size, :labeled)
         RETURNING household_id;
     ''')
 
@@ -313,6 +314,15 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
     
     # Obtain location ID
     location_id = get_or_create_location_id(conn, household)
+    try:
+        household["house_size"] = float(household["house_size"]) if household["house_size"] is not None else None
+    except ValueError:
+        household["house_size"] = None
+    if household["house_size"] is not None and not isnan(household["house_size"]):
+        household["house_size"] = float(household["house_size"])
+    else:
+        household["house_size"] = None
+
 
     # Convert occupancy to int if it is not NaN
     if household["occupancy"] is not None and not isnan(household["occupancy"]):
@@ -349,6 +359,7 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         rental_units=household["rental_units"],
         evs=household["EVs"],
         consumption=consumption,
+        house_size=household["house_size"],
         labeled=labeled
         )).scalar_one()
     

@@ -336,6 +336,18 @@ if __name__ == "__main__":
         s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
         print(s)
         triples.append(s)
+
+    # insert with sparql
+    sparql = SPARQLWrapper(args.energy_endpoint + "/statements")
+    sparql.method = "POST"
+    sparql.setQuery(f"""
+    INSERT DATA {{
+        {"".join(triples)}
+    }}
+    """)
+    sparql.query()
+
+
     # save the triples
     with open(args.path_to_save, "w") as f:
         f.writelines(triples)

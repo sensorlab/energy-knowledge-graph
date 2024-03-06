@@ -101,7 +101,6 @@ def reset_database(data_path : Path, loadprofiles_path : Path, consumption_data 
         conn.execute(text('DROP TABLE IF EXISTS devices CASCADE'))
         conn.execute(text('DROP TABLE IF EXISTS households CASCADE'))
         conn.execute(text('DROP TABLE IF EXISTS locations CASCADE'))
-        conn.execute(text('DROP TABLE IF EXISTS weather CASCADE'))
         # save changes
         conn.commit()
 

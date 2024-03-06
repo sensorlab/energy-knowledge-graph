@@ -220,7 +220,15 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
         RETURNING location_id;
     ''')
 
+<<<<<<< HEAD
 
+=======
+    # insert_weather_sql = text('''
+    #     INSERT INTO weather (yearly, hourly)
+    #     VALUES (:yearly, :hourly)
+    #     RETURNING weather_id;
+    # ''')
+>>>>>>> 589f4244e028e12b50e91c5279dd9152e6b98fa7
     # queary location data to check if location already exists in database
     locations = conn.execute(query_location_sql, dict(country=household["country"], latitude=household["lat"], longitude=household["lon"])).scalars().all()
 
@@ -247,6 +255,11 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     if location_data["wages"] is not None:
         location_data["wages"] = int(location_data["wages"])
 
+<<<<<<< HEAD
+=======
+    # get weather data TODO for now just fill with null
+    # weather_id = conn.execute(insert_weather_sql, dict(yearly=None, hourly=None)).scalar_one()
+>>>>>>> 589f4244e028e12b50e91c5279dd9152e6b98fa7
     # Create entry in DB
     location_id = conn.execute(insert_location_sql,
                                 dict(

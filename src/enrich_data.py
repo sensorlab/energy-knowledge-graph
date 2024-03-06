@@ -26,31 +26,6 @@ tf = TimezoneFinder()
 # local path
 DATA_PATH : Path = Path("./data/metadata/").resolve()
 
-# get temperature, relative humidity, precipitation, cloudcover(%) from openmeteo api for given lat, lon and optional start and end date and return yearly and average day in a month data
-def get_weather_data(lat, lon, start_date="2010-01-01", end_date="2023-01-01"):
-    url = f"https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={start_date}&end_date={end_date}&hourly=temperature_2m,relativehumidity_2m,precipitation,cloudcover&timezone=auto"
-    try:
-        response = requests.get(url)
-        # Raise an exception if the response status is not 200 (HTTP_OK)
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as http_err:
-        print(f'HTTP error occurred: {http_err}')
-        return None
-    except requests.exceptions.RequestException as err:
-        print(f'Error occurred: {err}')
-        return None
-
-    # No error was raised, so we can return the JSON data
-    data = response.json()
-
-    df_hourly, df_daily = parse_weather_data(data)
-
-    yearly = average_day_of_the_year(df_daily)
-
-    df_avg_day_hourly = average_day_of_the_month(df_hourly)
-
-    return yearly, df_avg_day_hourly
-
 
 # get location data from openstreetmaps api for given lat, lon
 def get_location_data(lat, lon):
@@ -84,27 +59,6 @@ def get_location_data(lat, lon):
     # No error was raised, so we can return the JSON data
     return data
 
-
-# parse weather data into hourly and daily dataframes
-def parse_weather_data(weather_data):
-    df_hourly = pd.DataFrame(weather_data["hourly"])
-    df_hourly["time"] = pd.to_datetime(df_hourly["time"])
-    df_hourly.set_index("time", inplace=True)
-
-    # resample to daily
-    df_daily = df_hourly.resample('D').agg({'temperature_2m': np.mean, 'relativehumidity_2m': np.mean, 'precipitation': np.sum, 'cloudcover': np.mean})
-
-    return df_hourly, df_daily
-# calculate average weather values for each day of the year for the past 13 years
-def average_day_of_the_year(df_daily):
-    yearly = df_daily.groupby(df_daily.index.dayofyear).mean()
-    return yearly
-# calculate average weather values for each day(hourly) of the month for all months
-def average_day_of_the_month(df_hourly):
-    df_avg_day_hourly = df_hourly.groupby([df_hourly.index.month, df_hourly.index.hour]).mean()
-    df_avg_day_hourly.index.names = ['month', 'hour']
-
-    return df_avg_day_hourly
 
 
 
@@ -399,16 +353,6 @@ def create_location_dict(country: str, date, accuracy=1, lat=None, lon=None) -> 
     }
 
     return data
-
-# create weather dict for given latitude and longitude
-def create_weather_dict(lat: float, lon: float) -> dict:
-    weather_data = get_weather_data(lat, lon)
-    # TODO think about how to add average day of the month data to Postgres
-    weather = {
-        "yearly" : weather_data[0],
-        "daily" : weather_data[1],
-    }
-    return weather
 
 
 if __name__ == "__main__":

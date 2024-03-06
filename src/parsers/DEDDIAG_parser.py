@@ -15,10 +15,23 @@ from src.helper import save_to_pickle
 
 
 def parse_id(file_name: str) -> int:
+    """
+    Parse the id from the file name
+    ## Parameters
+    file_name : The name of the file
+    ## Returns
+    int : The id
+    """
     return int(file_name.split("_")[1])
 
 
 def parse_DEDDIAG(data_path: str, save_path: str) -> None:
+    """
+    Parse the DEDDIAG dataset and save to a pickle file
+    ## Parameters
+    data_path : The path to the DEDDIAG dataset
+    save_path : The path to save the parsed data
+    """
     data = {}
 
     # extend data path

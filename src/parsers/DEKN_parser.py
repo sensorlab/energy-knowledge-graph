@@ -13,6 +13,13 @@ from src.helper import save_to_pickle
 
 # https://data.open-power-system-data.org/household_data/
 def parse_DEKN(data_path: str, save_path: str) -> None:
+    """
+    Parse the DEKN dataset and save to a pickle file
+    ## Parameters
+    data_path : The path to the DEKN dataset
+    save_path : The path to save the parsed data
+
+    """
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
     df = pd.read_csv(data_path / "household_data_1min_singleindex_filtered.csv")

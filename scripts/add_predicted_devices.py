@@ -3,6 +3,16 @@ import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
 def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph")-> int:
+    """
+    Get the highest device id in the graph to know where to start adding new devices
+    ## Parameters
+    endpoint : The endpoint of the graph database
+    ## Returns
+    int : The highest device id
+
+
+
+    """
     query_houses = """
     PREFIX voc: <http://vocabulary.example.org/>
     PREFIX saref: <https://saref.etsi.org/core/>
@@ -31,7 +41,15 @@ def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electr
         print("Error in the query")
         return False
 
-def get_household(household : str, endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph")-> dict:
+def get_household(household : str, endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph")-> str:
+    """
+    Get the household uri from the graph
+    ## Parameters
+    household : The name of the household
+    endpoint : The endpoint of the graph database
+    ## Returns
+    str : The uri of the household
+    """
 
     query_houses = f"""
     PREFIX voc: <http://vocabulary.example.org/>
@@ -61,6 +79,17 @@ def get_household(household : str, endpoint="http://193.2.205.14:7200/repositori
     
 
 def insert_device(device_id : int, device_name : str, household : str, endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph"):
+    """
+    Insert a device into the graph
+    ## Parameters
+    device_id : The id of the device
+    device_name : The name of the device
+    household : The uri of the household
+    endpoint : The endpoint of the graph database
+    ## Returns
+    bool : True if the device was inserted successfully, False otherwise
+    """
+
     sparql_insert_query = f"""
     PREFIX voc: <http://vocabulary.example.org/>
     PREFIX saref: <https://saref.etsi.org/core/>
@@ -83,7 +112,17 @@ def insert_device(device_id : int, device_name : str, household : str, endpoint=
         print("Error in the insert query")
         return False
 
-def add_predicted_devices(predicted_path : Path,  graph_endpoint : str, ):
+def add_predicted_devices(predicted_path : Path,  graph_endpoint : str):
+    """
+
+    Add the predicted devices to the graph
+    ## Parameters
+    predicted_path : The path to the predicted devices file
+    graph_endpoint : The endpoint of the graph database
+    ## Returns
+    None
+    """
+    
 
     data = pd.read_pickle(predicted_path / "predicted_devices.pkl")
 

@@ -1,3 +1,12 @@
+import os
+import sys
+
+# Add the project root directory to sys.path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    print(project_root)
+    sys.path.insert(0, project_root)
+    
 from run_parsers import parse_datasets
 from loadprofiles import generate_loadprofiles
 from generate_metadata import generate_metadata

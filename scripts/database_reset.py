@@ -6,7 +6,7 @@ from sqlalchemy import text ,inspect
 from sqlalchemy.engine import Connection
 from sqlalchemy_utils import database_exists, create_database
 import pandas as pd
-from src.enrich_data import create_location_dict, create_weather_dict
+from src.enrich_data import create_location_dict
 from src.api import get_or_create_location_id, get_or_create_device_id, get_or_create_household_id
 from tqdm import tqdm
 import argparse
@@ -101,7 +101,6 @@ def reset_database(data_path : Path, loadprofiles_path : Path, consumption_data 
         conn.execute(text('DROP TABLE IF EXISTS devices CASCADE'))
         conn.execute(text('DROP TABLE IF EXISTS households CASCADE'))
         conn.execute(text('DROP TABLE IF EXISTS locations CASCADE'))
-        conn.execute(text('DROP TABLE IF EXISTS weather CASCADE'))
         # save changes
         conn.commit()
 

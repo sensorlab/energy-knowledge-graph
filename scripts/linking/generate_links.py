@@ -7,7 +7,14 @@ import argparse
 
 
 def get_wikidata_results(latitude : float, longitude : float):
-
+    """
+    Query Wikidata for the cities in a 50km radius of the given coordinates
+    ## Parameters
+    latitude : Latitude of the coordinates
+    longitude : Longitude of the coordinates
+    ## Returns
+    results : JSON object with the results of the query
+    """
     # wiki data query to get the cities in a 50km radius of the given coordinates
     query_wikidata = f"""
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
@@ -45,6 +52,13 @@ def query_wikidata_coordinates(latitude : float, longitude : float, label : str,
     """
     Query Wikidata for the coordinates of a city given its label and coordinates, if the label is not found, return the closest city
     Can be used with the results of a previous query to avoid querying Wikidata again by passing the results as the data parameter
+    ## Parameters
+    latitude : Latitude of the coordinates
+    longitude : Longitude of the coordinates
+    label : Label of the city
+    data : Results of a previous query to avoid querying Wikidata again
+    ## Returns
+    city : URI of the city in Wikidata
     """
     if data is None:
         print("Querying Wikidata......")
@@ -78,7 +92,13 @@ def query_wikidata_coordinates(latitude : float, longitude : float, label : str,
 
 
 def query_graphDB_cities(endpoint : str):
-    """Query the energy knowledge graph for the cities and their coordinates"""
+    """
+    Query the energy knowledge graph for the cities and their coordinates
+    ## Parameters
+    endpoint : Sparql enpoint for the energy KG
+    ## Returns
+    results_Graphdb : JSON object with the results of the query
+    """
     query_my_data = """
     PREFIX schema: <https://schema.org/>
     PREFIX wdtn: <http://www.wikidata.org/prop/direct-normalized/>
@@ -113,6 +133,14 @@ def query_graphDB_cities(endpoint : str):
     return results_Graphdb 
 
 def query_graphdb_countries(endpoint):
+    """
+    Query the energy knowledge graph for the countries
+    ## Parameters
+    endpoint : Sparql enpoint for the energy KG
+    ## Returns
+    uris : Dictionary with the names of the countries as keys and their URIs as values
+    """
+
     query_countries = """
     PREFIX voc: <http://vocabulary.example.org/>
     PREFIX saref: <https://saref.etsi.org/core/>
@@ -139,6 +167,16 @@ def query_graphdb_countries(endpoint):
     return uris
 
 def get_dbpedia_results(latitude : float, longitude : float):
+    """
+    Query DBpedia for the cities in a 50km radius of the given coordinates
+    ## Parameters
+    latitude : Latitude of the coordinates
+    longitude : Longitude of the coordinates
+
+    ## Returns
+    results : JSON object with the results of the query
+    """
+
     # dbpedia query to get the cities in a 50km radius of the given coordinates
     query = f"""
     PREFIX dbo: <http://dbpedia.org/ontology/>
@@ -177,6 +215,18 @@ def get_dbpedia_results(latitude : float, longitude : float):
     return results
 
 def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, data=None):
+    """ 
+    Query DBpedia for the coordinates of a city given its label and coordinates, if the label is not found, return the closest city
+    Can be used with the results of a previous query to avoid querying DBpedia again by passing the results as the data parameter
+    ## Parameters
+    latitude : Latitude of the coordinates
+    longitude : Longitude of the coordinates
+    label : Label of the city
+    data : Results of a previous query to avoid querying DBpedia again
+    ## Returns
+    city : URI of the city in DBpedia
+
+    """
     if data is None:
         print("Querying DBpedia......")
         query = f"""
@@ -242,21 +292,13 @@ def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, 
 def query_wikidata_countries(country: str):
     """
     Query Wikidata for the country of a city given its city wikidata entity id
-    """   
-    # query_wikidata_countries =f"""PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-    # PREFIX wd: <http://www.wikidata.org/entity/>
-    # PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    # PREFIX bd: <http://www.bigdata.com/rdf#>
+    ## Parameters
+    country : Name of the country
+    ## Returns
+    country : URI of the country in Wikidata
 
-    # SELECT ?city ?cityLabel ?country ?countryLabel
-    # WHERE {{
-    # wd:{city} rdfs:label ?cityLabel ;  # City (Montreal)
-    #         wdt:P17 ?country .         # Country of the city
-    # ?country rdfs:label ?countryLabel .
-    
-    # FILTER(LANG(?cityLabel) = "en" && LANG(?countryLabel) = "en").
-    # }}
-    # """
+    """   
+
     query_wikidata_countries = f"""
     SELECT ?country WHERE {{
     ?country wdt:P31 wd:Q6256; # instance of a country
@@ -277,6 +319,13 @@ def query_wikidata_countries(country: str):
 
 
 def query_dbpedia_countries(country : str):
+    """
+    Query DBpedia for the country of a city given its city name
+    ## Parameters
+    country : Name of the country
+    ## Returns
+    country : URI of the country in DBpedia
+    """
     query = f"""
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX dbo: <http://dbpedia.org/ontology/>
@@ -336,6 +385,18 @@ if __name__ == "__main__":
         s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
         print(s)
         triples.append(s)
+
+    # insert in energy KG with sparql
+    sparql = SPARQLWrapper(args.energy_endpoint + "/statements")
+    sparql.method = "POST"
+    sparql.setQuery(f"""
+    INSERT DATA {{
+        {"".join(triples)}
+    }}
+    """)
+    sparql.query()
+
+
     # save the triples
     with open(args.path_to_save, "w") as f:
         f.writelines(triples)

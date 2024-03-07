@@ -12,6 +12,12 @@ from pathlib import Path
 
 
 def parse_DRED(data_path: str, save_path: str) -> None:
+    """
+    Parse the DRED dataset and save to a pickle file
+    ## Parameters
+    data_path : The path to the DRED dataset
+    save_path : The path to save the parsed data
+    """
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
     df = pd.read_csv(data_path / "All_data.csv", skiprows=1).drop(columns=["unknown"])

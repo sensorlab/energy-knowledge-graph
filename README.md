@@ -15,26 +15,22 @@ The projects builds knowledge graph for energy consumption.[TODO expand add pipe
 
 ## Installation / Use
 
-If PostgresML is already deployed on remote machine, go to step 3. If database is already populated with the data, go to step 10.
-
 The scripts are described in more detail in the [scripts README](./scripts/README.md).
 
 
-1. Clone PostgresML [repository](https://github.com/postgresml/postgresml) `git clone https://github.com/postgresml/postgresml`
-2. Navigate to postgresml directory `cd ./postgresml` and run `docker-compose up --build`
-3. Start separate terminal and clone this [repository](https://github.com/sensorlab/energy-knowledge-graph) `git clone https://github.com/sensorlab/energy-knowledge-graph`
-4. Navigate into energy-knowledge-graph directory, enter conda or virtualenv, and install dependecies with `pip install -r requirements.txt` and `pip install -r requirements.tensorflow.txt` if you want to use InceptionTime
-5. Unzip the `data_dump_full.tar.gz` file in the data directory using `tar -xvf data_dump_full.tar.gz -C data`, optionally you can use only the data_sample.tar.gz file `tar -xvf data_sample.tar.gz -C data` instead 
-5. Make sure that `./data/`folder contains contains required datasets and metadata data folder should be of structure `./data/metadata/` containing metadata and `./data/raw/` containing raw datasets
-6. Create an .env file in the [scripts](./scripts/) directory with the following content:
+1. Start a terminal and clone this [repository](https://github.com/sensorlab/energy-knowledge-graph) `git clone https://github.com/sensorlab/energy-knowledge-graph`
+2. Navigate into energy-knowledge-graph directory, enter conda or virtualenv, and install dependecies with `pip install -r requirements.txt` for data preprocessing 
+and `pip install -r requirements.tensorflow.txt` if you want to use the machine learning part of the pipeline
+3. Unzip the `data_dump_full.tar.gz` file in the data directory using `tar -xvf data_dump_full.tar.gz -C data`, optionally you can use only the data_sample.tar.gz file `tar -xvf data_sample.tar.gz -C data` instead 
+4. Make sure that `./data/`folder contains contains required datasets and metadata data folder should be of structure `./data/metadata/` containing metadata and `./data/raw/` containing raw datasets
+5. Create an .env file in the [scripts](./scripts/) directory with the following content:
     ```bash
     DATABASE_USER=<username to access PostgreSQL database>
     DATABASE_PASSWORD=<password to access PostgreSQL database>
     ```
-7. Check [pipeline_config.py](./scripts/pipeline_config.py) for the configuration of the pipeline leave as is for default configuration
+6. Check [pipeline_config.py](./scripts/pipeline_config.py) for the configuration of the pipeline leave as is for default configuration
 7. Run `python scripts/process_data.py` by default this will preprocess the data and store it in the database, 
-8. Access PostgreSQL at port `:5433`, PostgresML dashboard at port `:8000`, and PostgresML documentation at port `:8001`
-
+8. Access PostgreSQL at port `:5433`
 
 
 
@@ -52,7 +48,8 @@ In the [pipeline_config.py](./scripts/pipeline_config.py) file you can set the f
 - `DATASETS` - list of datasets to be preprocessed
 - `TRAINING_DATASETS` - list of datasets to be used to generate the training data
 - `PREDICT_DATASETS` - list of unlabelled datasets to run the pretrained model on
-- various paths for where to store the data and where to read the data from this is explained in    more detail in the [pipeline_config](./scripts/pipeline_config.py) file
+- `POSTGRES_URL` - the url for the postgres database to store the data
+- various paths for where to store the data and where to read the data from this is explained in more detail in the [pipeline_config](./scripts/pipeline_config.py) file
 
 
 The pipeline contains the following data processing steps:

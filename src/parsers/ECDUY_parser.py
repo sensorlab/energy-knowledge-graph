@@ -19,6 +19,7 @@ from src.helper import save_to_pickle
 
 
 def process_file(file_path: str) -> dict:
+    
     # file_path = os.path.join(DATA_PATH, 'consumption_data', file)
 
     file_path: Path = Path(file_path).resolve()

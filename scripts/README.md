@@ -26,7 +26,7 @@ This will run all the parsers on the datasets found in `path/to/data/` directory
 
 ## Output
 
-The script runs the relevant parser for each dataset in the input directory. The parsed results are then saved in a pickle file in your specified save path. The data for each dataset is in the shape:
+The script runs the relevant parser for each dataset specified. The parsed results are then saved in a pickle file in your specified save path. The data for each dataset is in the shape:
 
 household : { appliance : {dataframe with timestamps and values in watts} }
 
@@ -52,7 +52,8 @@ Currently, the script supports the following datasets:
 * SustData
 * UCIML
 * UKDALE
-
+* PRECON
+* EEUD
 # Load Profile Script
 
 This script processes multiple datasets and calculates the daily, weekly, and monthly load profiles.

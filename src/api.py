@@ -2,10 +2,18 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 import json
 from math import isnan
-from .enrich_data import create_location_dict, create_weather_dict
+from .enrich_data import create_location_dict
 import re
-
+import requests
 def preprocess_string(string : str) -> str:
+    """
+    Preprocesses string to make it uniform
+    ## Parameters
+    `string` : The string to preprocess
+    ## Returns
+    `str` : The preprocessed string
+
+    """
     string = string.lower().strip()
     string = re.sub(' +', ' ', string)
     string = string.replace("_", " ")
@@ -98,7 +106,7 @@ def preprocess_string(string : str) -> str:
     string = re.sub(r'\d+', '', string)
     return string.strip()
 
-
+# SQL queries
 create_households_table_sql = text('''
 CREATE TABLE "households" (
 	"household_id" bigserial NOT NULL,
@@ -112,7 +120,8 @@ CREATE TABLE "households" (
 	"rental_units" int,
 	"evs" int,
     "consumption" float,
-    "labeled" boolean,                                   
+    "labeled" boolean,                        
+    "house_size" float,           
 	CONSTRAINT "households_pk" PRIMARY KEY ("household_id")
 ) WITH (
   OIDS=FALSE
@@ -167,39 +176,36 @@ CREATE TABLE "devices" (
   OIDS=FALSE
 );
 ''')
-create_weather_table_sql = text('''
-CREATE TABLE "weather" (
-	"weather_id" bigserial,
-	"yearly" float[],
-	"hourly" float[],
-	CONSTRAINT "weather_pk" PRIMARY KEY ("weather_id")
-) WITH (
-  OIDS=FALSE
-);
-''')
 
 alter_tables = text('''                 
 ALTER TABLE "households" ADD CONSTRAINT "households_fk0" FOREIGN KEY ("location_id") REFERENCES "locations"("location_id");
 
 ALTER TABLE "devices" ADD CONSTRAINT "device_fk0" FOREIGN KEY ("household_id") REFERENCES "households"("household_id");
 
-ALTER TABLE "locations" ADD CONSTRAINT "locations_fk0" FOREIGN KEY ("weather_id") REFERENCES "weather"("weather_id");
   ''')
 
 
 
 def ensure_tables(conn: Connection) -> None:
+    """Ensure that the tables are created in the database"""
     conn.execute(create_locations_table_sql)
     conn.execute(create_households_table_sql)
     conn.execute(create_devices_table_sql)
-    conn.execute(create_weather_table_sql)
     conn.execute(alter_tables)
 
 
 #significant_fields = ('country', 'state', 'municipality', 'city', 'town', 'village', 'suburb', 'neighbourhood')
 
 def get_or_create_location_id(conn: Connection, household:dict) -> int:
-    """We will try to find area that exactly matches"""
+    """
+    Get or create location ID if it doesnt exist yet
+    ## Parameters
+    `conn` : The connection to the database
+    `household` : The household dictionary
+    ## Returns
+    `int` : The location ID
+
+    """
 
     assert household.get('country', None), 'Country is mandatory'
 
@@ -209,16 +215,11 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     ''')
 
     insert_location_sql = text('''
-        INSERT INTO locations (weather_id, continent, country, country_code, region, city, street, timezone, latitude, longitude, gdp, wages, population_density, elevation, education_level_low, education_level_medium, education_level_high, education_category, electricity_price, gas_price, cdd, hdd, holidays, carbon_intesity)
-        VALUES (:weather_id, :continent, :country, :country_code, :region, :city, :street, :timezone, :latitude, :longitude, :gdp, :wages, :population_density, :elevation, :education_level_low, :education_level_medium, :education_level_high, :education_category, :electricity_price, :gas_price, :cdd, :hdd, :holidays, :carbon_intesity)
+        INSERT INTO locations (continent, country, country_code, region, city, street, timezone, latitude, longitude, gdp, wages, population_density, elevation, education_level_low, education_level_medium, education_level_high, education_category, electricity_price, gas_price, cdd, hdd, holidays, carbon_intesity)
+        VALUES (:continent, :country, :country_code, :region, :city, :street, :timezone, :latitude, :longitude, :gdp, :wages, :population_density, :elevation, :education_level_low, :education_level_medium, :education_level_high, :education_category, :electricity_price, :gas_price, :cdd, :hdd, :holidays, :carbon_intesity)
         RETURNING location_id;
     ''')
 
-    insert_weather_sql = text('''
-        INSERT INTO weather (yearly, hourly)
-        VALUES (:yearly, :hourly)
-        RETURNING weather_id;
-    ''')
     # queary location data to check if location already exists in database
     locations = conn.execute(query_location_sql, dict(country=household["country"], latitude=household["lat"], longitude=household["lon"])).scalars().all()
 
@@ -245,12 +246,9 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     if location_data["wages"] is not None:
         location_data["wages"] = int(location_data["wages"])
 
-    # get weather data TODO for now just fill with null
-    weather_id = conn.execute(insert_weather_sql, dict(yearly=None, hourly=None)).scalar_one()
     # Create entry in DB
     location_id = conn.execute(insert_location_sql,
                                 dict(
-        weather_id=weather_id,
         continent=location_data["continent"],
         country=location_data["country"], 
         country_code=location_data["country_code"], 
@@ -281,15 +279,33 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
 
 
 def query_osm_metadata(lat:float, lon:float) -> dict:
-    """OSM - OpenStreetMap"""
-    import requests
+    """
+    OSM - OpenStreetMap
+    Query OSM for metadata
+    ## Parameters
+    `lat` : Latitude
+    `lon` : Longitude
+    ## Returns
+    `dict` : The metadata in JSON format as a dictionary
+    """
+
     url = f'https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&accept-language=en'
     res = requests.get(url)
     return res.json()
 
 
 def get_or_create_household_id(conn: Connection, household: dict, consumption : float, labeled : bool) -> int:
-    """Currently there is no way to validate duplication of the entries."""
+    """
+    Get or create household ID if it doesnt exist yet
+    ## Parameters
+    `conn` : The connection to the database
+    `household` : The household dictionary
+    `consumption` : The consumption of the household
+    `labeled` : Whether the data is labeled
+    ## Returns
+    `int` : The household ID
+
+    """
 
     query_household_sql = text('''
         SELECT household_id FROM households WHERE name = :name
@@ -303,8 +319,8 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         return household_id
 
     insert_household_sql = text('''
-        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs, consumption, labeled)
-        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs, :consumption, :labeled)
+        INSERT INTO households (location_id, name, house_type, first_reading, last_reading, occupancy, facing, rental_units, evs, consumption, house_size, labeled)
+        VALUES (:location_id, :name, :house_type, :first_reading, :last_reading, :occupancy, :facing, :rental_units, :evs, :consumption, :house_size, :labeled)
         RETURNING household_id;
     ''')
 
@@ -313,6 +329,15 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
     
     # Obtain location ID
     location_id = get_or_create_location_id(conn, household)
+    try:
+        household["house_size"] = float(household["house_size"]) if household["house_size"] is not None else None
+    except ValueError:
+        household["house_size"] = None
+    if household["house_size"] is not None and not isnan(household["house_size"]):
+        household["house_size"] = float(household["house_size"])
+    else:
+        household["house_size"] = None
+
 
     # Convert occupancy to int if it is not NaN
     if household["occupancy"] is not None and not isnan(household["occupancy"]):
@@ -349,6 +374,7 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         rental_units=household["rental_units"],
         evs=household["EVs"],
         consumption=consumption,
+        house_size=household["house_size"],
         labeled=labeled
         )).scalar_one()
     
@@ -358,6 +384,18 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
 
 
 def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:dict, daily_consumption:float, event_consumption:float) -> int:
+    """
+    Get or create device ID if it doesnt exist yet
+    ## Parameters
+    `conn` : The connection to the database
+    `device` : The device name
+    `household_id` : The household ID
+    `data` : The consumption data
+    `daily_consumption` : The daily consumption
+    `event_consumption` : The event consumption
+    ## Returns
+    `int` : The device ID
+    """
     insert_device_sql = text('''
         INSERT INTO devices (household_id, name, loadprofile_daily, loadprofile_weekly, loadprofile_monthly, daily_consumption, event_consumption)
         VALUES (:household_id, :name, :loadprofile_daily, :loadprofile_weekly, :loadprofile_monthly, :daily_consumption, :event_consumption)
@@ -382,9 +420,6 @@ def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:
     device_id = conn.execute(insert_device_sql, dict(
         household_id=household_id, 
         name = preprocess_string(device),
-        # loadprofile_daily = list(data[device]["daily"].flatten()),
-        # loadprofile_weekly = list(data[device]["weekly"].flatten()),
-        # loadprofile_monthly = list(data[device]["monthly"].flatten()),
         loadprofile_daily = data[device]["daily"].flatten().astype(float).tolist(),
         loadprofile_weekly = data[device]["weekly"].flatten().astype(float).tolist(),
         loadprofile_monthly = data[device]["monthly"].flatten().astype(float).tolist(),
@@ -394,17 +429,3 @@ def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:
         
         )).scalar_one()
     return device_id
-
-def get_or_create_weather_id(conn:Connection, weather:dict) -> int:
-    # TODO: finish this
-
-
-    insert_weather_sql = text('''
-        INSERT INTO weather (meta)
-        VALUES (:meta)
-        RETURNING id;
-    ''')
-
-    # Create entry in DB
-    weather_id = conn.execute(insert_weather_sql, dict(meta=weather)).scalar_one()
-    return weather_id

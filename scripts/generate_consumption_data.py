@@ -132,6 +132,14 @@ def average_on_off_event(df: pd.DataFrame) -> float:
     
 # Function to process each dataset
 def process_dataset(dataset_path):
+    """
+    Process a dataset and return the consumption data
+    ### Parameters
+    `dataset_path` : Path to the dataset
+    ### Returns
+    `dict` : A dictionary containing the consumption data for each house in the dataset
+    """
+
     house_data_dict = {}
     data = pd.read_pickle(dataset_path)
     for h in data.keys():

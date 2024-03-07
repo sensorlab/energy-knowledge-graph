@@ -2,7 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection
 import json
 from math import isnan
-from .enrich_data import create_location_dict, create_weather_dict
+from .enrich_data import create_location_dict
 import re
 import requests
 def preprocess_string(string : str) -> str:

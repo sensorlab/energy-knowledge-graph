@@ -131,7 +131,6 @@ CREATE TABLE "households" (
 create_locations_table_sql = text('''
 CREATE TABLE "locations" (
 	"location_id" bigserial NOT NULL,
-	"weather_id" bigserial NOT NULL,
 	"continent" varchar,
 	"country" varchar,
 	"country_code" varchar,

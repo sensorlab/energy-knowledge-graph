@@ -15,7 +15,7 @@ The projects builds knowledge graph for energy consumption.[TODO expand add pipe
 
 ## Installation / Use
 
-The scripts are described in more detail in the [scripts README](./scripts/README.md).
+The scripts are described in more detail in the [scripts README](src/README.md).
 
 
 1. Start a terminal and clone this [repository](https://github.com/sensorlab/energy-knowledge-graph) `git clone https://github.com/sensorlab/energy-knowledge-graph`

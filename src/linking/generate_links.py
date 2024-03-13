@@ -343,6 +343,62 @@ def query_dbpedia_countries(country : str):
     results = sparql_dbpedia.query().convert()
     return results["results"]["bindings"][0]["country"]["value"]
 
+
+def generate_links(energy_endpoint):
+    """
+    Generate links between the energy knowledge graph and DBpedia and Wikidata
+    ## Parameters
+    energy_endpoint : Sparql enpoint for the energy KG
+
+    """
+    # query the energy knowledge graph for the cities and their coordinates
+    results_Graphdb_cities = query_graphDB_cities(energy_endpoint)
+    result_Graphdb_countries = query_graphdb_countries(energy_endpoint)
+
+
+    matches= []
+    # iterate over the results and query Wikidata and DBpedia for each city
+    for c in results_Graphdb_cities["results"]["bindings"]:
+        label = c["cityName"]["value"]
+        # if label != "Montreal":
+        #     continue
+        longitude = float(c["longitude"]["value"])
+        latitude = float(c["latitude"]["value"])
+        print(label, longitude, latitude)
+        result_dbpedia = (c["City"]["value"], query_dbpedia_coordinates(latitude, longitude, label))
+        result_wikidata = (c["City"]["value"], query_wikidata_coordinates(latitude, longitude, label))
+        matches.append(result_dbpedia)
+        matches.append(result_wikidata)
+    # from time import sleep
+    # sleep(5)
+    # iterate over the results and query Wikidata for each country
+    for c in result_Graphdb_countries:
+        print(c)
+        result_wikidata_countries = (result_Graphdb_countries[c], query_wikidata_countries(c))
+        result_dbpedia_countries = (result_Graphdb_countries[c], query_dbpedia_countries(c))
+        matches.append(result_wikidata_countries)
+        matches.append(result_dbpedia_countries)
+
+    triples = []
+    # generate the triples for the matches
+    for m in matches:
+        s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
+        print(s)
+        triples.append(s)
+    print("Inserting triples....")
+    # insert in energy KG with sparql
+    sparql = SPARQLWrapper(energy_endpoint + "/statements")
+    sparql.method = "POST"
+    sparql.setQuery(f"""
+    INSERT DATA {{
+        {"".join(triples)}
+    }}
+    """)
+    sparql.query()
+
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process energy graph data.")
 

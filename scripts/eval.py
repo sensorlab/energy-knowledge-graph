@@ -1,5 +1,5 @@
 import pandas as pd
-import config
+import model_config
 import numpy as np
 from pathlib import Path
 import os

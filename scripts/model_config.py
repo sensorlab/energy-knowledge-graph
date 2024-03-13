@@ -13,7 +13,7 @@ WINDOW_SIZE=2688
 
 # paths
 DATA_PATH="../../shared/Energy_graph_data/X_Y_wsize2688_numW_100000_upper32_gap3600_numD64_ideal.pkl"
-SAVE_PATH="../data/"
+SAVE_PATH= "../data/"
 LABELS_PATH="../../shared/Energy_graph_data/labels_new.pkl"
 MODEL_PATH="./experiments/"
 

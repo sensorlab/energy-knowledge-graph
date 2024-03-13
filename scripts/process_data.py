@@ -6,17 +6,15 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     print(project_root)
     sys.path.insert(0, project_root)
-    
-from run_parsers import parse_datasets
-from loadprofiles import generate_loadprofiles
-from generate_metadata import generate_metadata
-from generate_consumption_data import generate_consumption_data
-from database_reset import reset_database
-from generate_training_data import generate_training_data
+from src.linking.generate_links import generate_links
+from src.run_parsers import parse_datasets
+from src.loadprofiles import generate_loadprofiles
+from src.generate_metadata import generate_metadata
+from src.generate_consumption_data import generate_consumption_data
+from src.database_reset import reset_database
+from src.generate_training_data import generate_training_data
 from src.remove_devices import remove_devices
 
-
-import argparse
 from pathlib import Path
 import gc
 
@@ -87,10 +85,10 @@ if __name__ == "__main__":
 
     # to avoid needing tensorflow to be installed when not using the "predict-devices" step
     if "predict-devices" in steps:
-        from label_datasets import get_predicted_appliances
+        from src.label_datasets import get_predicted_appliances
     
     if "add-predicted-devices" in steps:
-        from add_predicted_devices import add_predicted_devices
+        from src.add_predicted_devices import add_predicted_devices
         
     datasets = config.DATASETS
     # datasets used for training
@@ -105,6 +103,7 @@ if __name__ == "__main__":
     "consumption-data" : lambda: generate_consumption_data(parsed_data_path, consumption_data_path, datasets),      
     "db-reset" : lambda : reset_database(generated_metadata_path/"residential_metadata.parquet", loadprofiles_path/"merged_loadprofiles.pkl", consumption_data_path/"consumption_data.pkl", datasets, config.POSTGRES_URL),
     "training-data" : lambda : (remove_devices(parsed_data_path, training_data_cleaned_folder, training_datsets), generate_training_data(training_data_cleaned_folder, training_data_folder, training_datsets)),
+    "generate-links" : lambda : generate_links(knowledge_graph_endpoint),
     "predict-devices" : lambda : (get_predicted_appliances(parsed_data_path, model_path, labels_path, predicted_appliances_path, predict_datasets)),
     "add-predicted-devices" : lambda : add_predicted_devices(predicted_appliances_path, graph_endpoint=knowledge_graph_endpoint)
 

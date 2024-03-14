@@ -72,7 +72,6 @@ def REFIT_metadata(DATA_PATH : Path):
     # get first and last reading for each house
     start_end = {}
     for house in data.keys():
-        # print(house)
         start_end[house] = {}
         start_end[house]['first_reading'] = data[house]["aggregate"].index.min().date()
         start_end[house]['last_reading'] = data[house]["aggregate"].index.max().date()
@@ -232,7 +231,6 @@ def UKDALE_metadata(DATA_PATH : Path):
     # go over all houses and get metadata
     for file in os.listdir(DATA_PATH / "UKDALE/metadata/"):
         if file.endswith(".yaml") and "building" in file:
-            # print(file)
             with open(DATA_PATH / "UKDALE/metadata" / file, 'r') as stream:
                 try:
                     data = yaml.safe_load(stream)

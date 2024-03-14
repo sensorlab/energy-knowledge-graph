@@ -1,7 +1,7 @@
 import numpy as np
 from pathlib import Path
 import pandas as pd
-import model_config
+import model_config as config
 from sklearn.model_selection import train_test_split
 from helper import normalize
 from models.InceptionTime import Classifier_INCEPTION

@@ -52,7 +52,6 @@ def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta
     windows = []
     for i in range(0, len(df) - time_window, time_window + 1):
         window = df.iloc[i : i + time_window]
-
         # if there is a gap of more than max_gap skip the window
         time_diffs = window.index.to_series().diff().dropna()
         if (time_diffs >= max_gap).any():
@@ -62,12 +61,8 @@ def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta
             continue
         # skip if the device is always off
         if window.max().max() < 5:
-            # print("skipping window with zeros: ", window.max().max())
             continue
         window.reset_index(drop=True, inplace=True)
-
-        # # dataframe to numpy array
-        # window = window.to_numpy()
 
         window_values = window.values
         max_value = np.max(window_values)

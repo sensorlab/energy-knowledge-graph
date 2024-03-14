@@ -127,8 +127,7 @@ def query_graphDB_cities(endpoint : str):
     sparlq_graphdb.setReturnFormat(JSON)
     results_Graphdb = sparlq_graphdb.query().convert()
 
-    for r in results_Graphdb["results"]["bindings"]:
-        print(r["cityName"]["value"], r["longitude"]["value"], r["latitude"]["value"])
+   
 
     return results_Graphdb 
 
@@ -364,7 +363,6 @@ def generate_links(energy_endpoint):
         #     continue
         longitude = float(c["longitude"]["value"])
         latitude = float(c["latitude"]["value"])
-        print(label, longitude, latitude)
         result_dbpedia = (c["City"]["value"], query_dbpedia_coordinates(latitude, longitude, label))
         result_wikidata = (c["City"]["value"], query_wikidata_coordinates(latitude, longitude, label))
         matches.append(result_dbpedia)
@@ -373,7 +371,6 @@ def generate_links(energy_endpoint):
     # sleep(5)
     # iterate over the results and query Wikidata for each country
     for c in result_Graphdb_countries:
-        print(c)
         result_wikidata_countries = (result_Graphdb_countries[c], query_wikidata_countries(c))
         result_dbpedia_countries = (result_Graphdb_countries[c], query_dbpedia_countries(c))
         matches.append(result_wikidata_countries)
@@ -383,7 +380,6 @@ def generate_links(energy_endpoint):
     # generate the triples for the matches
     for m in matches:
         s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
-        print(s)
         triples.append(s)
     print("Inserting triples....")
     # insert in energy KG with sparql
@@ -420,7 +416,6 @@ if __name__ == "__main__":
         #     continue
         longitude = float(c["longitude"]["value"])
         latitude = float(c["latitude"]["value"])
-        print(label, longitude, latitude)
         result_dbpedia = (c["City"]["value"], query_dbpedia_coordinates(latitude, longitude, label))
         result_wikidata = (c["City"]["value"], query_wikidata_coordinates(latitude, longitude, label))
         matches.append(result_dbpedia)
@@ -429,7 +424,6 @@ if __name__ == "__main__":
     sleep(5)
     # iterate over the results and query Wikidata for each country
     for c in result_Graphdb_countries:
-        print(c)
         result_wikidata_countries = (result_Graphdb_countries[c], query_wikidata_countries(c))
         result_dbpedia_countries = (result_Graphdb_countries[c], query_dbpedia_countries(c))
         matches.append(result_wikidata_countries)
@@ -439,7 +433,6 @@ if __name__ == "__main__":
     # generate the triples for the matches
     for m in matches:
         s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
-        print(s)
         triples.append(s)
 
     # insert in energy KG with sparql

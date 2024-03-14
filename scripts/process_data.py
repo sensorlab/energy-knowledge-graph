@@ -109,6 +109,7 @@ if __name__ == "__main__":
 
     }
     for step in steps:
+        print("********************************************************************************************\n","Starting step: ", step)
         functions[step]()
         gc.collect()
 

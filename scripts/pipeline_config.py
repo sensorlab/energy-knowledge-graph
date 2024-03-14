@@ -51,6 +51,7 @@ STEPS = [
         "metadata",
         "consumption-data",
         "db-reset",
+        "generate-links",
         "training-data"
         "predict-devices",
         "add-predicted-devices"

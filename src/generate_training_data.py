@@ -83,7 +83,6 @@ def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta
             continue
         # skip if the device is always off
         if window.max().max() < 5:
-            # print("skipping window with zeros: ", window.max().max())
             continue
         window.reset_index(drop=True, inplace=True)
 
@@ -240,7 +239,6 @@ def generate_training_data(data_path : Path, save_path : Path, datasets : list, 
     max_gap = pd.Timedelta(seconds=max_gap)
     # generate labels from the parsed data and save to a pickle file
     labels = generate_labels(data_path, save_path, datasets)
-    print(type(labels), labels)
     data = get_device_windows(data_path, window_size, upper_bound, max_gap, datasets)
 
     windows = generate_synthetic(data, num_windows, labels)

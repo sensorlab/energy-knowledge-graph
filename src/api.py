@@ -4,7 +4,7 @@ import requests
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
-from helper import preprocess_string
+from .helper import preprocess_string
 from .enrich_data import create_location_dict
 
 # SQL queries

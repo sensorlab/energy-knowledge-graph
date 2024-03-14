@@ -1,6 +1,6 @@
 import os
 import sys
-
+import argparse
 # Add the project root directory to sys.path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
@@ -21,8 +21,55 @@ import gc
 import pipeline_config as config
 
 if __name__ == "__main__":
+    # get sample and full option from command line if --sample is passed it uses only the sample data if --full is passed it uses the full data
+    parser = argparse.ArgumentParser(description='Process data for the energy knowledge graph')
+    parser.add_argument('--sample', action='store_true', help='Use sample data')
+    parser.add_argument('--full', action='store_true', help='Use full data')   
+    args = parser.parse_args()
 
+    if args.sample:
+        datasets = [
+        "REFIT",
+        "ECO",
+        "HES",
+        "UKDALE",
+        "HUE",
+        "LERTA",
+        "UCIML",
+        "DEKN",
+        "SUST1",
+        "SUST2",
+        "HEART",
+        "ENERTALK",
+        "DEDDIAG",
+        "IDEAL"]
+    elif args.full:
+        datasets = [
+        "REFIT",
+        "ECO",
+        "HES",
+        "UKDALE",
+        "HUE",
+        "LERTA",
+        "UCIML",
+        "DRED",
+        "REDD",
+        "IAWE",
+        "DEKN",
+        "SUST1",
+        "SUST2",
+        "HEART",
+        "ENERTALK",
+        "DEDDIAG",
+        "IDEAL",
+        "ECDUY",
+        "PRECON",
+        "EEUD"
+    ]   
+    else:
+        datasets = config.DATASETS
 
+   
 
     # path to the raw data folder
     raw_data_path : Path = Path(config.RAW_DATA_PATH).resolve()
@@ -89,8 +136,9 @@ if __name__ == "__main__":
     
     if "add-predicted-devices" in steps:
         from src.add_predicted_devices import add_predicted_devices
-        
-    datasets = config.DATASETS
+
+
+
     # datasets used for training
     training_datsets = config.TRAINING_DATASETS
     # datasets on which to predict appliances

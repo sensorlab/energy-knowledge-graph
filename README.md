@@ -29,7 +29,7 @@ and `pip install -r requirements.tensorflow.txt --extra-index-url https://pypi.n
     DATABASE_PASSWORD=<password to access PostgreSQL database>
     ```
 6. Check [pipeline_config.py](./scripts/pipeline_config.py) for the configuration of the pipeline leave as is for default configuration
-7. Run `python scripts/process_data.py` by default this will preprocess the data and store it in the database, 
+7. Run `python scripts/process_data.py` by default this will preprocess the datasets defined in [pipeline_config.py](./scripts/pipeline_config.py) and store it in the database if we pass the command line argument `--sample` it will preprocess only the datasets present in the sample dump and if we pass `--full` it will preprocess all the datasets present in the full dump
 8. Access PostgreSQL at port `:5433`
 
 

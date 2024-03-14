@@ -5,8 +5,8 @@ import math
 import argparse
 
 
-
-def get_wikidata_results(latitude : float, longitude : float):
+# noinspection PyShadowingNames
+def get_wikidata_results(latitude: float, longitude: float):
     """
     Query Wikidata for the cities in a 50km radius of the given coordinates
     ## Parameters
@@ -38,7 +38,7 @@ def get_wikidata_results(latitude : float, longitude : float):
     }} LIMIT 1000
 
     """
-     
+
     sparql_wdata = SPARQLWrapper("https://query.wikidata.org/sparql")
 
     sparql_wdata.setQuery(query_wikidata)
@@ -48,17 +48,15 @@ def get_wikidata_results(latitude : float, longitude : float):
     results = sparql_wdata.query().convert()
     return results
 
-def query_wikidata_coordinates(latitude : float, longitude : float, label : str, data=None):
+
+# noinspection PyUnboundLocalVariable,PyShadowingNames
+def query_wikidata_coordinates(latitude: float, longitude: float, label: str, data=None):
     """
-    Query Wikidata for the coordinates of a city given its label and coordinates, if the label is not found, return the closest city
-    Can be used with the results of a previous query to avoid querying Wikidata again by passing the results as the data parameter
-    ## Parameters
-    latitude : Latitude of the coordinates
-    longitude : Longitude of the coordinates
-    label : Label of the city
-    data : Results of a previous query to avoid querying Wikidata again
-    ## Returns
-    city : URI of the city in Wikidata
+    Query Wikidata for the coordinates of a city given its label and coordinates, if the label is not found,
+    return the closest city Can be used with the results of a previous query to avoid querying Wikidata again by
+    passing the results as the data parameter ## Parameters latitude : Latitude of the coordinates longitude :
+    Longitude of the coordinates label : Label of the city data : Results of a previous query to avoid querying
+    Wikidata again ## Returns city : URI of the city in Wikidata
     """
     if data is None:
         print("Querying Wikidata......")
@@ -66,7 +64,6 @@ def query_wikidata_coordinates(latitude : float, longitude : float, label : str,
     else:
         results = data
 
-        
     matched_cities = []
     # match the label of the city with the results and if the similarity is above 80% add it to the list of matches
     for r in results["results"]["bindings"]:
@@ -90,8 +87,7 @@ def query_wikidata_coordinates(latitude : float, longitude : float, label : str,
     return matched_cities[0][1]["city"]["value"]
 
 
-
-def query_graphDB_cities(endpoint : str):
+def query_graphDB_cities(endpoint: str):
     """
     Query the energy knowledge graph for the cities and their coordinates
     ## Parameters
@@ -127,9 +123,8 @@ def query_graphDB_cities(endpoint : str):
     sparlq_graphdb.setReturnFormat(JSON)
     results_Graphdb = sparlq_graphdb.query().convert()
 
-   
+    return results_Graphdb
 
-    return results_Graphdb 
 
 def query_graphdb_countries(endpoint):
     """
@@ -150,7 +145,7 @@ def query_graphdb_countries(endpoint):
     
     }
     """
-    
+
     sparql_graphdb = SPARQLWrapper(endpoint)
     sparql_graphdb.setQuery(query_countries)
     sparql_graphdb.setReturnFormat(JSON)
@@ -158,14 +153,16 @@ def query_graphdb_countries(endpoint):
     results = sparql_graphdb.query().convert()
     uris = {}
     for uri in results["results"]["bindings"]:
-        k =  uri["country"]["value"].split("/")[-1].replace("%20", " ")
+        k = uri["country"]["value"].split("/")[-1].replace("%20", " ")
         # special case for the US
         if k == "United States":
             k = "United States of America"
         uris[k] = uri["country"]["value"]
     return uris
 
-def get_dbpedia_results(latitude : float, longitude : float):
+
+# noinspection PyShadowingNames
+def get_dbpedia_results(latitude: float, longitude: float):
     """
     Query DBpedia for the cities in a 50km radius of the given coordinates
     ## Parameters
@@ -213,17 +210,15 @@ def get_dbpedia_results(latitude : float, longitude : float):
 
     return results
 
-def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, data=None):
-    """ 
-    Query DBpedia for the coordinates of a city given its label and coordinates, if the label is not found, return the closest city
-    Can be used with the results of a previous query to avoid querying DBpedia again by passing the results as the data parameter
-    ## Parameters
-    latitude : Latitude of the coordinates
-    longitude : Longitude of the coordinates
-    label : Label of the city
-    data : Results of a previous query to avoid querying DBpedia again
-    ## Returns
-    city : URI of the city in DBpedia
+
+# noinspection PyUnboundLocalVariable,PyShadowingNames
+def query_dbpedia_coordinates(latitude: float, longitude: float, label: str, data=None):
+    """
+    Query DBpedia for the coordinates of a city given its label and coordinates, if the label is not found,
+    return the closest city Can be used with the results of a previous query to avoid querying DBpedia again by
+    passing the results as the data parameter ## Parameters latitude : Latitude of the coordinates longitude :
+    Longitude of the coordinates label : Label of the city data : Results of a previous query to avoid querying
+    DBpedia again ## Returns city : URI of the city in DBpedia
 
     """
     if data is None:
@@ -288,6 +283,9 @@ def query_dbpedia_coordinates(latitude : float, longitude : float, label : str, 
     # sort the results by the ratio of the match and return the best match
     matched_cities.sort(key=lambda x: x[0], reverse=True)
     return matched_cities[0][1]["city"]["value"]
+
+
+# noinspection PyShadowingNames
 def query_wikidata_countries(country: str):
     """
     Query Wikidata for the country of a city given its city wikidata entity id
@@ -296,7 +294,7 @@ def query_wikidata_countries(country: str):
     ## Returns
     country : URI of the country in Wikidata
 
-    """   
+    """
 
     query_wikidata_countries = f"""
     SELECT ?country WHERE {{
@@ -305,7 +303,7 @@ def query_wikidata_countries(country: str):
     }}
 
     """
-        
+
     sparql_wdata = SPARQLWrapper("https://query.wikidata.org/sparql")
 
     sparql_wdata.setQuery(query_wikidata_countries)
@@ -317,7 +315,7 @@ def query_wikidata_countries(country: str):
     return results["results"]["bindings"][0]["country"]["value"]
 
 
-def query_dbpedia_countries(country : str):
+def query_dbpedia_countries(country: str):
     """
     Query DBpedia for the country of a city given its city name
     ## Parameters
@@ -343,6 +341,7 @@ def query_dbpedia_countries(country : str):
     return results["results"]["bindings"][0]["country"]["value"]
 
 
+# noinspection PyShadowingNames
 def generate_links(energy_endpoint):
     """
     Generate links between the energy knowledge graph and DBpedia and Wikidata
@@ -354,8 +353,7 @@ def generate_links(energy_endpoint):
     results_Graphdb_cities = query_graphDB_cities(energy_endpoint)
     result_Graphdb_countries = query_graphdb_countries(energy_endpoint)
 
-
-    matches= []
+    matches = []
     # iterate over the results and query Wikidata and DBpedia for each city
     for c in results_Graphdb_cities["results"]["bindings"]:
         label = c["cityName"]["value"]
@@ -379,7 +377,7 @@ def generate_links(energy_endpoint):
     triples = []
     # generate the triples for the matches
     for m in matches:
-        s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
+        s = "<" + str(m[0]) + "> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<" + str(m[1]) + "> .\n"
         triples.append(s)
     print("Inserting triples....")
     # insert in energy KG with sparql
@@ -393,22 +391,20 @@ def generate_links(energy_endpoint):
     sparql.query()
 
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process energy graph data.")
 
-    parser.add_argument("--energy_endpoint", default="http://193.2.205.14:7200/repositories/EnergyGraph_mixed", type=str, help="Sparql enpoint for the energy KG")
+    parser.add_argument("--energy_endpoint", default="http://193.2.205.14:7200/repositories/EnergyGraph_mixed",
+                        type=str, help="Sparql enpoint for the energy KG")
     parser.add_argument("--path_to_save", default="matches.nt", type=str, help="Path to save the matches")
 
-    args = parser.parse_args() 
+    args = parser.parse_args()
 
     # query the energy knowledge graph for the cities and their coordinates
     results_Graphdb_cities = query_graphDB_cities(args.energy_endpoint)
     result_Graphdb_countries = query_graphdb_countries(args.energy_endpoint)
 
-
-    matches= []
+    matches = []
     # iterate over the results and query Wikidata and DBpedia for each city
     for c in results_Graphdb_cities["results"]["bindings"]:
         label = c["cityName"]["value"]
@@ -421,6 +417,7 @@ if __name__ == "__main__":
         matches.append(result_dbpedia)
         matches.append(result_wikidata)
     from time import sleep
+
     sleep(5)
     # iterate over the results and query Wikidata for each country
     for c in result_Graphdb_countries:
@@ -432,7 +429,7 @@ if __name__ == "__main__":
     triples = []
     # generate the triples for the matches
     for m in matches:
-        s = "<"+str(m[0]) +"> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<"+str(m[1]) +"> .\n"
+        s = "<" + str(m[0]) + "> " + "<http://www.w3.org/2002/07/owl#sameAs> " + "<" + str(m[1]) + "> .\n"
         triples.append(s)
 
     # insert in energy KG with sparql
@@ -444,7 +441,6 @@ if __name__ == "__main__":
     }}
     """)
     sparql.query()
-
 
     # save the triples
     with open(args.path_to_save, "w") as f:

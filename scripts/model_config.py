@@ -1,29 +1,27 @@
 import json
-import os
-MODEL_NAME="TEST" # used for saving model and predictions
-# model parameters
-NUM_EPOCHS=1200
-BATCH_SIZE=128
-LEARNING_RATE=0.001
-DEPTH=10
-KERNEL_SIZE=128
-NUM_MODELS=10 # number of models in ensemble
-WINDOW_SIZE=2688
 
+MODEL_NAME = "TEST"  # used for saving model and predictions
+# model parameters
+NUM_EPOCHS = 1200
+BATCH_SIZE = 128
+LEARNING_RATE = 0.001
+DEPTH = 10
+KERNEL_SIZE = 128
+NUM_MODELS = 10  # number of models in ensemble
+WINDOW_SIZE = 2688
 
 # paths
-DATA_PATH=".data/training_data/X_Y_wsize2688_numW_100000_upper32_gap3600_numD64_ideal.pkl"
-SAVE_PATH= "../data/"
-LABELS_PATH=".data/training_data/labels_new.pkl"
-MODEL_PATH="./trained_models/"
+DATA_PATH = ".data/training_data/X_Y_wsize2688_numW_100000_upper32_gap3600_numD64_ideal.pkl"
+SAVE_PATH = "../data/"
+LABELS_PATH = ".data/training_data/labels_new.pkl"
+MODEL_PATH = "./trained_models/"
 
-
-USE_SEED=True
-RANDOM_STATE=42
-SAVE_PREDICTIONS=True
-SAVE_MODEL=True
-THRESHOLD=0.3
-TEST_SIZE=0.2
+USE_SEED = True
+RANDOM_STATE = 42
+SAVE_PREDICTIONS = True
+SAVE_MODEL = True
+THRESHOLD = 0.3
+TEST_SIZE = 0.2
 
 
 def save_config():

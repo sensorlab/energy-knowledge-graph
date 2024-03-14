@@ -1,14 +1,12 @@
 import argparse
-import pickle
 import os
+import pickle
 from pathlib import Path
 
-import pandas as pd
-from tqdm import tqdm
 import numpy as np
+import pandas as pd
 import tensorflow as tf
-
-from src.models.InceptionTime import Classifier_INCEPTION
+from tqdm import tqdm
 
 
 # min-max normalization Xmin=0 
@@ -21,7 +19,6 @@ def normalize(X, max_value):
     ## Returns
     `X` : Normalized data
     """
-    max_value = 0
 
     for x in X:
         v = np.max(x)
@@ -33,7 +30,8 @@ def normalize(X, max_value):
     return X / max_value
 
 
-def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta, max_gap : pd.Timedelta) -> list:   
+# noinspection PyUnboundLocalVariable
+def process_data(df: pd.DataFrame, time_window: int, upper_bound: pd.Timedelta, max_gap: pd.Timedelta) -> list:
     """
     Process the data by resampling it to 8s and filling the gaps with the nearest value and then splitting it into windows of size time_window.
     If there is a gap of more than max_gap skip the window. If there are more than 15 gaps of upper_bound or more skip the window. If the device is always off skip the window.
@@ -48,10 +46,10 @@ def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta
     df = df.resample("8S").fillna(method="nearest", limit=4)
     df.fillna(0, inplace=True)
     # handle negatve values
-    df[df < 0] = 0  
+    df[df < 0] = 0
     windows = []
     for i in range(0, len(df) - time_window, time_window + 1):
-        window = df.iloc[i : i + time_window]
+        window = df.iloc[i: i + time_window]
         # if there is a gap of more than max_gap skip the window
         time_diffs = window.index.to_series().diff().dropna()
         if (time_diffs >= max_gap).any():
@@ -72,7 +70,7 @@ def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta
     return np.array(windows), max_value
 
 
-def preprocess_dataset(data_path : Path):
+def preprocess_dataset(data_path: Path):
     """
     Preprocess the datasets by resampling the data and splitting it into windows
     ## Parameters
@@ -94,7 +92,8 @@ def preprocess_dataset(data_path : Path):
 
     return household_windows, max_value
 
-def predict_appilances(windows : np.array, models : list, max_value : float) -> dict:
+
+def predict_appilances(windows: np.array, models: list, max_value: float) -> dict:
     """
     Predict the appliances for the given windows using the models
     ## Parameters
@@ -112,7 +111,6 @@ def predict_appilances(windows : np.array, models : list, max_value : float) -> 
 
         predictions.append(y_pred)
 
-
     # average the predictions of the models
     predictions_models = np.array(predictions)
     predictions_models = np.mean(predictions_models, axis=0)
@@ -125,7 +123,7 @@ def predict_appilances(windows : np.array, models : list, max_value : float) -> 
     return y_pred_tf
 
 
-def get_labels(data : dict, model_path : Path, label_path : Path, max_value : float) -> dict:
+def get_labels(data: dict, model_path: Path, label_path: Path, max_value: float) -> dict:
     """
     Get the appliances for the given households
     ## Parameters
@@ -145,8 +143,7 @@ def get_labels(data : dict, model_path : Path, label_path : Path, max_value : fl
         if "init" in f or "ipynb" in f:
             continue
 
-            
-        model = tf.keras.models.load_model(model_path / "model"/f)
+        model = tf.keras.models.load_model(model_path / "model" / f)
 
         models.append(model)
 
@@ -155,7 +152,9 @@ def get_labels(data : dict, model_path : Path, label_path : Path, max_value : fl
         devices[house] = labels[predict_appilances(data[house], models, max_value) == 1]
     return devices
 
-def get_predicted_appliances(data_path : Path, model_path : Path, label_path : Path, save_path : Path, datasets : list[str]) -> None:
+
+def get_predicted_appliances(data_path: Path, model_path: Path, label_path: Path, save_path: Path,
+                             datasets: list[str]) -> None:
     """
     Label unlabeled datasets utilizing InceptionTime model.
     ## Parameters
@@ -169,55 +168,52 @@ def get_predicted_appliances(data_path : Path, model_path : Path, label_path : P
     """
     household_labels = {}
     for dataset in datasets:
-        assert (data_path / (dataset +".pkl")).exists(), f"Dataset {dataset} does not exist"
+        assert (data_path / (dataset + ".pkl")).exists(), f"Dataset {dataset} does not exist"
 
         household_windows, max_value = preprocess_dataset(data_path / (dataset + ".pkl"))
 
         labels = get_labels(household_windows, model_path, label_path, max_value)
         household_labels.update(labels)
 
-     # save with pickle
+    # save with pickle
     with open(Path(save_path) / "predicted_devices.pkl", "wb") as handle:
         pickle.dump(household_labels, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Label unlabeled datasets utilizing InceptionTime model.")
     parser.add_argument("--data_path", type=str, default="./data/parsed/", help="Path to the parsed data")
-    parser.add_argument("--model_path", type=str, default="./data/trained_models/InceptionTime/", help="Path to the pretrained model folder")
+    parser.add_argument("--model_path", type=str, default="./data/trained_models/InceptionTime/",
+                        help="Path to the pretrained model folder")
     parser.add_argument("--label_path", type=str, default="./data/training_data/labels.pkl", help="Path to the labels")
     parser.add_argument("--save_folder", type=str, default="./data/", help="Path to the save folder")
-    parser.add_argument("--datasets", type=str, nargs="+", default=["IDEAL", "LERTA"], help="List of datasets to generate labels for, example: 'IDEAL' will generate only for IDEAL")
+    parser.add_argument("--datasets", type=str, nargs="+", default=["IDEAL", "LERTA"],
+                        help="List of datasets to generate labels for, example: 'IDEAL' will generate only for IDEAL")
     args = parser.parse_args()
 
-    data_path : Path = Path(args.data_path).resolve()
+    data_path: Path = Path(args.data_path).resolve()
     assert data_path.exists(), "Data path does not exist"
 
-    model_path : Path = Path(args.model_path).resolve()
+    model_path: Path = Path(args.model_path).resolve()
     assert model_path.exists(), "Model path does not exist"
 
-    label_path : Path = Path(args.label_path).resolve()
+    label_path: Path = Path(args.label_path).resolve()
     assert label_path.exists(), "Label path does not exist"
 
-    save_path : Path = Path(args.save_folder).resolve()
+    save_path: Path = Path(args.save_folder).resolve()
     assert save_path.exists(), "Save path does not exist"
-
 
     datasets = args.datasets
     # check if the datasets exist
 
     household_labels = {}
     for dataset in datasets:
-        assert (data_path / (dataset +".pkl")).exists(), f"Dataset {dataset} does not exist"
+        assert (data_path / (dataset + ".pkl")).exists(), f"Dataset {dataset} does not exist"
 
         household_windows, max_value = preprocess_dataset(data_path / (dataset + ".pkl"))
 
         labels = get_labels(household_windows, model_path, label_path, max_value)
         household_labels.update(labels)
-
-
-
 
     # save with pickle
     with open(Path(save_path) / "predicted_devices.pkl", "wb") as handle:

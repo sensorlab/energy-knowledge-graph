@@ -7,6 +7,7 @@ import argparse
 import concurrent.futures
 from pathlib import Path
 
+
 def average_daily_consumption(df: pd.DataFrame) -> float:
     """
     Calculate the average daily consumption of a device in kWh
@@ -16,21 +17,21 @@ def average_daily_consumption(df: pd.DataFrame) -> float:
     ### Returns
     `float` : average daily consumption in kWh
     """
-    
+
     if df.empty:
         return 0
     df = df.copy()
     time_deltas = df.index.to_series().diff().dropna()
     median_time_delta = time_deltas.median()
-    sampling_rate = median_time_delta.total_seconds()/3600
-    df/=1000
+    sampling_rate = median_time_delta.total_seconds() / 3600
+    df /= 1000
     df *= sampling_rate
     df = df.resample('1D').sum()
 
-    
-    return df.values.mean()    
+    return df.values.mean()
 
 
+# noinspection PyBroadException
 def average_on_off_event(df: pd.DataFrame) -> float:
     """
     Calculate the average on/off event consumption of a device in kWh
@@ -45,9 +46,10 @@ def average_on_off_event(df: pd.DataFrame) -> float:
     df_orig = df.copy()
     time_deltas = df.index.to_series().diff().dropna()
     median_time_delta = time_deltas.median()
-    sampling_rate = median_time_delta.total_seconds()/3600
+    sampling_rate = median_time_delta.total_seconds() / 3600
 
     threshold = 5  # Define the threshold for 'on' state
+    # noinspection PyUnresolvedReferences
     df['above_threshold'] = (df >= threshold).astype(int)
     df['rolling_sum'] = df['above_threshold'].rolling(window=6, min_periods=1).sum()
 
@@ -55,15 +57,12 @@ def average_on_off_event(df: pd.DataFrame) -> float:
     df['state'] = (df['rolling_sum'] > 5).astype(int)
     df['state_change'] = df['state'].diff().fillna(0)
 
-
     # Find start and end times of 'on' events
     on_starts = df_orig.index[df['state_change'] == 1].tolist()
     on_ends = df_orig.index[df['state_change'] == -1].tolist()
 
-
-
     # Adjust for edge cases (e.g., if the series starts or ends with an 'on' state)
- 
+
     if df['state'].iloc[0] == 1:
         on_starts.insert(0, df.index[0])
     if df['state'].iloc[-1] == 1:
@@ -76,7 +75,7 @@ def average_on_off_event(df: pd.DataFrame) -> float:
         end_index = df.index.get_loc(end)
 
         # Adjust start and end index to add additional rows
-        start_index = max(start_index , 0)
+        start_index = max(start_index, 0)
         end_index = min(end_index, len(df) - 1)
 
         on_period = df.iloc[start_index:end_index + 1]
@@ -87,7 +86,6 @@ def average_on_off_event(df: pd.DataFrame) -> float:
         merged_on_ends = [on_ends[0]]  # Initialize with the first 'end' event
     except:
         return 0
-
 
     for i in range(1, len(on_starts)):
         start_index = df.index.get_loc(on_starts[i])
@@ -113,23 +111,24 @@ def average_on_off_event(df: pd.DataFrame) -> float:
         end_index = df.index.get_loc(end)
 
         # Adjust start and end index to add additional rows
-        start_index = max(start_index , 0)
-        end_index = min(end_index , len(df) - 1)
+        start_index = max(start_index, 0)
+        end_index = min(end_index, len(df) - 1)
 
         merged_on_period = df.iloc[start_index:end_index + 1]
         merged_on_periods.append(merged_on_period)
 
     avg = []
     for p in merged_on_periods:
-        p = p.iloc[:,0].copy()
-        p/=1000
+        p = p.iloc[:, 0].copy()
+        p /= 1000
         p *= sampling_rate
-        
+
         # break
         avg.append(p.sum())
 
     return np.array(avg).mean()
-    
+
+
 # Function to process each dataset
 def process_dataset(dataset_path):
     """
@@ -151,13 +150,16 @@ def process_dataset(dataset_path):
             if "aggregate" in d:
                 house_data[d] = {"daily": average_daily_consumption(df[d].copy())}
             else:
-                house_data[d] = {"daily": average_daily_consumption(df[d].copy()), "event": average_on_off_event(df[d].copy())}
-       
+                house_data[d] = {"daily": average_daily_consumption(df[d].copy()),
+                                 "event": average_on_off_event(df[d].copy())}
+
         house_data_dict[h] = house_data
     del data
     return house_data_dict
 
-def generate_consumption_data(DATA_PATH : Path, SAVE_PATH : Path, datasets : list[str]) -> None:
+
+# noinspection PyShadowingNames
+def generate_consumption_data(data_path: Path, save_path: Path, datasets: list[str]) -> None:
     """
     Generate consumption data for a list of datasets and save to a pickle file
     ### Parameters
@@ -166,42 +168,37 @@ def generate_consumption_data(DATA_PATH : Path, SAVE_PATH : Path, datasets : lis
     `datasets` : List of datasets to process example: ["REFIT", "ECO"] will process only REFIT and ECO
     """
     if os.cpu_count() < len(datasets):
-        cpu_count = os.cpu_count()/2
+        cpu_count = os.cpu_count() / 2
 
     else:
         cpu_count = len(datasets)
 
-
-    
-
     # get all dataset paths
-    dataset_paths =[]
-    for d in  os.listdir(DATA_PATH):
+    dataset_paths = []
+    for d in os.listdir(data_path):
         if d.split(".")[0] not in datasets:
             continue
         if d.endswith(".pkl"):
-            dataset_paths.append(os.path.join(DATA_PATH, d))
-    
+            dataset_paths.append(os.path.join(data_path, d))
+
     consumption_data = {}
     # process each dataset in parallel and save results to dictionary
     with tqdm(total=len(dataset_paths), desc="Processing datasets", unit="dataset") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
             futures = {executor.submit(process_dataset, dataset_path): dataset_path for dataset_path in dataset_paths}
-            
+
             for future in concurrent.futures.as_completed(futures):
                 house_data_dict = future.result()
                 consumption_data.update(house_data_dict)
                 progress_bar.update(1)
 
-    
-
-    with open(os.path.join(SAVE_PATH, "consumption_data.pkl"), 'wb') as f:
+    with open(os.path.join(save_path, "consumption_data.pkl"), 'wb') as f:
         pickle.dump(consumption_data, f, pickle.HIGHEST_PROTOCOL)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Calculate consumption data.')
-    parser.add_argument('--data_path', type=str, help='Path to data folder containing parsed datsets.', default="")
+    parser.add_argument('--data_path', type=str, help='Path to data folder containing parsed datasets.', default="")
 
     parser.add_argument('--save_path', type=str, help='Path to save folder.', default="")
 

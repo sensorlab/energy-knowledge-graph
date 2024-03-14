@@ -1,16 +1,14 @@
-import pandas as pd
-import os
-from tqdm import tqdm
-import pickle
-import numpy as np
-import random
 import argparse
-from pathlib import Path
+import pickle
+import random
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
 
 from src.helper import preprocess_string, generate_labels
-
-
 
 
 def sample_normal_within_range(mu=7, sigma=5, a=1, b=35) -> int:
@@ -23,7 +21,8 @@ def sample_normal_within_range(mu=7, sigma=5, a=1, b=35) -> int:
     return np.array(samples)[0]
 
 
-def process_dataset(dataset : str, path : Path, time_window : int, upper_bound : pd.Timedelta, max_gap: pd.Timedelta) -> dict:
+def process_dataset(dataset: str, path: Path, time_window: int, upper_bound: pd.Timedelta,
+                    max_gap: pd.Timedelta) -> dict:
     """Process the dataset and return the windows for each device
     ## Parameters
     `dataset` : Name of the dataset
@@ -53,7 +52,7 @@ def process_dataset(dataset : str, path : Path, time_window : int, upper_bound :
     return devices_processed_local
 
 
-def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta, max_gap : pd.Timedelta) -> list:   
+def process_data(df: pd.DataFrame, time_window: int, upper_bound: pd.Timedelta, max_gap: pd.Timedelta) -> list:
     """
     Process the data by resampling it to 8s and filling the gaps with the nearest value and then splitting it into windows of size time_window.
     If there is a gap of more than max_gap skip the window. If there are more than 15 gaps of upper_bound or more skip the window. If the device is always off skip the window.
@@ -72,7 +71,7 @@ def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta
 
     windows = []
     for i in range(0, len(df) - time_window, time_window + 1):
-        window = df.iloc[i : i + time_window]
+        window = df.iloc[i: i + time_window]
 
         # if there is a gap of more than max_gap skip the window
         time_diffs = window.index.to_series().diff().dropna()
@@ -91,7 +90,8 @@ def process_data(df: pd.DataFrame, time_window : int, upper_bound : pd.Timedelta
     return windows
 
 
-def get_device_windows(path: Path, time_window : int, upper_bound : pd.Timedelta, max_gap : pd.Timedelta, datasets : list) -> dict:
+def get_device_windows(path: Path, time_window: int, upper_bound: pd.Timedelta, max_gap: pd.Timedelta,
+                       datasets: list) -> dict:
     """
     Get the windows for each device in the dataset
     ## Parameters
@@ -105,11 +105,10 @@ def get_device_windows(path: Path, time_window : int, upper_bound : pd.Timedelta
     """
 
     devices_processed = {}
-    datasets = os.listdir(path)
-
 
     with ProcessPoolExecutor(max_workers=4) as executor:  # Change max_workers as needed
-        futures = {executor.submit(process_dataset, dataset, path, time_window, upper_bound, max_gap): dataset for dataset in datasets}
+        futures = {executor.submit(process_dataset, dataset, path, time_window, upper_bound, max_gap): dataset for
+                   dataset in datasets}
 
         for future in tqdm(as_completed(futures), total=len(futures)):
             dataset = futures[future]
@@ -126,9 +125,8 @@ def get_device_windows(path: Path, time_window : int, upper_bound : pd.Timedelta
     return devices_processed
 
 
-
 # sum(devices) = aggregate
-def generate_synthetic(devices_processed : dict, num_windows : int, device_list : list) -> list:
+def generate_synthetic(devices_processed: dict, num_windows: int, device_list: list) -> list:
     """Generate synthetic data where the sum of the devices is equal to the aggregate consumption
     ## Parameters
     `devices_processed` : Dictionary containing the windows for each device
@@ -182,8 +180,7 @@ def generate_synthetic(devices_processed : dict, num_windows : int, device_list 
     return windows
 
 
-
-def create_tuples(windows : list, labels : list) -> list:
+def create_tuples(windows: list, labels: list) -> list:
     """
     Create training data from the windows
     ## Parameters
@@ -213,8 +210,8 @@ def create_tuples(windows : list, labels : list) -> list:
     return X_Y_test
 
 
-
-def generate_training_data(data_path : Path, save_path : Path, datasets : list, window_size=2688 , num_windows=100000, upper_bound=32, max_gap=3600):
+def generate_training_data(data_path: Path, save_path: Path, datasets: list, window_size=2688, num_windows=100000,
+                           upper_bound=32, max_gap=3600):
     """
     Generate training data from the parsed data and save it to a pickle file
     ## Parameters
@@ -232,8 +229,6 @@ def generate_training_data(data_path : Path, save_path : Path, datasets : list, 
     for i in range(len(datasets)):
         if not datasets[i].endswith(".pkl"):
             datasets[i] = datasets[i] + ".pkl"
-    
-    
 
     upper_bound = pd.Timedelta(seconds=upper_bound)
     max_gap = pd.Timedelta(seconds=max_gap)
@@ -244,11 +239,12 @@ def generate_training_data(data_path : Path, save_path : Path, datasets : list, 
     windows = generate_synthetic(data, num_windows, labels)
 
     X_Y = create_tuples(windows, labels)
-    print("Saving data to: ", save_path / f"X_Y_wsize{window_size}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}.pkl")
-    with open(save_path / f"X_Y_wsize{window_size}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}.pkl", "wb") as f:
+    print("Saving data to: ",
+          save_path / f"X_Y_wsize{window_size}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}.pkl")
+    with open(
+            save_path / f"X_Y_wsize{window_size}_numW_{num_windows}_upper{int(upper_bound.total_seconds())}_gap{int(max_gap.total_seconds())}_numD{len(labels)}.pkl",
+            "wb") as f:
         pickle.dump(X_Y, f, protocol=pickle.HIGHEST_PROTOCOL)
-
-
 
 
 if __name__ == "__main__":
@@ -258,13 +254,15 @@ if __name__ == "__main__":
     parser.add_argument("--data_path", type=str, default="./data/parsed/", help="Path to base folder (default: `.`)")
 
     # Argument for the path to the save folder
-    parser.add_argument("--save_path", type=str, default="./data/training_data/synthetic/", help="Path to save folder (default: `.`)")
+    parser.add_argument("--save_path", type=str, default="./data/training_data/synthetic/",
+                        help="Path to save folder (default: `.`)")
 
     # Argument for time window
     parser.add_argument("--window_size", type=int, default=2688, help="window size (default: 2688)")
 
     # Argument for number of windows
-    parser.add_argument("--num-windows", type=int, default=100_000, help="Number of windows to generate (default: 100000)")
+    parser.add_argument("--num-windows", type=int, default=100_000,
+                        help="Number of windows to generate (default: 100000)")
 
     # Argument for upper bound
     parser.add_argument("--upper-bound", type=int, default=32, help="Upper bound in seconds (default: 32)")
@@ -277,15 +275,12 @@ if __name__ == "__main__":
     # Set random seed for reproducibility
     np.random.seed(args.seed)
 
-
     # Initialize paths
-    data_path : Path = Path(args.data_path).resolve()
+    data_path: Path = Path(args.data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
 
-    save_path : Path = Path(args.save_path).resolve()
+    save_path: Path = Path(args.save_path).resolve()
     assert save_path.exists(), f"Path '{save_path}' does not exist!"
-
-
 
     # Initialize parameters
     time_window = args.window_size
@@ -294,5 +289,3 @@ if __name__ == "__main__":
     max_gap = pd.Timedelta(seconds=args.max_gap)
 
     generate_training_data(data_path, save_path, time_window, num_windows, upper_bound, max_gap)
-
-

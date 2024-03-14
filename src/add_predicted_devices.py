@@ -2,7 +2,10 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 from pathlib import Path
 from tqdm import tqdm
-def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph")-> int:
+
+
+# noinspection PyShadowingBuiltins,PyBroadException
+def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph") -> int:
     """
     Get the highest device id in the graph to know where to start adding new devices
     ## Parameters
@@ -27,7 +30,6 @@ def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electr
     sparlq_graphdb = SPARQLWrapper(endpoint)
     sparlq_graphdb.setQuery(query_houses)
     sparlq_graphdb.setReturnFormat(JSON)
-    
 
     try:
         results_Graphdb = sparlq_graphdb.query().convert()
@@ -41,7 +43,9 @@ def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electr
         print("Error in the query")
         return False
 
-def get_household(household : str, endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph")-> str:
+
+# noinspection PyTypeChecker,PyBroadException
+def get_household(household: str, endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph") -> str:
     """
     Get the household uri from the graph
     ## Parameters
@@ -76,9 +80,11 @@ def get_household(household : str, endpoint="http://193.2.205.14:7200/repositori
     except:
         print("Error in the get household query")
         return False
-    
 
-def insert_device(device_id : int, device_name : str, household : str, endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph"):
+
+# noinspection PyBroadException
+def insert_device(device_id: int, device_name: str, household: str,
+                  endpoint="http://193.2.205.14:7200/repositories/Electricity_Graph"):
     """
     Insert a device into the graph
     ## Parameters
@@ -101,18 +107,20 @@ def insert_device(device_id : int, device_name : str, household : str, endpoint=
     <http://mydata.example.org/public-devices/{device_id}> schema:name "{device_name}" .
     }}
     """
-    sparlq_graphdb = SPARQLWrapper(endpoint +"/statements")
+    sparlq_graphdb = SPARQLWrapper(endpoint + "/statements")
     sparlq_graphdb.setMethod('POST')
     sparlq_graphdb.setQuery(sparql_insert_query)
 
     try:
-        results_Graphdb = sparlq_graphdb.query()
+        sparlq_graphdb.query()
         return True
     except:
         print("Error in the insert query")
         return False
 
-def add_predicted_devices(predicted_path : Path,  graph_endpoint : str):
+
+# noinspection PyTypeChecker
+def add_predicted_devices(predicted_path: Path, graph_endpoint: str):
     """
 
     Add the predicted devices to the graph
@@ -122,7 +130,6 @@ def add_predicted_devices(predicted_path : Path,  graph_endpoint : str):
     ## Returns
     None
     """
-    
 
     data = pd.read_pickle(predicted_path / "predicted_devices.pkl")
 

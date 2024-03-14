@@ -1,25 +1,25 @@
-import os
-from tqdm import tqdm
-import pandas as pd
-import pickle
-import sys
-import concurrent.futures
-import multiprocessing
-from pathlib import Path
 import argparse
+import concurrent.futures
+import os
+import pickle
+from pathlib import Path
 
-def watts2kwh(df : pd.DataFrame, data_frequency : float) -> pd.DataFrame:
+import pandas as pd
+from tqdm import tqdm
+
+
+def watts2kwh(df: pd.DataFrame, data_frequency: float) -> pd.DataFrame:
     """
         Convert watts to kWh for given data frequency 
         ### Parameters
         `df`: should be in the form datetime index and columns should contain device consumption readings in watts
         `data_frequency` : the frequency of the data as a fraction of an hour (e.g. 0.5 for half-hourly data)
     """
-    df = df/1000 * data_frequency
+    df = df / 1000 * data_frequency
     return df
 
 
-def calculate_loadprofiles(df : pd.DataFrame) -> dict:
+def calculate_loadprofiles(df: pd.DataFrame) -> dict:
     """
         Calculate the daily, weekly and monthly load profiles of a given device or household
         ### Parameters
@@ -29,8 +29,6 @@ def calculate_loadprofiles(df : pd.DataFrame) -> dict:
     hourly = df.resample('H').sum()
     daily = df.resample('D').sum()
 
-
-        
     # daily load profile
     loadprofile_daily = hourly.groupby(hourly.index.hour).mean()
 
@@ -48,7 +46,8 @@ def calculate_loadprofiles(df : pd.DataFrame) -> dict:
     }
     return loadprofiles
 
-def process_dataset(dataset : str, data_path : Path) -> dict:
+
+def process_dataset(dataset: str, data_path: Path) -> dict:
     """
     Process a dataset and return the load profiles as a dictionary
     ### Parameters
@@ -62,15 +61,15 @@ def process_dataset(dataset : str, data_path : Path) -> dict:
         house_lp = {}
         for device in data_dict[house]:
             # these datasets are already in kWh
-            if "ECDUY" in  house or "DEKN" in house or "HUE" in house:
+            if "ECDUY" in house or "DEKN" in house or "HUE" in house:
                 house_lp[device] = calculate_loadprofiles(data_dict[house][device])
             else:
                 # get sampling rate for kWh conversion
                 time_deltas = data_dict[house][device].index.to_series().diff().dropna()
                 median_time_delta = time_deltas.median()
-                sampling_rate = median_time_delta.total_seconds()/3600
+                sampling_rate = median_time_delta.total_seconds() / 3600
                 house_lp[device] = calculate_loadprofiles(watts2kwh(data_dict[house][device], sampling_rate))
-            
+
         loadprofiles[house] = house_lp
     # # save datset loadprofiles
     # with open(os.path.join(save_path, dataset.split(".")[0] + "_loadprofiles.pkl"), 'wb') as f:
@@ -78,7 +77,8 @@ def process_dataset(dataset : str, data_path : Path) -> dict:
 
     return loadprofiles
 
-def generate_loadprofiles(data_path : Path, save_path : Path, datasets : list[str]) -> None:
+
+def generate_loadprofiles(data_path: Path, save_path: Path, datasets: list[str]) -> None:
     """
     Generate load profiles for a list of datasets and save to a pickle file
     ### Parameters
@@ -87,9 +87,10 @@ def generate_loadprofiles(data_path : Path, save_path : Path, datasets : list[st
     `datasets` : List of datasets to process as a list of strings containing the dataset names
     """
 
-    dataset_paths = [dataset for dataset in os.listdir(data_path) if dataset.endswith('.pkl') and (dataset.split(".")[0] in datasets)]
+    dataset_paths = [dataset for dataset in os.listdir(data_path) if
+                     dataset.endswith('.pkl') and (dataset.split(".")[0] in datasets)]
 
-    cpu_count = int(os.cpu_count()//4)
+    cpu_count = int(os.cpu_count() // 4)
 
     cpu_count = len(datasets) if cpu_count > len(datasets) else cpu_count
     data_dict = {}
@@ -106,11 +107,9 @@ def generate_loadprofiles(data_path : Path, save_path : Path, datasets : list[st
     # combined file containing all loadprofiles
     with open(save_path / "merged_loadprofiles.pkl", 'wb') as f:
         pickle.dump(data_dict, f, pickle.HIGHEST_PROTOCOL)
-            
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description='Process data and save load profiles.')
     parser.add_argument('data_path', type=str, help='Path to the data folder containing parsed datasets.')
     parser.add_argument('save_folder', type=str, help='Path to the folder where we want to save the loadprofiles')
@@ -140,5 +139,4 @@ if __name__ == "__main__":
         "ECDUY"
     ]
 
-    generate_loadprofiles(data_path, save_folder ,datasets)
-    
+    generate_loadprofiles(data_path, save_folder, datasets)

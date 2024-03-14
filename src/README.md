@@ -101,7 +101,7 @@ This script generates a pickle file containing average daily consumption in kWh 
 
 # Reset database
 
-This script will delete the database at the specified url in the enviroment variable DATABASE_URL .env file and recreate it with the provided data. Make sure you have the correct database url in the .env file and the data files in the correct location before running the script. 
+This script will delete the database at the specified url in the environment variable DATABASE_URL .env file and recreate it with the provided data. Make sure you have the correct database url in the .env file and the data files in the correct location before running the script. 
 
 `python database-reset.py <data_path> <loadprofiles_path> <consumption_data_path>`
 

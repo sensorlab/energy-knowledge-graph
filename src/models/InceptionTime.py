@@ -1,13 +1,15 @@
 # CHECK INCEPTION TIME IMPLEMENTATION 
 # from NUK import F1Score
-import tensorflow as tf
+# noinspection PyUnresolvedReferences
 from tensorflow import keras
 
 
 class Classifier_INCEPTION:
 
-    def __init__(self, output_directory, input_shape, nb_classes, model_number, verbose=False, build=True, batch_size=64,
-                 nb_filters=32, use_residual=True, use_bottleneck=True, depth=6, kernel_size=41, nb_epochs=1500, lr=0.001):
+    def __init__(self, output_directory, input_shape, nb_classes, model_number, verbose=False, build=True,
+                 batch_size=64,
+                 nb_filters=32, use_residual=True, use_bottleneck=True, depth=6, kernel_size=41, nb_epochs=1500,
+                 lr=0.001):
 
         # define callbacks here
         reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.25, patience=7, min_lr=0.0001)
@@ -27,7 +29,7 @@ class Classifier_INCEPTION:
         self.lr = lr
         self.model_number = model_number
 
-        if build == True:
+        if build:
             self.model = self.build_model(input_shape, nb_classes)
             self.verbose = verbose
             self.model.save_weights(self.output_directory / 'model_init.hdf5')
@@ -40,7 +42,6 @@ class Classifier_INCEPTION:
         else:
             input_inception = input_tensor
 
-        
         kernel_size_s = [self.kernel_size // (2 ** i) for i in range(3)]
 
         conv_list = []
@@ -90,28 +91,23 @@ class Classifier_INCEPTION:
         output_layer = keras.layers.Dense(nb_classes, activation='sigmoid')(gap_layer)
 
         model = keras.models.Model(inputs=input_layer, outputs=output_layer)
-    
+
         model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.Adam(learning_rate=self.lr),
                       metrics=['accuracy'])
-        
 
         return model
 
-
     def fit(self, x_train, y_train, callback, validation):
-       
-       
 
         if self.batch_size is None:
             mini_batch_size = int(min(x_train.shape[0] / 10, 16))
         else:
             mini_batch_size = self.batch_size
-        
+
         callbacks2 = self.callbacks
         callbacks2.append(callback)
         self.model.fit(x_train, y_train, batch_size=mini_batch_size, epochs=self.nb_epochs,
-                                  verbose=2, callbacks=callbacks2, validation_data=validation)
-
+                       verbose=2, callbacks=callbacks2, validation_data=validation)
 
         self.model.save(self.output_directory / f'model_{self.model_number}.hdf5')
 

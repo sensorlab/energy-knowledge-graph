@@ -65,4 +65,4 @@ def parse_DEKN(data_path: str, save_path: str) -> None:
 
         dfs[name] = data
 
-        save_to_pickle(dfs, save_path)
+    save_to_pickle(dfs, save_path)

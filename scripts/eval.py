@@ -7,10 +7,9 @@ import tensorflow as tf
 from sklearn import metrics
 
 
-def eval():
-
+def evaluation():
     # load test data
-    model_path : Path = Path(config.MODEL_PATH + config.MODEL_NAME) 
+    model_path: Path = Path(config.MODEL_PATH + config.MODEL_NAME)
     # the train.py script saves the data splits in the model folder the training data is already normalized
     X_test = np.load(model_path / "data_split/X_test.npy")
     y_test = np.load(model_path / "data_split/y_test.npy")
@@ -23,8 +22,7 @@ def eval():
         if "init" in f or "ipynb" in f:
             continue
 
-            
-        model = tf.keras.models.load_model(model_path / "model"/f)
+        model = tf.keras.models.load_model(model_path / "model" / f)
 
         models.append(model)
 
@@ -38,13 +36,14 @@ def eval():
 
     model_predictions = []
     # predict
-    for i,m in enumerate(models):
+    for i, m in enumerate(models):
         y_pred = m.predict(X_test)
         # save individual predictions
         np.save(model_path / "predictions" / f"y_pred_{i}.npy", y_pred)
 
         # save classification report for each model
-        r = metrics.classification_report(y_test, np.where(y_pred > config.THRESHOLD, 1, 0), target_names=labels, zero_division=0, output_dict=True)
+        r = metrics.classification_report(y_test, np.where(y_pred > config.THRESHOLD, 1, 0), target_names=labels,
+                                          zero_division=0, output_dict=True)
         r_df = pd.DataFrame(r).T
         r_df.to_csv(model_path / "results" / f"classification_report_{i}.csv")
         model_predictions.append(y_pred)
@@ -63,8 +62,6 @@ def eval():
     res_df = pd.DataFrame(res).T
     res_df.to_csv(model_path / "results" / "classification_report_ensemble.csv")
 
-    
 
 if __name__ == "__main__":
-    eval()
-        
+    evaluation()

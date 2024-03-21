@@ -1,110 +1,11 @@
+from math import isnan
+
+import requests
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
-import json
-from math import isnan
+
+from .helper import preprocess_string
 from .enrich_data import create_location_dict
-import re
-import requests
-def preprocess_string(string : str) -> str:
-    """
-    Preprocesses string to make it uniform
-    ## Parameters
-    `string` : The string to preprocess
-    ## Returns
-    `str` : The preprocessed string
-
-    """
-    string = string.lower().strip()
-    string = re.sub(' +', ' ', string)
-    string = string.replace("_", " ")
-    string = string.replace("-", " ")
-    string = string.replace("&", " ")
-    string = string.split("(")[0]
-    string = string.split("#")[0]
-
-    string = string.strip()
-
-    # handle known synoynms
-    synonyms = {
-        "refrigerator": "fridge",
-        "vaccumcleaner": "vacuum cleaner",
-        "breadmaker": "bread maker",
-      
-        
-    }
-    if "freezer" in string:
-        string = "fridge"
-
-    if string in synonyms:
-        string = synonyms[string]
-
-    if 'hi fi' in string:
-        string = "audio system"
-
-    if "router" in string:
-        string = "router"
-
-    if "treadmill" in string:
-        string = "running machine"
-        
-
-    if "laptop" in string:
-        string = "laptop"
-    
-    if "server" in string:
-        string = "server"
-
-    if "monitor" in string and not "baby" in string:
-        string = "monitor"
-    # special cases
-    if "computer" in string and "charger" not in string:
-        string = "pc"
-
-    if "tv" in string:
-        string = "television"
-
-    if "television" in string:
-        string = "television"
-
-    if "macbook" in string:
-        string = "laptop"
-        
-    if "car charger" == string:
-        string = "ev"
-    
-    if "toast" in string:
-        string = "toaster"
-    
-    if "modem" in string:
-        string = "router"
-
-    # we treat all audio devices as speakers so subwoofer is also a speaker
-    if "subwoofer" in string:
-        string = "speaker"
-
-    if "speaker" in string:
-        string = "speaker"
-
-    if "iron" in string and "soldering" not in string:
-        string = "iron"
-
-    
-    if "coffeemachine" in string:
-        string = "coffee machine"
-    if "coffee maker" in string:
-        string = "coffee machine"
-
-    if "dishwasher" in string:
-        string = "dish washer"
-    if "air conditioner" in string:
-        string = "ac"
-
-    if "air conditioning" in string:
-        string = "ac"
-    
-    string = re.sub(' +', ' ', string)
-    string = re.sub(r'\d+', '', string)
-    return string.strip()
 
 # SQL queries
 create_households_table_sql = text('''
@@ -184,7 +85,6 @@ ALTER TABLE "devices" ADD CONSTRAINT "device_fk0" FOREIGN KEY ("household_id") R
   ''')
 
 
-
 def ensure_tables(conn: Connection) -> None:
     """Ensure that the tables are created in the database"""
     conn.execute(create_locations_table_sql)
@@ -193,11 +93,11 @@ def ensure_tables(conn: Connection) -> None:
     conn.execute(alter_tables)
 
 
-#significant_fields = ('country', 'state', 'municipality', 'city', 'town', 'village', 'suburb', 'neighbourhood')
+# significant_fields = ('country', 'state', 'municipality', 'city', 'town', 'village', 'suburb', 'neighbourhood')
 
-def get_or_create_location_id(conn: Connection, household:dict) -> int:
+def get_or_create_location_id(conn: Connection, household: dict) -> int:
     """
-    Get or create location ID if it doesnt exist yet
+    Get or create location ID if it doesn't exist yet
     ## Parameters
     `conn` : The connection to the database
     `household` : The household dictionary
@@ -207,7 +107,6 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     """
 
     assert household.get('country', None), 'Country is mandatory'
-
 
     query_location_sql = text('''
         SELECT location_id FROM locations WHERE country = :country AND latitude = :latitude AND longitude = :longitude
@@ -220,7 +119,8 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     ''')
 
     # queary location data to check if location already exists in database
-    locations = conn.execute(query_location_sql, dict(country=household["country"], latitude=household["lat"], longitude=household["lon"])).scalars().all()
+    locations = conn.execute(query_location_sql, dict(country=household["country"], latitude=household["lat"],
+                                                      longitude=household["lon"])).scalars().all()
 
     # Sanity checks
     assert len(locations) < 2, f'There are two locations with identical location: {locations}'
@@ -229,7 +129,7 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
     if len(locations) > 0:
         location_id = locations[0]
         return location_id
-    
+
     # get location data
     lat, lon, country = household['lat'], household['lon'], household['country']
     city = household.get('city', None)
@@ -237,47 +137,46 @@ def get_or_create_location_id(conn: Connection, household:dict) -> int:
         location_data = create_location_dict(country, household["first_reading"], 0)
     else:
         location_data = create_location_dict(country, household["first_reading"], 1, lat, lon)
-    # special case if we have city info from somwhere else but we dont have accurate coordinates
+    # special case if we have city info from somwhere else, but we don't have accurate coordinates
     if location_data["city"] is None:
         location_data["city"] = city
-    
+
     # cast average wages to int
     if location_data["wages"] is not None:
         location_data["wages"] = int(location_data["wages"])
 
     # Create entry in DB
     location_id = conn.execute(insert_location_sql,
-                                dict(
-        continent=location_data["continent"],
-        country=location_data["country"], 
-        country_code=location_data["country_code"], 
-        region=location_data["region"], 
-        city=location_data["city"], 
-        street=location_data["street"], 
-        timezone=location_data["timezone"], 
-        latitude=location_data["latitude"], 
-        longitude=location_data["longitude"], 
-        gdp=location_data["GDP"], 
-        wages=location_data["wages"], 
-        population_density=location_data["population_density"], 
-        elevation=location_data["elevation"], 
-        education_level_low=location_data["education_level"][0], 
-        education_level_medium=location_data["education_level"][1],
-        education_level_high=location_data["education_level"][2],
-        education_category=location_data["education_level"][3],
-        electricity_price=location_data["electricity_price"], 
-        gas_price=location_data["gas_price"], 
-        cdd=location_data["CDD"], 
-        hdd=location_data["HDD"], 
-        holidays=location_data["public_holidays"],
-        carbon_intesity=location_data["carbon_intesity"])
-                                ).scalar_one()
-
+                               dict(
+                                   continent=location_data["continent"],
+                                   country=location_data["country"],
+                                   country_code=location_data["country_code"],
+                                   region=location_data["region"],
+                                   city=location_data["city"],
+                                   street=location_data["street"],
+                                   timezone=location_data["timezone"],
+                                   latitude=location_data["latitude"],
+                                   longitude=location_data["longitude"],
+                                   gdp=location_data["GDP"],
+                                   wages=location_data["wages"],
+                                   population_density=location_data["population_density"],
+                                   elevation=location_data["elevation"],
+                                   education_level_low=location_data["education_level"][0],
+                                   education_level_medium=location_data["education_level"][1],
+                                   education_level_high=location_data["education_level"][2],
+                                   education_category=location_data["education_level"][3],
+                                   electricity_price=location_data["electricity_price"],
+                                   gas_price=location_data["gas_price"],
+                                   cdd=location_data["CDD"],
+                                   hdd=location_data["HDD"],
+                                   holidays=location_data["public_holidays"],
+                                   carbon_intesity=location_data["carbon_intesity"])
+                               ).scalar_one()
 
     return location_id
 
 
-def query_osm_metadata(lat:float, lon:float) -> dict:
+def query_osm_metadata(lat: float, lon: float) -> dict:
     """
     OSM - OpenStreetMap
     Query OSM for metadata
@@ -293,9 +192,9 @@ def query_osm_metadata(lat:float, lon:float) -> dict:
     return res.json()
 
 
-def get_or_create_household_id(conn: Connection, household: dict, consumption : float, labeled : bool) -> int:
+def get_or_create_household_id(conn: Connection, household: dict, consumption: float, labeled: bool) -> int:
     """
-    Get or create household ID if it doesnt exist yet
+    Get or create household ID if it doesn't exist yet
     ## Parameters
     `conn` : The connection to the database
     `household` : The household dictionary
@@ -323,9 +222,6 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         RETURNING household_id;
     ''')
 
-
-
-    
     # Obtain location ID
     location_id = get_or_create_location_id(conn, household)
     try:
@@ -336,7 +232,6 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         household["house_size"] = float(household["house_size"])
     else:
         household["house_size"] = None
-
 
     # Convert occupancy to int if it is not NaN
     if household["occupancy"] is not None and not isnan(household["occupancy"]):
@@ -360,7 +255,6 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
     if consumption is not None:
         consumption = float(consumption)
 
-
     # Create entry in DB
     household_id = conn.execute(insert_household_sql, dict(
         location_id=location_id,
@@ -375,16 +269,15 @@ def get_or_create_household_id(conn: Connection, household: dict, consumption : 
         consumption=consumption,
         house_size=household["house_size"],
         labeled=labeled
-        )).scalar_one()
-    
-    
+    )).scalar_one()
+
     return household_id
 
 
-
-def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:dict, daily_consumption:float, event_consumption:float) -> int:
+def get_or_create_device_id(conn: Connection, device: str, household_id: int, data: dict, daily_consumption: float,
+                            event_consumption: float) -> int:
     """
-    Get or create device ID if it doesnt exist yet
+    Get or create device ID if it doesn't exist yet
     ## Parameters
     `conn` : The connection to the database
     `device` : The device name
@@ -417,14 +310,13 @@ def get_or_create_device_id(conn:Connection, device:str, household_id:int, data:
         return device_id
     # Create entry in DB
     device_id = conn.execute(insert_device_sql, dict(
-        household_id=household_id, 
-        name = preprocess_string(device),
-        loadprofile_daily = data[device]["daily"].flatten().astype(float).tolist(),
-        loadprofile_weekly = data[device]["weekly"].flatten().astype(float).tolist(),
-        loadprofile_monthly = data[device]["monthly"].flatten().astype(float).tolist(),
-        daily_consumption = daily_consumption,
-        event_consumption = event_consumption
+        household_id=household_id,
+        name=preprocess_string(device),
+        loadprofile_daily=data[device]["daily"].flatten().astype(float).tolist(),
+        loadprofile_weekly=data[device]["weekly"].flatten().astype(float).tolist(),
+        loadprofile_monthly=data[device]["monthly"].flatten().astype(float).tolist(),
+        daily_consumption=daily_consumption,
+        event_consumption=event_consumption
 
-        
-        )).scalar_one()
+    )).scalar_one()
     return device_id

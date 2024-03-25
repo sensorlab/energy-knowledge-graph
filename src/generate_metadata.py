@@ -856,24 +856,6 @@ def generate_metadata(data_path: Path, save_path: Path, datasets: list[str]) -> 
     for dataset in datasets:
         metadata_dfs.append(metadata_functions[dataset])
 
-    # # generate metadata for all datasets
-    # HUE_meta = HUE_metadata()
-    # REFIT_meta = REFIT_metadata()
-    # UCIML_meta = UCIML_metadata()
-    # HES_meta = HES_metadata()
-    # ECO_meta = ECO_metadata()
-    # LERTA_meta = LERTA_metadata()
-    # UKDALE_meta = UKDALE_metadata()
-    # DRED_meta = DRED_metadata()
-    # REDD_meta = REDD_metadata()
-    # IAWE_meta = IAWE_metadata()
-    # DEKN_meta = DEKN_metadata()
-    # HEART_meta = HEART_metadata()
-    # SUST_meta = pd.concat([SUST1_metadata(), SUST2_metadata()], ignore_index=True, axis=0)
-    # DEDDIAG_meta = DEDDIAG_metadata()
-    # ENERTALK_meta = ENERTALK_metadata()
-    # ECDUY_meta = ECDUY_metadata()
-    # IDEAL_meta = IDEAL_metadata()
 
     # concat all metadata
     metadata = pd.concat(

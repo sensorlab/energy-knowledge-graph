@@ -892,33 +892,3 @@ def generate_metadata(data_path: Path, save_path: Path, datasets: list[str]) -> 
     metadata.to_parquet(SAVE_PATH / "residential_metadata.parquet")
 
 
-if __name__ == "__main__":
-    """Generate metadata for all datasets and save to parquet file"""
-    parser = argparse.ArgumentParser(description='Process data path and save path.')
-    parser.add_argument('data_path', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/datasets/',
-                        help='Path to the data')
-    parser.add_argument('save_path', type=str, nargs='?', default='./energy-knowledge-graph/data/metadata/',
-                        help='Path to save the results')
-    args = parser.parse_args()
-
-    datasets = [
-        "REFIT",
-        "ECO",
-        "HES",
-        "UK-DALE",
-        "HUE",
-        "LERTA",
-        "UCIML",
-        "DRED",
-        "REDD",
-        "IAWE",
-        "DEKN",
-        "SUST1",
-        "SUST2",
-        "HEART",
-        "ENERTALK",
-        "DEDDIAG",
-        "IDEAL",
-        "ECDUY"
-    ]
-    generate_metadata(args.data_path, args.save_path, datasets)

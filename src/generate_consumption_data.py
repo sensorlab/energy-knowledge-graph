@@ -197,34 +197,3 @@ def generate_consumption_data(data_path: Path, save_path: Path, datasets: list[s
         pickle.dump(consumption_data, f, pickle.HIGHEST_PROTOCOL)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Calculate consumption data.')
-    parser.add_argument('--data_path', type=str, help='Path to data folder containing parsed datasets.', default="")
-
-    parser.add_argument('--save_path', type=str, help='Path to save folder.', default="")
-
-    args = parser.parse_args()
-    datasets = [
-        "REFIT",
-        "ECO",
-        "HES",
-        "UK-DALE",
-        "HUE",
-        "LERTA",
-        "UCIML",
-        "DRED",
-        "REDD",
-        "IAWE",
-        "DEKN",
-        "SUST1",
-        "SUST2",
-        "HEART",
-        "ENERTALK",
-        "DEDDIAG",
-        "IDEAL",
-        "ECDUY"
-    ]
-
-    DATA_PATH = args.data_path
-    SAVE_PATH = args.save_path
-    generate_consumption_data(DATA_PATH, SAVE_PATH, datasets)

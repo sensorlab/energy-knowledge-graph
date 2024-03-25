@@ -108,35 +108,3 @@ def generate_loadprofiles(data_path: Path, save_path: Path, datasets: list[str])
     with open(save_path / "merged_loadprofiles.pkl", 'wb') as f:
         pickle.dump(data_dict, f, pickle.HIGHEST_PROTOCOL)
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Process data and save load profiles.')
-    parser.add_argument('data_path', type=str, help='Path to the data folder containing parsed datasets.')
-    parser.add_argument('save_folder', type=str, help='Path to the folder where we want to save the loadprofiles')
-    args = parser.parse_args()
-
-    data_path = Path(args.data_path).resolve()
-    save_folder = Path(args.save_folder).resolve()
-    # datsets we want to generate loadprofiles for
-    datasets = [
-        "REFIT",
-        "ECO",
-        "HES",
-        "UK-DALE",
-        "HUE",
-        "LERTA",
-        "UCIML",
-        "DRED",
-        "REDD",
-        "IAWE",
-        "DEKN",
-        "SUST1",
-        "SUST2",
-        "HEART",
-        "ENERTALK",
-        "DEDDIAG",
-        "IDEAL",
-        "ECDUY"
-    ]
-
-    generate_loadprofiles(data_path, save_folder, datasets)

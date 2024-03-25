@@ -19,7 +19,7 @@ from src.remove_devices import remove_devices
 from pathlib import Path
 import gc
 
-import pipeline_config as config
+from configs import pipeline_config as config
 
 if __name__ == "__main__":
     # get sample and full option from command line

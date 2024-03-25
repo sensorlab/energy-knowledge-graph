@@ -28,17 +28,17 @@ and `pip install -r requirements.tensorflow.txt --extra-index-url https://pypi.n
     DATABASE_USER=<username to access PostgreSQL database>
     DATABASE_PASSWORD=<password to access PostgreSQL database>
     ```
-6. Check [pipeline_config.py](./scripts/pipeline_config.py) for the configuration of the pipeline leave as is for default configuration
-7. Run `python scripts/process_data.py` by default this will preprocess the datasets defined in [pipeline_config.py](./scripts/pipeline_config.py) and store it in the database if we pass the command line argument `--sample` it will preprocess only the datasets present in the sample dump and if we pass `--full` it will preprocess all the datasets present in the full dump
+6. Check [pipeline_config.py](configs/pipeline_config.py) for the configuration of the pipeline leave as is for default configuration
+7. Run `python scripts/process_data.py` by default this will preprocess the datasets defined in [pipeline_config.py](configs/pipeline_config.py) and store it in the database if we pass the command line argument `--sample` it will preprocess only the datasets present in the sample dump and if we pass `--full` it will preprocess all the datasets present in the full dump
 8. Access PostgreSQL at port `:5433`
 
 
 
 ## Detailed pipeline script usage
 
-The pipeline can be customized by changing the configuration in the [pipeline_config](./scripts/pipeline_config.py) file.
+The pipeline can be customized by changing the configuration in the [pipeline_config](configs/pipeline_config.py) file.
 
-In the [pipeline_config.py](./scripts/pipeline_config.py) file you can set the following parameters:
+In the [pipeline_config.py](configs/pipeline_config.py) file you can set the following parameters:
 
 
 
@@ -49,7 +49,7 @@ In the [pipeline_config.py](./scripts/pipeline_config.py) file you can set the f
 - `TRAINING_DATASETS` - list of datasets to be used to generate the training data
 - `PREDICT_DATASETS` - list of unlabelled datasets to run the pretrained model on
 - `POSTGRES_URL` - the url for the postgres database to store the data
-- various paths for where to store the data and where to read the data from this is explained in more detail in the [pipeline_config](./scripts/pipeline_config.py) file
+- various paths for where to store the data and where to read the data from this is explained in more detail in the [pipeline_config](configs/pipeline_config.py) file
 
 
 The pipeline contains the following data processing steps:

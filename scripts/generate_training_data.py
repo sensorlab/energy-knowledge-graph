@@ -9,8 +9,9 @@ import pandas as pd
 from tqdm import tqdm
 
 from src.helper import preprocess_string, generate_labels
+from src.remove_devices import remove_devices
 import configs.model_config as model_config
-
+import configs.pipeline_config as pipeline_config
 
 
 def sample_normal_within_range(mu=7, sigma=5, a=1, b=35) -> int:
@@ -284,11 +285,20 @@ if __name__ == "__main__":
     np.random.seed(args.seed)
 
     # Initialize paths
-    data_path: Path = Path(args.data_path).resolve()
-    assert data_path.exists(), f"Path '{data_path}' does not exist!"
+    parsed_data_path: Path = Path(pipeline_config.PARSED_DATA_PATH).resolve()
+    assert parsed_data_path.exists(), f"Path '{parsed_data_path}' does not exist!"
 
-    save_path: Path = Path(args.save_path).resolve()
-    assert save_path.exists(), f"Path '{save_path}' does not exist!"
+        # folder to save cleaned raw data with removed devices
+    training_data_cleaned_folder: Path = Path(pipeline_config.TRAINING_DATA_CLEANED_FOLDER).resolve()
+    if not training_data_cleaned_folder.exists():
+        training_data_cleaned_folder.mkdir()
+
+
+    # folder to save training data
+    training_data_folder: Path = Path(model_config.TRAINING_DATA_FOLDER).resolve()
+    if not training_data_folder.exists():
+        training_data_folder.mkdir()
+
 
     # Initialize parameters
     time_window = model_config.WINDOW_SIZE
@@ -296,4 +306,8 @@ if __name__ == "__main__":
     upper_bound = model_config.UPPER_BOUND
     max_gap = model_config.MAX_GAP
 
-    generate_training_data(data_path, save_path, time_window, num_windows, upper_bound, max_gap)
+
+    # remove devices that we dont use during training from the parsed data
+    remove_devices(parsed_data_path, training_data_cleaned_folder, model_config.TRAINING_DATASETS)
+
+    generate_training_data(training_data_cleaned_folder, training_data_folder, model_config.TRAINING_DATASETS , time_window, num_windows, upper_bound, max_gap)

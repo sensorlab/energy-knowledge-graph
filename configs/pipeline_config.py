@@ -21,8 +21,7 @@ GENERATED_METADATA_PATH = "./data/"
 # path to the folder to save the consumption data
 CONSUMPTION_DATA_PATH = "./data/"
 
-# folder to save training data
-TRAINING_DATA_FOLDER = "./data/training_data/"
+
 
 # folder to save cleaned raw data with removed devices for training
 TRAINING_DATA_CLEANED_FOLDER = "./data/training_data/raw/"
@@ -50,7 +49,6 @@ STEPS = [
     "consumption-data",
     "db-reset",
     "generate-links",
-    "training-data"
     "predict-devices",
     "add-predicted-devices"
 ]
@@ -79,19 +77,7 @@ DATASETS = [
     "EEUD"
 ]
 
-# datasets used for training
-TRAINING_DATASETS = [
-    "DEDDIAG",
-    "DRED",
-    "ECO",
-    "ENERTALK",
-    "HEART",
-    "HES",
-    "IAWE",
-    "REDD",
-    "REFIT",
-    "UKDALE"
-]
+
 # datasets on which to predict appliances
 PREDICT_DATASETS = [
     "IDEAL",

@@ -173,6 +173,7 @@ def generate_consumption_data(data_path: Path, save_path: Path, datasets: list[s
     else:
         cpu_count = len(datasets)
 
+    cpu_count = int(cpu_count)
     # get all dataset paths
     dataset_paths = []
     for d in os.listdir(data_path):

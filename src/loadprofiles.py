@@ -3,7 +3,7 @@ import concurrent.futures
 import os
 import pickle
 from pathlib import Path
-from helper import watts2kwh
+from .helper import watts2kwh
 
 import pandas as pd
 from tqdm import tqdm

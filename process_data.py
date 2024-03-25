@@ -126,6 +126,18 @@ if __name__ == "__main__":
     # datasets on which to predict appliances
     predict_datasets = config.PREDICT_DATASETS
 
+    step_descriptions = {  
+        "parse" : "Parsing the raw datasets and storing them as pickle files.....",
+        "loadprofiles" : "Generating loadprofiles from the parsed datasets.....",
+        "metadata" : "Generating metadata from the parsed datasets.....",
+        "consumption-data" : "Generating household and appliance average daily and on/off consumption data.....",
+        "db-reset" : "Resetting the database if it's not empty and populating it with the generated data.....",
+        "generate-links" : "Generating links between our knowledge graph and WikiData and DBpedia.....",
+        "predict-devices" : "Predicting devices for the specified unlablled datasets and storing them as a pickle file.....",
+        "add-predicted-devices" : "Adding the predicted devices to the knowledge graph....."
+    }
+
+
     functions = {
         "parse": lambda: parse_datasets(raw_data_path, parsed_data_path, datasets),
         "loadprofiles": lambda: generate_loadprofiles(parsed_data_path, loadprofiles_path, datasets),
@@ -145,6 +157,6 @@ if __name__ == "__main__":
     }
     for step in steps:
         print("********************************************************************************************\n",
-              "Starting step: ", step)
+              step_descriptions[step])
         functions[step]()
         gc.collect()

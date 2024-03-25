@@ -12,6 +12,7 @@ from src.helper import save_to_pickle
 # Location: Portugal
 # Source: https://osf.io/jcn2q/
 
+
 def parse_name(file_name: str) -> str:
     """
     Parse the file name to get the appliance name

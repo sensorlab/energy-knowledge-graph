@@ -8,7 +8,7 @@ import pandas as pd
 import tensorflow as tf
 from tqdm import tqdm
 
-
+import configs.model_config as model_config
 # min-max normalization Xmin=0 
 def normalize(X, max_value):
     """
@@ -30,8 +30,8 @@ def normalize(X, max_value):
     return X / max_value
 
 
-# noinspection PyUnboundLocalVariable
-def process_data(df: pd.DataFrame, time_window: int, upper_bound: pd.Timedelta, max_gap: pd.Timedelta) -> list:
+
+def process_data(df: pd.DataFrame, time_window, upper_bound: pd.Timedelta, max_gap: pd.Timedelta) -> list:
     """
     Process the data by resampling it to 8s and filling the gaps with the nearest value and then splitting it into windows of size time_window.
     If there is a gap of more than max_gap skip the window. If there are more than 15 gaps of upper_bound or more skip the window. If the device is always off skip the window.
@@ -43,7 +43,8 @@ def process_data(df: pd.DataFrame, time_window: int, upper_bound: pd.Timedelta, 
     ## Returns
     `windows` : List of windows for the aggregated data
     """
-    df = df.resample("8S").fillna(method="nearest", limit=4)
+
+    df = df.resample(model_config.SAMPLING_RATE).fillna(method="nearest", limit=4)
     df.fillna(0, inplace=True)
     # handle negatve values
     df[df < 0] = 0
@@ -83,7 +84,7 @@ def preprocess_dataset(data_path: Path):
     household_windows = {}
     data = pd.read_pickle(data_path)
     for h in tqdm(data):
-        windows, max_value_window = process_data(data[h]["aggregate"], 2688, pd.Timedelta("32s"), pd.Timedelta("3600s"))
+        windows, max_value_window = process_data(data[h]["aggregate"], model_config.WINDOW_SIZE, model_config.UPPER_BOUND, model_config.MAX_GAP)
 
         if max_value_window > max_value:
             max_value = max_value_window
@@ -118,7 +119,7 @@ def predict_appilances(windows: np.array, models: list, max_value: float) -> dic
     predictions_houses = np.mean(predictions_models, axis=0)
 
     # threshold the predictions
-    y_pred_tf = np.where(predictions_houses > 0.3, 1, 0)
+    y_pred_tf = np.where(predictions_houses > model_config.THRESHOLD, 1, 0)
 
     return y_pred_tf
 

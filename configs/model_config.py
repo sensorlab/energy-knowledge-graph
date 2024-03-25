@@ -8,13 +8,22 @@ LEARNING_RATE = 0.001
 DEPTH = 10
 KERNEL_SIZE = 128
 NUM_MODELS = 10  # number of models in ensemble
+
+
+# used for generating training data and labeling unlabeled data
 WINDOW_SIZE = 2688
+SAMPLING_RATE = "8S"
+UPPER_BOUND = 32
+MAX_GAP = "3600S"
 
 # paths
 DATA_PATH = ".data/training_data/X_Y_wsize2688_numW_100000_upper32_gap3600_numD64_ideal.pkl"
 SAVE_PATH = "../data/"
 LABELS_PATH = ".data/training_data/labels_new.pkl"
 MODEL_PATH = "./trained_models/"
+
+
+
 
 USE_SEED = True
 RANDOM_STATE = 42

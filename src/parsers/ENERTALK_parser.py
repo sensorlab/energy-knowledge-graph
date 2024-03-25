@@ -81,7 +81,7 @@ def parse_ENERTALK(data_path: str, save_path: str) -> None:
     house_paths = [os.path.join(data_path, house) for house in os.listdir(data_path)]
     queue = multiprocessing.Manager().Queue()
     
-    # there is only 22 households no need to use more than 4 cores
+    # there are only 22 households no need to use more than 4 cores
     cpu_count = 4
     if os.cpu_count() < 4:
         cpu_count = 1

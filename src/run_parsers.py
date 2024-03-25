@@ -1,6 +1,5 @@
 import os
 from tqdm import tqdm
-import sys
 import argparse
 import shutil
 import gc
@@ -32,22 +31,22 @@ from src.parsers.PRECON_parser import parse_PRECON
 from pathlib import Path
 
 """
-This script runs all the parsers on the data and saves the results to a pickle file for each dataset.
+This script runs the parsers on the corresponding data and saves the results to a pickle file for each dataset.
 Usage: python run_parsers.py <path to data> <path to save folder>
 
-the data for each dataset is in the shape
+The output data structure for each dataset has the following shape:
 
-household : { appliance : {dataframe with timestamps as datetime index and values in watts in the first column} }
+household: {appliance: {dataframe with timestamps as datetime index and values in watts in the first column}}
 
 """
 
-def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -> None:
+def parse_datasets(data_path: Path, save_folder: Path, datasets: list[str]) -> None:
     """
     Save the parsed data to a pickle file for each dataset
     ### Parameters
-    `data_path` : Path to the raw data
-    `save_folder` : Path to the save folder
-    `datasets` : List of datasets to parse example: ["REFIT", "ECO"] will parse only REFIT and ECO
+    `data_path`: Path to the raw data
+    `save_folder`: Path to the target folder for the pickle output.
+    `datasets`: List of datasets to parse example: ["REFIT", "ECO"] will parse only REFIT and ECO
     """
     parse_functions = {
         "REFIT": parse_REFIT,
@@ -76,7 +75,7 @@ def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -
         if dataset not in datasets:
             continue
         print(f"Processing {dataset}.... ")
-        # avoid parsing with NILMTK and just copy provided pickle files
+        # avoid parsing with NILMTK and just copy the provided pickle files
         if dataset == "REDD":
             shutil.copy2(data_path / dataset / "REDD.pkl", save_folder / "REDD.pkl")
             continue
@@ -95,9 +94,9 @@ def parse_datasets(data_path : Path, save_folder : Path, datasets : list[str]) -
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Run parsers on energy data.")
-    parser.add_argument("data_path", help="Path to the raw data")
-    parser.add_argument("save_folder", help="Path to the save folder")
+    parser = argparse.ArgumentParser(description = "Run parsers on energy data.")
+    parser.add_argument("data_path", help = "Path to the raw data")
+    parser.add_argument("save_folder", help = "Path to the save folder")
     args = parser.parse_args()
 
     data_path = Path(args.data_path).resolve()
@@ -127,6 +126,5 @@ if __name__ == "__main__":
         "IDEAL",
         "ECD-UY"
     ]
-
 
     parse_datasets(data_path, save_folder, datasets)

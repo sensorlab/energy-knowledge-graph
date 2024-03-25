@@ -1,5 +1,4 @@
 import pandas as pd
-import os
 from src.helper import  save_to_pickle
 from pathlib import Path
 
@@ -11,6 +10,7 @@ from pathlib import Path
 # submetered: yes
 # Location: Canada
 # Source: https://github.com/ETSSmartRes/HES-Dataset
+
 
 # read data from HES convert to kWh and save to dictionary
 def parse_HES(data_path: str, save_path: str) -> None:

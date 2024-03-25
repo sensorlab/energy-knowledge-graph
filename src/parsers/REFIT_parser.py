@@ -12,6 +12,7 @@ from pathlib import Path
 # Location: United Kingdom
 # Source: https://pureportal.strath.ac.uk/en/datasets/refit-electrical-load-measurements-cleaned
 
+
 # appliance names for each house
 appliances = [
     "aggregate, fridge, chest freezer, upright freezer, tumble dryer, washing machine, dishwasher, computer site, television site, electric heater",

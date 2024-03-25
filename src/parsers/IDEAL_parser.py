@@ -16,6 +16,7 @@ from pathlib import Path
 # Location: United Kingdom
 # Source: https://www.nature.com/articles/s41597-021-00921-y
 
+
 def read_and_preprocess_df(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path, header=None, names=["timestamp", "value"])
     df["timestamp"] = pd.to_datetime(df["timestamp"])

@@ -13,10 +13,9 @@ from src.helper import save_to_pickle
 # Source: https://www.nature.com/articles/s41597-021-00963-2
 
 
-
 def parse_id(file_name: str) -> int:
     """
-    Parse the id from the file name
+    Parse the dataset id from the file name
     ## Parameters
     file_name : The name of the file
     ## Returns
@@ -30,7 +29,7 @@ def parse_DEDDIAG(data_path: str, save_path: str) -> None:
     Parse the DEDDIAG dataset and save to a pickle file
     ## Parameters
     data_path : The path to the DEDDIAG dataset
-    save_path : The path to save the parsed data
+    save_path : The path to save the parsed data in pickle format
     """
     data = {}
 
@@ -63,8 +62,6 @@ def parse_DEDDIAG(data_path: str, save_path: str) -> None:
             df.dropna(inplace=True)
             data[label] = df
 
-    data_dict = {
-        "DEDDIAG_8": data,
-    }
+    data_dict = {"DEDDIAG_8": data}
 
     save_to_pickle(data_dict, save_path)

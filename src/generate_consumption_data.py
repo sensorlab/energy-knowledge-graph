@@ -168,7 +168,7 @@ def generate_consumption_data(data_path: Path, save_path: Path, datasets: list[s
     `datasets` : List of datasets to process example: ["REFIT", "ECO"] will process only REFIT and ECO
     """
     if os.cpu_count() < len(datasets):
-        cpu_count = os.cpu_count() / 2
+        cpu_count = os.cpu_count() // 2
 
     else:
         cpu_count = len(datasets)

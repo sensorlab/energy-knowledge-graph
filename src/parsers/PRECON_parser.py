@@ -5,7 +5,7 @@ from pathlib import Path
 from src.helper import save_to_pickle
 
 
-def parse_PRECON(data_path : Path, save_path : Path):
+def parse_PRECON(data_path: Path, save_path: Path):
     data = {}
     for f in tqdm(os.listdir(data_path)):
         if f.endswith(".csv") and "House" in f:

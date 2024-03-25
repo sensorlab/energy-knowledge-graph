@@ -28,7 +28,8 @@ def preproces_file(file_path: Path) -> pd.DataFrame:
     return df
 
 
-# processes a house by reading all the files in the house folder and saving dfs for each device and returning them as a dictionary
+# processes a house by reading all the files in the house folder and saving dfs for each 
+# device and returning them as a dictionary
 def process_house(house_path: Path, meta_path: Path) -> dict:
     data = {}
     # read the labels file to get the names of the columns

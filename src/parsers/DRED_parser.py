@@ -45,6 +45,6 @@ def parse_DRED(data_path: str, save_path: str) -> None:
     for c in df.columns:
         data[c] = pd.DataFrame(df[c])
 
-    res = {"DRED_1": data}
+    data_dict = {"DRED_1": data}
 
-    save_to_pickle(res, save_path)
+    save_to_pickle(data_dict, save_path)

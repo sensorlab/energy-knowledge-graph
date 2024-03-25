@@ -46,7 +46,7 @@ def parse_SUST2(data_path: str, save_path: str) -> None:
 
     df_aggregate.rename(columns={"P": "power"}, inplace=True)
     # save to dictonary
-    data_dict = {"aggregate": df_aggregate}
+    data = {"aggregate": df_aggregate}
 
     # appliance consumption data
     for file in os.listdir(data_path / "appliances/"):
@@ -65,8 +65,8 @@ def parse_SUST2(data_path: str, save_path: str) -> None:
                 # Handle duplicate indices due to DST: keep the first occurrence, drop the others
                 df = df[~df.index.duplicated(keep="first")]
 
-            data_dict[parse_name(file)] = df
+            data[parse_name(file)] = df
 
-    data = {"SUST2_1": data_dict}
+    data_dict = {"SUST2_1": data}
     # save to pickle
-    save_to_pickle(data, save_path)
+    save_to_pickle(data_dict, save_path)

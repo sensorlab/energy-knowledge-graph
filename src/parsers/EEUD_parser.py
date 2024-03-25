@@ -13,7 +13,7 @@ def parse_EEUD(data_path : Path, save_path : Path):
     save_path: Path to save the parsed data as pickle file
     """
     # dict to store households data
-    data = {}
+    data_dict = {}
     for file in tqdm(os.listdir(data_path)):
         name = "EEUD_" + file.split(".")[0][1:]
         if file.endswith(".csv"):
@@ -49,7 +49,7 @@ def parse_EEUD(data_path : Path, save_path : Path):
                 if device_name == "main":
                     device_name = "aggregate"
                 curr_data[device_name] = pd.DataFrame(df[c])
-            data[name] = curr_data
+            data_dict[name] = curr_data
         elif file.endswith(".xls"):
             xls = pd.ExcelFile(data_path / file)
             sheet_names = xls.sheet_names
@@ -83,10 +83,10 @@ def parse_EEUD(data_path : Path, save_path : Path):
                 if device_name == "main":
                     device_name = "aggregate"
                 curr_data[device_name] = pd.DataFrame(df[c])
-            data[name] = curr_data
+            data_dict[name] = curr_data
 
 
-    save_to_pickle(data, save_path)
+    save_to_pickle(data_dict, save_path)
 
 
 

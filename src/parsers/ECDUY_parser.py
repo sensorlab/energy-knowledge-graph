@@ -70,7 +70,7 @@ def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 6, n_jobs: int
     files = [os.path.join(data_path, "consumption_data", filename) for filename in files]
 
 
-    data = defaultdict(lambda: {"aggregate": []})
+    data_dict = defaultdict(lambda: {"aggregate": []})
 
     # process the batches
     for i in tqdm(range(0, len(files), batch_size)):
@@ -81,15 +81,15 @@ def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 6, n_jobs: int
         # merge the results
         for result in results:
             for key, value in result.items():
-                data[key]["aggregate"].extend(value["aggregate"])
+                data_dict[key]["aggregate"].extend(value["aggregate"])
         gc.collect()
 
-    # Convert defaultdict back to a normal dictionary
-    data = dict(data)
+    # Convert default dict back to a normal dictionary
+    data_dict = dict(data_dict)
 
     # merge the dataframes
-    for key in tqdm(data):
-        data[key]["aggregate"] = pd.concat(data[key]["aggregate"]).sort_index()
+    for key in tqdm(data_dict):
+        data_dict[key]["aggregate"] = pd.concat(data_dict[key]["aggregate"]).sort_index()
 
     # save the data
-    save_to_pickle(data, save_path)
+    save_to_pickle(data_dict, save_path)

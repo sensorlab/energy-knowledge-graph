@@ -41,7 +41,7 @@ def parse_DEKN(data_path: str, save_path: str) -> None:
     households = set(column.split("_")[2] for column in df.columns)
 
     # Create a dictionary of dataframes, one for each household
-    dfs = {}
+    data_dict = {}
 
     for household in households:
         # Filter columns relevant to this household
@@ -64,6 +64,6 @@ def parse_DEKN(data_path: str, save_path: str) -> None:
         for c in temp_df.columns:
             data[c] = pd.DataFrame(temp_df[c].dropna())
 
-        dfs[name] = data
+        data_dict[name] = data
 
-    save_to_pickle(dfs, save_path)
+    save_to_pickle(data_dict, save_path)

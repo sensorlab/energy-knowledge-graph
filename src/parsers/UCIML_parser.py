@@ -29,10 +29,10 @@ def parse_UCIML(data_path: str, save_path: str) -> None:
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
     household = pd.read_parquet(data_path)
     df = preprocess_dataframe(household)
-    houses = {}
+    data_dict = {}
     data = {}
     for col in df.columns:
         data[col] = pd.DataFrame(df[col])
-    houses["UCIML_1"] = data
+    data_dict["UCIML_1"] = data
 
-    save_to_pickle(houses, save_path)
+    save_to_pickle(data_dict, save_path)

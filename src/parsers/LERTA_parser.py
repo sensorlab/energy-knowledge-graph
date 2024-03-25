@@ -34,7 +34,7 @@ def parse_name(file_name: str) -> str:
 def parse_LERTA(data_path: str, save_path: str) -> None:
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
-    houses_data = {}
+    data_dict = {}
     for house in os.listdir(data_path):
         if house.endswith(".csv"):
             df = process_file(data_path / house)
@@ -42,6 +42,6 @@ def parse_LERTA(data_path: str, save_path: str) -> None:
             for col in df.columns:
                 if "AGGREGATE" in col:
                     data[col.lower()] = pd.DataFrame(df[col])
-            houses_data[parse_name(house)] = data
+            data_dict[parse_name(house)] = data
 
-    save_to_pickle(houses_data, save_path)
+    save_to_pickle(data_dict, save_path)

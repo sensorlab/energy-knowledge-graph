@@ -16,7 +16,6 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
     """
     Preprocess the dataframe
     """
-
     df = df.drop(columns=["Imin", "Imax", "Iavg", "Vmin", "Vmax", "Vavg", "Pmin", "Pmax", "Qmin", "Qmax", "Qavg", "PFmin", "PFmax", "PFavg", "miss_flag", "iid", "deploy"]).dropna()
     df = df.set_index("tmstp").sort_index()
     df = df[~df.index.duplicated(keep="first")]
@@ -28,11 +27,11 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
 def parse_SUST1(data_path: str, save_path: str) -> None:
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
-    data = {}
+    data_dict = {}
     for house in range(1, 51):
         name = "SUST1_" + str(house)
         tmp = {"aggregate": pd.DataFrame()}
-        data[name] = tmp
+        data_dict[name] = tmp
     data_path = data_path / "aggregate/"
     for folder in os.listdir(data_path):
         for file in os.listdir(data_path / folder):
@@ -45,10 +44,10 @@ def parse_SUST1(data_path: str, save_path: str) -> None:
                 df.rename(columns={"Pavg": "aggregate"}, inplace=True)
                 for iid in df["iid"].unique():
                     name = "SUST1_" + str(iid)
-                    data[name]["aggregate"] = pd.concat([data[name]["aggregate"], preprocess_df(df[df["iid"] == iid])], axis=0)
+                    data_dict[name]["aggregate"] = pd.concat([data_dict[name]["aggregate"], preprocess_df(df[df["iid"] == iid])], axis=0)
 
-    for house in data:
-        data[house]["aggregate"] = data[house]["aggregate"].sort_index()
-        data[house]["aggregate"] = data[house]["aggregate"][~data[house]["aggregate"].index.duplicated(keep="first")]
+    for house in data_dict:
+        data_dict[house]["aggregate"] = data_dict[house]["aggregate"].sort_index()
+        data_dict[house]["aggregate"] = data_dict[house]["aggregate"][~data_dict[house]["aggregate"].index.duplicated(keep="first")]
 
-    save_to_pickle(data, save_path)
+    save_to_pickle(data_dict, save_path)

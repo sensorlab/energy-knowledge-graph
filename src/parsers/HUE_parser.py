@@ -21,14 +21,14 @@ def parse_HUE(data_path: str, save_path: str) -> None:
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
 
-    residentials = pd.read_parquet(data_path).set_index("timestamp")
+    data = pd.read_parquet(data_path).set_index("timestamp")
     # Wh -> kWh
-    residentials["energy"] = residentials["energy"] / 1000
-    residentials = residentials.copy()
+    data["energy"] = data["energy"] / 1000
+    data = data.copy()
 
     # Create a dictionary with the data for each house
-    data = {}
-    for id in residentials["residential_id"].unique():
-        data["HUE_" + str(id)] = {"aggregate" : residentials.loc[residentials["residential_id"] == id, "energy"]}
+    data_dict = {}
+    for id in data["residential_id"].unique():
+        data_dict["HUE_" + str(id)] = {"aggregate" : data.loc[data["residential_id"] == id, "energy"]}
 
-    save_to_pickle(data, save_path)
+    save_to_pickle(data_dict, save_path)

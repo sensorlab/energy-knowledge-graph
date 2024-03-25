@@ -5,6 +5,7 @@ from functools import reduce
 from pathlib import Path
 from src.helper import save_to_pickle
 
+
 ######################DATASET INFO#########################################
 # sampling rate: 1s
 # length: 8 months
@@ -15,14 +16,14 @@ from src.helper import save_to_pickle
 # Source: https://vs.inf.ethz.ch/res/show.html?what=eco-data
 
 # read data from ECO convert to kWh and save to dictionary
-def get_house_data(file_path: str, device_mapping: dict) -> None:
+def get_house_data(file_path: str, device_mapping: dict) -> dict:
     file_path: Path = Path(file_path).resolve()
     assert file_path.exists(), f"Path '{file_path}' does not exist!"
 
     file_path_device = file_path / "PLUGS"
     file_path_SM = file_path / "SM"
     # dict to store appliance and aggregate consumption data
-    house_data = {}
+    data = {}
     # read device data
     for device in os.listdir(file_path_device):
         path = file_path_device / device
@@ -45,7 +46,7 @@ def get_house_data(file_path: str, device_mapping: dict) -> None:
                 device_df = pd.concat([device_df, df], axis=0)
 
         device_df.sort_index(inplace=True)
-        house_data[device_name] = device_df
+        data[device_name] = device_df
 
     # read total data
     total_df = pd.DataFrame()
@@ -61,9 +62,9 @@ def get_house_data(file_path: str, device_mapping: dict) -> None:
             # ignore days with missing data
             if not (df == -1).any().any():
                 total_df = pd.concat([total_df, df], axis=0)
-    house_data["aggregate"] = total_df
+    data["aggregate"] = total_df
 
-    return house_data
+    return data
 
 
 # return a dictionary of number to device name mapping for given house
@@ -155,13 +156,11 @@ def get_device_map(house: str) -> dict:
 
 def parse_ECO(file_path: str, path_to_save: str) -> None:
     file_path: Path = Path(file_path).resolve()
-    houses_data = {}
+    data_dict = {}
 
     for house in os.listdir(file_path):
         mapping = get_device_map(house)
         name = "ECO_" + house[-1]
-        houses_data[name] = get_house_data(file_path / house, mapping)
+        data_dict[name] = get_house_data(file_path / house, mapping)
 
-    save_to_pickle(houses_data, path_to_save)
-
-
+    save_to_pickle(data_dict, path_to_save)

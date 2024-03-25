@@ -49,13 +49,13 @@ def process_dataframe(df: pd.DataFrame, house_number: int) -> pd.DataFrame:
     if device_names != None:
         df.columns = device_names
     # dictionary to hold devices for each house
-    data_dict = {}
+    data = {}
     for c in df.columns:
         if "not used" in c or "unknown" in c:
             continue
-        data_dict[c] = pd.DataFrame(df[c])
+        data[c] = pd.DataFrame(df[c])
 
-    return data_dict
+    return data
 
 
 def parse_name(name: str) -> int:
@@ -71,7 +71,7 @@ def parse_REFIT(data_path: str, save_path: str) -> dict:
     data_path = data_path / "CLEAN_REFIT_081116/"
 
     # store house data in a dictionary keyed by house name and valued by a dictionary of appliances
-    data = {}
+    data_dict = {}
     for file in os.listdir(data_path):
         if not file.endswith(".csv"):
             continue
@@ -83,7 +83,7 @@ def parse_REFIT(data_path: str, save_path: str) -> dict:
 
         name = "REFIT_" + str(house_number)
 
-        data[name] = df
+        data_dict[name] = df
 
     # save data
-    save_to_pickle(data, save_path)
+    save_to_pickle(data_dict, save_path)

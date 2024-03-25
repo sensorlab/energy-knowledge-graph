@@ -65,7 +65,7 @@ def parse_UKDALE(data_path: str, save_path: str) -> None:
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
     # dictionary of houses, each house is a dictionary of devices
-    houses_data = {}
+    data_dict = {}
     for house in os.listdir(data_path):
         if "house" in house:
             number = house.split("_")[1]
@@ -73,6 +73,6 @@ def parse_UKDALE(data_path: str, save_path: str) -> None:
             # skip due to lacking device submeter data(devices grouped together) and in general only 5 submeters
             if name == "UKDALE_4":
                 continue
-            houses_data[name] = process_house(data_path / house , data_path / f"metadata/building{number}.yaml")
+            data_dict[name] = process_house(data_path / house , data_path / f"metadata/building{number}.yaml")
 
-    save_to_pickle(houses_data, save_path)
+    save_to_pickle(data_dict, save_path)

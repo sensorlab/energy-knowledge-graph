@@ -19,10 +19,9 @@ def parse_HES(data_path: str, save_path: str) -> None:
 
     device_dict = pd.read_pickle(data_path / "HES_processed.pkl")
 
-    # Initialize an empty list to store device dataframes
-    house_data = {}
+    data_dict = {}
 
-    dfs = {}
+    data = {}
     # Iterate over each device
     for device in device_dict:
         # Concatenate all daily dataframes for the current device
@@ -43,21 +42,21 @@ def parse_HES(data_path: str, save_path: str) -> None:
         device_df.sort_index(inplace=True)
 
         # Add the current device dataframe to the dict of dataframes
-        dfs[device] = device_df
+        data[device] = device_df
 
-    house_data["HES_1"] = dfs
+    data_dict["HES_1"] = data
 
     df_total = pd.Series(dtype="float64")
 
     # calculate total energy consumption
-    for device in house_data["HES_1"]:
-        df_total = df_total.add(house_data["HES_1"][device][device], fill_value=0)
+    for device in data_dict["HES_1"]:
+        df_total = df_total.add(data_dict["HES_1"][device][device], fill_value=0)
 
     # rename the column to 'aggregate'
     df_total = df_total.rename("aggregate")
 
     # add the aggregate to the house data
-    house_data["HES_1"]["aggregate"] = pd.DataFrame(df_total)
+    data_dict["HES_1"]["aggregate"] = pd.DataFrame(df_total)
 
-    save_to_pickle(house_data, save_path)
+    save_to_pickle(data_dict, save_path)
 

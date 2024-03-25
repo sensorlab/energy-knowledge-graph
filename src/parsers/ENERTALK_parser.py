@@ -54,7 +54,7 @@ def process_house(house_path, queue) -> tuple[str, dict]:
     house_path: Path = Path(house_path).resolve()
     assert house_path.exists(), f"Path '{house_path}' does not exist!"
     house = os.path.basename(house_path)  # Extract house name from the path
-    house_dict = defaultdict(list)
+    data = defaultdict(list)
     house_name = "ENERTALK_" + str(int(house))
 
     for day in os.listdir(house_path):
@@ -63,16 +63,16 @@ def process_house(house_path, queue) -> tuple[str, dict]:
             device_path = os.path.join(day_path, device)
             name = parse_name(device)
             df = preprocess_dataframe(pd.read_parquet(device_path))
-            house_dict[name].append(df)
+            data[name].append(df)
 
-    for key in house_dict:
-        df = pd.concat(house_dict[key], axis=0)
+    for key in data:
+        df = pd.concat(data[key], axis=0)
         # remove duplicate timestamps
         df = df[~df.index.duplicated(keep="first")]
-        house_dict[key] = df
+        data[key] = df
 
     queue.put(1)  # Indicate that one house has been processed
-    return house_name, house_dict
+    return house_name, data
 
 
 def parse_ENERTALK(data_path: str, save_path: str) -> None:

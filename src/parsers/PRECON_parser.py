@@ -6,7 +6,7 @@ from src.helper import save_to_pickle
 
 
 def parse_PRECON(data_path: Path, save_path: Path):
-    data = {}
+    data_dict = {}
     for f in tqdm(os.listdir(data_path)):
         if f.endswith(".csv") and "House" in f:
             name = "PRECON_" + f.split(".")[0][5:]
@@ -18,6 +18,6 @@ def parse_PRECON(data_path: Path, save_path: Path):
             df = df.resample("1min").ffill(limit=2).dropna()
             # convert from kW to watts
             df = df*1000
-            data[name] = {"aggregate" : df}
+            data_dict[name] = {"aggregate" : df}
             
-    save_to_pickle(data, save_path)
+    save_to_pickle(data_dict, save_path)

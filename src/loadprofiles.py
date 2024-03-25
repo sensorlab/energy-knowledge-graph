@@ -3,20 +3,11 @@ import concurrent.futures
 import os
 import pickle
 from pathlib import Path
+from helper import watts2kwh
 
 import pandas as pd
 from tqdm import tqdm
 
-
-def watts2kwh(df: pd.DataFrame, data_frequency: float) -> pd.DataFrame:
-    """
-        Convert watts to kWh for given data frequency 
-        ### Parameters
-        `df`: should be in the form datetime index and columns should contain device consumption readings in watts
-        `data_frequency` : the frequency of the data as a fraction of an hour (e.g. 0.5 for half-hourly data)
-    """
-    df = df / 1000 * data_frequency
-    return df
 
 
 def calculate_loadprofiles(df: pd.DataFrame) -> dict:
@@ -71,9 +62,6 @@ def process_dataset(dataset: str, data_path: Path) -> dict:
                 house_lp[device] = calculate_loadprofiles(watts2kwh(data_dict[house][device], sampling_rate))
 
         loadprofiles[house] = house_lp
-    # # save datset loadprofiles
-    # with open(os.path.join(save_path, dataset.split(".")[0] + "_loadprofiles.pkl"), 'wb') as f:
-    #     pickle.dump(loadprofiles, f, pickle.HIGHEST_PROTOCOL)
 
     return loadprofiles
 

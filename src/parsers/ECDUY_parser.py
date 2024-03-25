@@ -16,13 +16,10 @@ from src.helper import save_to_pickle
 # Location: Uruguay
 # Source: https://www.nature.com/articles/s41597-022-01122-x
 
-# DATA_PATH = ""
 
 
 def process_file(file_path: str) -> dict:
     
-    # file_path = os.path.join(DATA_PATH, 'consumption_data', file)
-
     file_path: Path = Path(file_path).resolve()
     assert file_path.exists(), f"Path '{file_path}' does not exist!"
 
@@ -43,6 +40,15 @@ def process_file(file_path: str) -> dict:
 
 
 def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 6, n_jobs: int = 32) -> None:
+    """
+    Parse the ECDUY dataset and save the data to a pickle file
+    ### Parameters
+    `data_path` : Path to the folder containing the ECDUY dataset
+    `save_path` : Path to the folder to save the parsed data
+    `batch_size` : Number of files to process in parallel
+    `n_jobs` : Number of processes to use
+
+    """
     n_jobs = int(os.cpu_count() // 8)
     if os.cpu_count() < 16:
         n_jobs = os.cpu_count() // 2
@@ -63,7 +69,6 @@ def parse_ECDUY(data_path: str, save_path: str, batch_size: int = 6, n_jobs: int
     # Fix filenames to full path
     files = [os.path.join(data_path, "consumption_data", filename) for filename in files]
 
-    # batch_size = 11  # or whatever size you deem fit, based on your system's number of cores and memory there is 22 file total for size 11 around 500gb is
 
     data = defaultdict(lambda: {"aggregate": []})
 

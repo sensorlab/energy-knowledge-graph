@@ -61,9 +61,3 @@ def parse_HES(data_path: str, save_path: str) -> None:
 
     save_to_pickle(house_data, save_path)
 
-
-if __name__ == "__main__":
-    # for debugging purposes
-    data_path = "../../data/HES/HES.pkl"
-    save_path = "../../data/HES/HES_processed.pkl"
-    parse_HES(data_path, save_path)

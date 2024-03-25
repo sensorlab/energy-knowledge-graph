@@ -59,7 +59,7 @@ The pipeline contains the following data processing steps:
 3. [metadata](src/generate_metadata.py) - This script generates metadata for the households and stores it in a dataframe as a parquet file
 4. [consumption-data](./scripts/consumption_data.py) - This script calculates the electrictiy consumption data for the households and their appliances
 5. [db-reset](./scripts/db_reset.py) - This script resets and populates the database with the households metadata, load profiles and consumption data
-6. [training-data](src/generate_training_data.py) - This script generates the training data for on/off appliance classification from the training datasets
+6. [training-data](scripts/generate_training_data.py) - This script generates the training data for on/off appliance classification from the training datasets
 
 and the following steps for predicting devices using a pretrained model (requires tensorflow):
 

@@ -3,6 +3,7 @@ from tqdm import tqdm
 from pathlib import Path
 import pandas as pd
 import os
+from src.helper import save_to_pickle
 
 def parse_EEUD(data_path : Path, save_path : Path):
     """
@@ -32,11 +33,11 @@ def parse_EEUD(data_path : Path, save_path : Path):
             else:
                 df = pd.read_csv(data_path / file, header=45).drop(columns=["No"])
             # set the date time as index and sort the index and remove duplicates
-            df[' Date Time'] = pd.to_datetime(df[" Date Time"])
+            df[" Date Time"] = pd.to_datetime(df[" Date Time"])
             df.set_index(" Date Time", inplace=True)
             df.sort_index(inplace=True)
             df = df[~df.index.duplicated(keep="first")]
-            # convert to watts
+            # convert from kW to watts
             df *= 1000
             # resample to 1min and fill the missing values
             df = df.resample("1min").ffill()
@@ -83,9 +84,10 @@ def parse_EEUD(data_path : Path, save_path : Path):
                     device_name = "aggregate"
                 curr_data[device_name] = pd.DataFrame(df[c])
             data[name] = curr_data
-    # save with pickle
-    with open(save_path, 'wb') as f:
-        pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+    save_to_pickle(data, save_path)
+
 
 
 

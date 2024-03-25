@@ -17,7 +17,8 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
     Preprocess the dataframe
     """
 
-    df = df.drop(columns=["Imin", "Imax", "Iavg", "Vmin", "Vmax", "Vavg", "Pmin", "Pmax", "Qmin", "Qmax", "Qavg", "PFmin", "PFmax", "PFavg", "miss_flag", "iid", "deploy"]).dropna().set_index("tmstp").sort_index()
+    df = df.drop(columns=["Imin", "Imax", "Iavg", "Vmin", "Vmax", "Vavg", "Pmin", "Pmax", "Qmin", "Qmax", "Qavg", "PFmin", "PFmax", "PFavg", "miss_flag", "iid", "deploy"]).dropna()
+    df = df.set_index("tmstp").sort_index()
     df = df[~df.index.duplicated(keep="first")]
     df = df.resample("min").fillna(method="nearest", limit=5).dropna()  # if there is data within 5 minutes, fill it in else drop it
 

@@ -31,7 +31,4 @@ def parse_HUE(data_path: str, save_path: str) -> None:
     for id in residentials["residential_id"].unique():
         data["HUE_" + str(id)] = {"aggregate" : residentials.loc[residentials["residential_id"] == id, "energy"]}
 
-    # save each house in a separate dataframe
-    df_dict = {f"HUE_{key}": to_dict(residentials["energy"]) for key, df_group in residentials.groupby("residential_id")}
-
     save_to_pickle(data, save_path)

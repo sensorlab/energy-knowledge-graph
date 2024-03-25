@@ -180,7 +180,7 @@ def DRED_remove(read_path, save_path):
 
 def remove_devices(read_path : Path, save_path : Path, datasets : list[str]):
     """
-    Remove devices from the datasets that are not used for training
+    Remove devices from the datasets that we ignore during training
 
     ## Parameters:
     `read_path` : The path to the folder with the raw data

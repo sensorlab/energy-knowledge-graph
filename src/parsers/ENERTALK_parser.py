@@ -77,7 +77,6 @@ def process_house(house_path, queue) -> tuple[str, dict]:
 
 def parse_ENERTALK(data_path: str, save_path: str) -> None:
     data_dict = {}
-    # data_path = "./Energy_graph/data/temp/ENERTALK/"
     house_paths = [os.path.join(data_path, house) for house in os.listdir(data_path)]
     queue = multiprocessing.Manager().Queue()
     
@@ -87,14 +86,14 @@ def parse_ENERTALK(data_path: str, save_path: str) -> None:
         cpu_count = 1
     with tqdm(total=len(house_paths), desc="Processing houses", unit="house") as progress_bar:
         with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
-            futures = [executor.submit(process_house, house_path, queue) for house_path in house_paths]
+            houses = [executor.submit(process_house, house_path, queue) for house_path in house_paths]
 
             # Update progress bar based on queue
-            for _ in concurrent.futures.as_completed(futures):
+            for _ in concurrent.futures.as_completed(houses):
                 progress_bar.update(queue.get())
 
-            for future in futures:
-                house_name, house_dict = future.result()
+            for house in houses:
+                house_name, house_dict = house.result()
                 data_dict[house_name] = house_dict
 
     save_to_pickle(data_dict, save_path)

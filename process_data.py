@@ -13,7 +13,7 @@ from src.loadprofiles import generate_loadprofiles
 from src.generate_metadata import generate_metadata
 from src.generate_consumption_data import generate_consumption_data
 from src.database_reset import reset_database
-from src.generate_training_data import generate_training_data
+from scripts.generate_training_data import generate_training_data
 from src.remove_devices import remove_devices
 
 from pathlib import Path

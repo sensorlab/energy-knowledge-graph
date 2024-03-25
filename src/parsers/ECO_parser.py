@@ -153,7 +153,6 @@ def get_device_map(house: str) -> dict:
         return None
 
 
-#
 def parse_ECO(file_path: str, path_to_save: str) -> None:
     file_path: Path = Path(file_path).resolve()
     houses_data = {}
@@ -166,5 +165,3 @@ def parse_ECO(file_path: str, path_to_save: str) -> None:
     save_to_pickle(houses_data, path_to_save)
 
 
-if __name__ == "__main__":
-    parse_ECO("data/ECO", "data/ECO_parsed.pkl")

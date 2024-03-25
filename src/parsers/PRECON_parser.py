@@ -16,6 +16,7 @@ def parse_PRECON(data_path: Path, save_path: Path):
             df = pd.DataFrame(df["Usage_kW"])
             df.rename(columns={"Usage_kW": "aggregate"}, inplace=True)
             df = df.resample("1min").ffill(limit=2).dropna()
+            # convert from kW to watts
             df = df*1000
             data[name] = {"aggregate" : df}
             

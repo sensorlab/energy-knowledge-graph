@@ -17,7 +17,9 @@ def preprocess_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df.set_index("timestamp", inplace=True)
     df.sort_index(inplace=True)
-    df.drop(columns=["country", "region", "lat", "lon", "tz", "voltage", "global_reactive_power", "global_intensity", "unmetered", "sub_metering_1", "sub_metering_2", "sub_metering_3"], inplace=True)
+    df.drop(
+        columns=["country", "region", "lat", "lon", "tz", "voltage", "global_reactive_power", "global_intensity", "unmetered", "sub_metering_1", "sub_metering_2", "sub_metering_3"],
+        inplace=True)
     df.rename(columns={"global_active_power": "aggregate"}, inplace=True)
     return df
 

@@ -126,6 +126,7 @@ if __name__ == "__main__":
     # datasets on which to predict appliances
     predict_datasets = config.PREDICT_DATASETS
 
+    # static dictionary to store the descriptions of the steps to be printed to the console
     step_descriptions = {  
         "parse" : "Parsing the raw datasets and storing them as pickle files.....",
         "loadprofiles" : "Generating loadprofiles from the parsed datasets.....",

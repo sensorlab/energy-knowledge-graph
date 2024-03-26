@@ -23,7 +23,7 @@ def parse_DEKN(data_path: str, save_path: str) -> None:
     """
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"
-    df = pd.read_csv(data_path / "household_data_1min_singleindex_filtered.csv")
+    df = pd.read_csv(data_path / "household_data_1min_singleindex_filtered.csv", low_memory=False)
 
     # drop unnecessary columns
     df = df.drop(columns=["utc_timestamp", "interpolated"])

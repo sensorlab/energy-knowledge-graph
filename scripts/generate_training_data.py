@@ -3,11 +3,19 @@ import pickle
 import random
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-
+import os
+import sys
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+
+# Add the project root directory to sys.path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    print(project_root)
+    sys.path.insert(0, project_root)
+    
 from src.helper import preprocess_string, generate_labels
 from src.remove_devices import remove_devices
 import configs.model_config as model_config
@@ -123,7 +131,7 @@ def get_device_windows(path: Path, time_window: int, upper_bound: pd.Timedelta, 
                 for name, windows in result.items():
                     if name not in devices_processed:
                         devices_processed[name] = []
-                devices_processed[name].extend(windows)
+                    devices_processed[name].extend(windows)
             except BrokenProcessPool as e:
                 print(f"Process pool error while processing dataset {dataset}. Error: {e}")
             except TimeoutError as e:
@@ -153,6 +161,10 @@ def generate_synthetic(devices_processed: dict, num_windows: int, device_list: l
         df = pd.DataFrame()
         # choose random windows from the selected devices
         for device in selected_devices:
+            if not devices_processed[device]:
+                print(f"No windows present for device {device} ")
+                continue
+
             curr_df = devices_processed[device][random.randint(0, len(devices_processed[device]) - 1)]
 
             # if the device is never on choose another window
@@ -256,33 +268,9 @@ def generate_training_data(data_path: Path, save_path: Path, datasets: list, win
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process energy graph data.")
-
-    # Argument for the path to the base folder
-    parser.add_argument("--data_path", type=str, default="./data/parsed/", help="Path to base folder (default: `.`)")
-
-    # Argument for the path to the save folder
-    parser.add_argument("--save_path", type=str, default="./data/training_data/synthetic/",
-                        help="Path to save folder (default: `.`)")
-
-    # Argument for time window
-    parser.add_argument("--window_size", type=int, default=2688, help="window size (default: 2688)")
-
-    # Argument for number of windows
-    parser.add_argument("--num-windows", type=int, default=100_000,
-                        help="Number of windows to generate (default: 100000)")
-
-    # Argument for upper bound
-    parser.add_argument("--upper-bound", type=int, default=32, help="Upper bound in seconds (default: 32)")
-
-    # Argument for max gap
-    parser.add_argument("--max-gap", type=int, default=3600, help="Max gap in seconds (default: 3600)")
-
-
-    args = parser.parse_args()
 
     # Set random seed for reproducibility
-    np.random.seed(args.seed)
+    np.random.seed(model_config.RANDOM_STATE)
 
     # Initialize paths
     parsed_data_path: Path = Path(pipeline_config.PARSED_DATA_PATH).resolve()
@@ -305,7 +293,6 @@ if __name__ == "__main__":
     num_windows = model_config.NUM_WINDOWS
     upper_bound = model_config.UPPER_BOUND
     max_gap = model_config.MAX_GAP
-
 
     # remove devices that we dont use during training from the parsed data
     remove_devices(parsed_data_path, training_data_cleaned_folder, model_config.TRAINING_DATASETS)

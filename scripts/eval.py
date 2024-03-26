@@ -1,11 +1,17 @@
 import pandas as pd
-from configs import model_config as config
+
 import numpy as np
 from pathlib import Path
+import sys
 import os
 import tensorflow as tf
 from sklearn import metrics
-
+# Add the project root directory to sys.path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    print(project_root)
+    sys.path.insert(0, project_root)
+import configs.model_config as config
 
 def evaluation():
     # load test data

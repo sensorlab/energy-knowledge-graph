@@ -1,12 +1,20 @@
 import numpy as np
 from pathlib import Path
 import pandas as pd
-from configs import model_config as config
 from sklearn.model_selection import train_test_split
+import os
+import sys
+import tensorflow as tf
+
+
+# Add the project root directory to sys.path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    print(project_root)
+    sys.path.insert(0, project_root)
 from src.helper import normalize
 from src.models.InceptionTime import Classifier_INCEPTION
-import os
-import tensorflow as tf
+import configs.model_config as model_config
 
 physical_devices = tf.config.list_physical_devices('GPU')
 
@@ -37,19 +45,19 @@ def read_data(data_path: str, label_path: str) -> tuple[np.ndarray, np.ndarray, 
 
 
 def train():
-    base = Path(f"{config.SAVE_PATH}/{config.MODEL_NAME}")
+    base = Path(f"{model_config.MODEL_PATH}/{model_config.MODEL_NAME}")
     base.mkdir(parents=True, exist_ok=True)
 
-    X, y, labels = read_data(config.DATA_PATH, config.LABELS_PATH)  # set paths
+    X, y, labels = read_data(model_config.TRAINING_DATA_PATH, model_config.LABELS_PATH)  # set paths
 
     # save config to json
-    config.save_config()
+    model_config.save_config()
 
     NmDevices = len(labels)  # number of devices(classes)
 
     # split data into train and test set
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=config.TEST_SIZE,
-                                                        random_state=config.RANDOM_STATE)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=model_config.TEST_SIZE,
+                                                        random_state=model_config.RANDOM_STATE)
 
     # normalize data
     X_train = normalize(X_train)
@@ -74,21 +82,21 @@ def train():
         os.mkdir(base / "logs/")
 
     # train model
-    for i in range(config.NUM_MODELS):
+    for i in range(model_config.NUM_MODELS):
         # create csv logger callback to log training progress
         csv_logger = tf.keras.callbacks.CSVLogger(base / "logs" / f"model_{i}.csv", separator=",", append=False)
         model = Classifier_INCEPTION(
             output_directory=base / f"model/",
-            input_shape=(config.WINDOW_SIZE, 1),
+            input_shape=(model_config.WINDOW_SIZE, 1),
             nb_classes=NmDevices,
             verbose=True,
             build=True,
-            batch_size=config.BATCH_SIZE,
-            nb_epochs=config.NUM_EPOCHS,
-            lr=config.LEARNING_RATE,
-            depth=config.DEPTH,
+            batch_size=model_config.BATCH_SIZE,
+            nb_epochs=model_config.NUM_EPOCHS,
+            lr=model_config.LEARNING_RATE,
+            depth=model_config.DEPTH,
             model_number=i,
-            kernel_size=config.KERNEL_SIZE
+            kernel_size=model_config.KERNEL_SIZE
         )
         model.fit(X_train, y_train, csv_logger, validation=(X_test, y_test))
 

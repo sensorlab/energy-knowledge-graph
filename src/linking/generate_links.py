@@ -40,7 +40,7 @@ def get_wikidata_results(latitude: float, longitude: float):
     """
 
     sparql_wdata = SPARQLWrapper("https://query.wikidata.org/sparql")
-
+    sparql_wdata.addCustomHttpHeader("User-Agent", "EKG/1.0")
     sparql_wdata.setQuery(query_wikidata)
 
     sparql_wdata.setReturnFormat(JSON)
@@ -305,7 +305,7 @@ def query_wikidata_countries(country: str):
     """
 
     sparql_wdata = SPARQLWrapper("https://query.wikidata.org/sparql")
-
+    sparql_wdata.addCustomHttpHeader("User-Agent", "EKG/1.0")
     sparql_wdata.setQuery(query_wikidata_countries)
 
     sparql_wdata.setReturnFormat(JSON)

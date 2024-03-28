@@ -87,13 +87,13 @@ def query_wikidata_coordinates(latitude: float, longitude: float, label: str, da
     return matched_cities[0][1]["city"]["value"]
 
 
-def query_graphDB_cities(endpoint: str):
+def query_blazegraph_cities(endpoint: str):
     """
     Query the energy knowledge graph for the cities and their coordinates
     ## Parameters
     endpoint : Sparql enpoint for the energy KG
     ## Returns
-    results_Graphdb : JSON object with the results of the query
+    results_blazegraph : JSON object with the results of the query
     """
     query_my_data = """
     PREFIX schema: <https://schema.org/>
@@ -118,15 +118,15 @@ def query_graphDB_cities(endpoint: str):
     """
     # endpoint = "http://localhost:7200/repositories/test"
 
-    sparlq_graphdb = SPARQLWrapper(endpoint)
-    sparlq_graphdb.setQuery(query_my_data)
-    sparlq_graphdb.setReturnFormat(JSON)
-    results_Graphdb = sparlq_graphdb.query().convert()
+    sparlq_blazegraph = SPARQLWrapper(endpoint)
+    sparlq_blazegraph.setQuery(query_my_data)
+    sparlq_blazegraph.setReturnFormat(JSON)
+    results_blazegraph = sparlq_blazegraph.query().convert()
 
-    return results_Graphdb
+    return results_blazegraph
 
 
-def query_graphdb_countries(endpoint):
+def query_blazegraph_countries(endpoint):
     """
     Query the energy knowledge graph for the countries
     ## Parameters
@@ -146,11 +146,11 @@ def query_graphdb_countries(endpoint):
     }
     """
 
-    sparql_graphdb = SPARQLWrapper(endpoint)
-    sparql_graphdb.setQuery(query_countries)
-    sparql_graphdb.setReturnFormat(JSON)
+    sparql_blazegraph = SPARQLWrapper(endpoint)
+    sparql_blazegraph.setQuery(query_countries)
+    sparql_blazegraph.setReturnFormat(JSON)
 
-    results = sparql_graphdb.query().convert()
+    results = sparql_blazegraph.query().convert()
     uris = {}
     for uri in results["results"]["bindings"]:
         k = uri["country"]["value"].split("/")[-1].replace("%20", " ")
@@ -350,12 +350,12 @@ def generate_links(energy_endpoint):
 
     """
     # query the energy knowledge graph for the cities and their coordinates
-    results_Graphdb_cities = query_graphDB_cities(energy_endpoint)
-    result_Graphdb_countries = query_graphdb_countries(energy_endpoint)
+    results_blazegraph_cities = query_blazegraph_cities(energy_endpoint)
+    result_blazegraph_countries = query_blazegraph_countries(energy_endpoint)
 
     matches = []
     # iterate over the results and query Wikidata and DBpedia for each city
-    for c in results_Graphdb_cities["results"]["bindings"]:
+    for c in results_blazegraph_cities["results"]["bindings"]:
         label = c["cityName"]["value"]
         # if label != "Montreal":
         #     continue
@@ -368,9 +368,9 @@ def generate_links(energy_endpoint):
     # from time import sleep
     # sleep(5)
     # iterate over the results and query Wikidata for each country
-    for c in result_Graphdb_countries:
-        result_wikidata_countries = (result_Graphdb_countries[c], query_wikidata_countries(c))
-        result_dbpedia_countries = (result_Graphdb_countries[c], query_dbpedia_countries(c))
+    for c in result_blazegraph_countries:
+        result_wikidata_countries = (result_blazegraph_countries[c], query_wikidata_countries(c))
+        result_dbpedia_countries = (result_blazegraph_countries[c], query_dbpedia_countries(c))
         matches.append(result_wikidata_countries)
         matches.append(result_dbpedia_countries)
 
@@ -381,7 +381,7 @@ def generate_links(energy_endpoint):
         triples.append(s)
     print("Inserting triples....")
     # insert in energy KG with sparql
-    sparql = SPARQLWrapper(energy_endpoint + "/statements")
+    sparql = SPARQLWrapper(energy_endpoint)
     sparql.method = "POST"
     sparql.setQuery(f"""
     INSERT DATA {{
@@ -401,12 +401,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # query the energy knowledge graph for the cities and their coordinates
-    results_Graphdb_cities = query_graphDB_cities(args.energy_endpoint)
-    result_Graphdb_countries = query_graphdb_countries(args.energy_endpoint)
+    results_blazegraph_cities = query_blazegraph_cities(args.energy_endpoint)
+    result_blazegraph_countries = query_blazegraph_countries(args.energy_endpoint)
 
     matches = []
     # iterate over the results and query Wikidata and DBpedia for each city
-    for c in results_Graphdb_cities["results"]["bindings"]:
+    for c in results_blazegraph_cities["results"]["bindings"]:
         label = c["cityName"]["value"]
         # if label != "Montreal":
         #     continue
@@ -420,9 +420,9 @@ if __name__ == "__main__":
 
     sleep(5)
     # iterate over the results and query Wikidata for each country
-    for c in result_Graphdb_countries:
-        result_wikidata_countries = (result_Graphdb_countries[c], query_wikidata_countries(c))
-        result_dbpedia_countries = (result_Graphdb_countries[c], query_dbpedia_countries(c))
+    for c in result_blazegraph_countries:
+        result_wikidata_countries = (result_blazegraph_countries[c], query_wikidata_countries(c))
+        result_dbpedia_countries = (result_blazegraph_countries[c], query_dbpedia_countries(c))
         matches.append(result_wikidata_countries)
         matches.append(result_dbpedia_countries)
 
@@ -433,7 +433,7 @@ if __name__ == "__main__":
         triples.append(s)
 
     # insert in energy KG with sparql
-    sparql = SPARQLWrapper(args.energy_endpoint + "/statements")
+    sparql = SPARQLWrapper(args.energy_endpoint)
     sparql.method = "POST"
     sparql.setQuery(f"""
     INSERT DATA {{

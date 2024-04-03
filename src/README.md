@@ -58,11 +58,81 @@ This script will delete the database at the specified url in the environment var
 
 
 
+# SPARQL examples
+
+We provide some example SPARQL queries that can be run on the knowledge graph. We also host a SPARQL endpoint at [TODO link] where you can test your queries.
 
 
+## Example 1: Query all countries with GDP greater than 50000
+
+```sparql
+PREFIX voc: <http://vocabulary.example.org/>
+PREFIX saref: <https://saref.etsi.org/core/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <https://schema.org/>
+SELECT ?gdp ?location ?countryName WHERE {
+  ?location rdf:type schema:Place . 
+  ?location voc:hasGDPOf ?gdp .
+  ?location schema:containedInPlace ?country .
+  ?country rdf:type schema:Country .
+  ?country schema:name ?countryName .
+  FILTER(?gdp > 50000) .
+} 
+
+```
 
 
+## Example 2: Query all devices in a house with name "LERTA_4"
 
+```sparql
+PREFIX voc: <http://vocabulary.example.org/>
+PREFIX saref: <https://saref.etsi.org/core/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <https://schema.org/>
+SELECT DISTINCT ?house ?devices ?deviceNames ?houseName WHERE {
+ ?house rdf:type schema:House .
+ ?house schema:name ?houseName .
+ ?house voc:containsDevice ?devices .
+ ?devices schema:name ?deviceNames .
+ FILTER(?houseName = "LERTA_4").
 
+} 
 
+```
+
+## Example 3: Query household "UKDALE_1" and the city it is in as well as the corresponding city in dbpedia and wikidata
+
+```sparql
+PREFIX voc: <http://vocabulary.example.org/>
+PREFIX saref: <https://saref.etsi.org/core/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <https://schema.org/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX dbo: <http://dbpedia.org/ontology/>
+
+SELECT DISTINCT ?houseName ?city ?dbpediaCity ?wikidataCity WHERE {
+  ?house rdf:type schema:House .
+  ?house schema:name ?houseName .
+  ?house schema:containedInPlace ?place .
+  ?place schema:containedInPlace ?city .
+  ?city rdf:type schema:City .
+  
+  OPTIONAL {
+    ?city owl:sameAs ?linkedCity .
+    FILTER(STRSTARTS(STR(?linkedCity), "http://dbpedia.org/resource/"))
+    BIND(?linkedCity AS ?dbpediaCity)
+  }
+  
+  OPTIONAL {
+    ?city owl:sameAs ?linkedCity2 .
+    FILTER(STRSTARTS(STR(?linkedCity2), "http://www.wikidata.org/entity/"))
+    BIND(?linkedCity2 AS ?wikidataCity)
+  }
+  
+  FILTER(?houseName = "UKDALE_1")
+}
+    
+```
 

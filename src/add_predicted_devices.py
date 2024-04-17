@@ -17,7 +17,6 @@ def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electr
 
     """
     query_houses = """
-    PREFIX voc: <http://vocabulary.example.org/>
     PREFIX saref: <https://saref.etsi.org/core/>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX schema: <https://schema.org/>
@@ -40,7 +39,7 @@ def get_highest_device_id(endpoint="http://193.2.205.14:7200/repositories/Electr
                 max_id = id
         return max_id
     except:
-        print("Error in the query")
+        print("Error in the query getting the highest device id")
         return False
 
 
@@ -56,7 +55,6 @@ def get_household(household: str, endpoint="http://193.2.205.14:7200/repositorie
     """
 
     query_houses = f"""
-    PREFIX voc: <http://vocabulary.example.org/>
     PREFIX saref: <https://saref.etsi.org/core/>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX schema: <https://schema.org/>
@@ -97,17 +95,15 @@ def insert_device(device_id: int, device_name: str, household: str,
     """
 
     sparql_insert_query = f"""
-    PREFIX voc: <http://vocabulary.example.org/>
-    PREFIX saref: <https://saref.etsi.org/core/>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX schema: <https://schema.org/>
     INSERT DATA {{
-    <{household}> voc:containsDevice <http://mydata.example.org/public-devices/{device_id}> .
-    <http://mydata.example.org/public-devices/{device_id}> rdf:type saref:Device .
-    <http://mydata.example.org/public-devices/{device_id}> schema:name "{device_name}" .
+    <{household}> <http://vocab-kg.ijs.si/containsDevice> <http://kgdata.ijs.si/public-devices/{device_id}> .
+    <http://kgdata.ijs.si/public-devices/{device_id}> a <https://saref.etsi.org/core/Device> .
+    <http://kgdata.ijs.si/public-devices/{device_id}> schema:name "{device_name}" .
     }}
     """
-    sparlq_graphdb = SPARQLWrapper(endpoint + "/statements")
+    sparlq_graphdb = SPARQLWrapper(endpoint)
     sparlq_graphdb.setMethod('POST')
     sparlq_graphdb.setQuery(sparql_insert_query)
 
@@ -140,6 +136,8 @@ def add_predicted_devices(predicted_path: Path, graph_endpoint: str):
             household = household[0]["household"]["value"]
             for device in data[house]:
                 start_id += 1
-                insert_device(start_id, device, household, endpoint=graph_endpoint)
+                if not insert_device(start_id, device, household, endpoint=graph_endpoint):
+                    print(f"Error inserting device {device} in house {house}")
+                    break
         else:
             print(f"House {house} not found in the graph")

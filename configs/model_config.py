@@ -14,8 +14,8 @@ NUM_MODELS = 10  # number of models in ensemble
 WINDOW_SIZE = 2688
 NUM_WINDOWS=100000
 SAMPLING_RATE = "8S"
-UPPER_BOUND = 32
-MAX_GAP = 3600
+UPPER_BOUND = pd.to_timedelta(32, unit='s')
+MAX_GAP = pd.to_timedelta(3600, unit='s')
 
 # paths to the data and labels used for training / evaluation
 TRAINING_DATA_PATH = "./data/training_data/X_Y_wsize2688_numW_100000_upper32_gap3600_numD64.pkl"

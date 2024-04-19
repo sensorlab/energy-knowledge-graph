@@ -78,7 +78,7 @@ We provide some example SPARQL queries that can be run on the knowledge graph. W
 ## Example 1: Query all countries with GDP greater than 50000
 
 ```sparql
-PREFIX voc: <http://vocabulary.example.org/>
+PREFIX voc: <https://elkg.ijs.si/ontology/>
 PREFIX saref: <https://saref.etsi.org/core/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX schema: <https://schema.org/>
@@ -97,7 +97,7 @@ SELECT ?gdp ?location ?countryName WHERE {
 ## Example 2: Query all devices in a house with name "LERTA_4"
 
 ```sparql
-PREFIX voc: <http://vocabulary.example.org/>
+PREFIX voc: <https://elkg.ijs.si/ontology/>
 PREFIX saref: <https://saref.etsi.org/core/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX schema: <https://schema.org/>
@@ -115,7 +115,7 @@ SELECT DISTINCT ?house ?devices ?deviceNames ?houseName WHERE {
 ## Example 3: Query household "UKDALE_1" and the city it is in as well as the corresponding city in dbpedia and wikidata
 
 ```sparql
-PREFIX voc: <http://vocabulary.example.org/>
+PREFIX voc: <https://elkg.ijs.si/ontology/>
 PREFIX saref: <https://saref.etsi.org/core/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX schema: <https://schema.org/>

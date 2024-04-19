@@ -98,9 +98,9 @@ def insert_device(device_id: int, device_name: str, household: str,
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX schema: <https://schema.org/>
     INSERT DATA {{
-    <{household}> <http://vocab-kg.ijs.si/containsDevice> <http://kgdata.ijs.si/public-devices/{device_id}> .
-    <http://kgdata.ijs.si/public-devices/{device_id}> a <https://saref.etsi.org/core/Device> .
-    <http://kgdata.ijs.si/public-devices/{device_id}> schema:name "{device_name}" .
+    <{household}> <https://elkg.ijs.si/ontology/containsDevice> <https://elkg.ijs.si/resource/public-devices/{device_id}> .
+    <https://elkg.ijs.si/resource/public-devices/{device_id}> a <https://saref.etsi.org/core/Device> .
+    <https://elkg.ijs.si/resource/public-devices/{device_id}> schema:name "{device_name}" .
     }}
     """
     sparlq_graphdb = SPARQLWrapper(endpoint)

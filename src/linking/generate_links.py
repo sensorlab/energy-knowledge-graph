@@ -98,13 +98,11 @@ def query_blazegraph_cities(endpoint: str):
     query_my_data = """
     PREFIX schema: <https://schema.org/>
     PREFIX wdtn: <http://www.wikidata.org/prop/direct-normalized/>
-    PREFIX data: <http://mydata.example.org/>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX wdt: <http://www.wikidata.org/prop/direct/>
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX voc: <http://vocabulary.example.org/>
     PREFIX wd: <http://www.wikidata.org/entity/>
     SELECT DISTINCT ?cityName ?longitude ?latitude ?City
     WHERE {
@@ -136,7 +134,6 @@ def query_blazegraph_countries(endpoint):
     """
 
     query_countries = """
-    PREFIX voc: <http://vocabulary.example.org/>
     PREFIX saref: <https://saref.etsi.org/core/>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX schema: <https://schema.org/>

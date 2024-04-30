@@ -59,7 +59,7 @@ The pipeline contains the following data processing steps:
 3. [metadata](src/generate_metadata.py) - This script generates metadata for the households and stores it in a dataframe as a parquet file
 4. [consumption-data](./scripts/consumption_data.py) - This script calculates the electrictiy consumption data for the households and their appliances
 5. [db-reset](./scripts/db_reset.py) - This script resets and populates the database with the households metadata, load profiles and consumption data
-6. [training-data](scripts/generate_training_data.py) - This script generates the training data for on/off appliance classification from the training datasets
+
 
 and the following steps for predicting devices using a pretrained model (requires tensorflow):
 
@@ -67,6 +67,30 @@ and the following steps for predicting devices using a pretrained model (require
 2. [add_predicted_devices](src/add_predicted_devices.py) - This script adds the predicted devices to the knowledge graph
 
 
+## Training pipeline usage
+
+The training pipeline consists of the following steps:
+
+1. [generate_training_data.py](scripts/generate_training_data.py) - This script generates the training data for on/off appliance classification from the training datasets specified in the [model_config.py](configs/pipeline_config.py) file.
+2. [train.py](scripts/train.py) - This script trains the model on the training data generated in the previous step and saves the model in the specified path in the [model_config.py](configs/pipeline_config.py) file various hyperparameters and training settings can also be set in the config file.
+3. [eval.py](scripts/eval.py) - This script evaluates the model on the test data and saves the evaluation metrics in the specified path in the [model_config.py](configs/pipeline_config.py) file.
+
+Quick start guide for training pipeline:
+```bash
+      # navigate to the scripts directory
+      cd energy-knowledge-graph/scripts
+      # open the model_config.py file and set the paths and to the data and select the datasets to be used for training
+      # generate training data
+      python generate_training_data.py
+
+      # open the model_config.py file and set the hyperparameters and training settings
+      # train the model
+      python train.py
+      
+      # evaluate the model
+      python eval.py
+    
+```
 
 
 

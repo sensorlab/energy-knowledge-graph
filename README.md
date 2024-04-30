@@ -86,7 +86,7 @@ Quick start guide for training pipeline:
       # open the model_config.py file and set the hyperparameters and training settings
       # train the model
       python train.py
-      
+
       # evaluate the model
       python eval.py
     
@@ -96,7 +96,7 @@ Quick start guide for training pipeline:
 
 # SPARQL examples
 
-We provide some example SPARQL queries that can be run on the knowledge graph. We also host a SPARQL endpoint at [TODO link] where you can test your queries.
+We provide some example SPARQL queries that can be run on the knowledge graph. We also host a [SPARQL endpoint](https://sparqlelec.ijs.si/) where you can test your queries.
 
 
 ## Example 1: Query all countries with GDP greater than 50000

@@ -2,6 +2,8 @@
 
 The projects builds knowledge graph for energy consumption.[TODO expand add pipeline image?]
 
+<embed src="images/pipeline.pdf" width="800px" height="600px" />
+
 # File structure
 
 - `data` - contains the raw datasets and their metadata and later preprocessed data

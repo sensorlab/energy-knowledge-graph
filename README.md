@@ -3,7 +3,7 @@
 The projects builds knowledge graph for energy consumption.[TODO expand add pipeline image?]
 
 <!-- add pipeline from images/pipeline.pdf -->
-![Knowledge graph development methodology.](images/pipeline.pdf)
+![Knowledge graph development methodology.](images/pipeline.png)
 
 # File structure
 

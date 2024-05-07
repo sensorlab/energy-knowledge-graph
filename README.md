@@ -1,6 +1,6 @@
 # Energy Knowledge Graph
 
-The projects builds knowledge graph for energy consumption.[TODO expand add pipeline image?]
+This is the repository for the Energy Knowledge Graph project. The project aims to create a knowledge graph of energy consumption data from various households and appliances. The knowledge graph is created by parsing the raw data from the households and appliances and storing it in a structured format in a PostgreSQL database. The data is then used to train a machine learning model to predict the appliances in the households. The predicted devices are then added to the knowledge graph alongside metadata. The knowledge graph can be queried using SPARQL queries from our [endpoint](https://sparqlelec.ijs.si/) .
 
 <!-- add pipeline from images/pipeline.pdf -->
 ![Knowledge graph development methodology.](images/pipeline.png)
@@ -17,6 +17,8 @@ The projects builds knowledge graph for energy consumption.[TODO expand add pipe
 
 
 ## Installation / Use
+
+The dataset can be downloaded here[TODO add link to dataset] and the scripts can be run to preprocess the data and populate the database.
 
 The scripts are described in more detail in the [scripts README](src/README.md).
 

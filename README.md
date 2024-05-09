@@ -1,9 +1,28 @@
-# Energy Knowledge Graph
+# Electricity Knowledge Graph
+This repository contains the source code and the dataset for the paper [Towards Data-Driven Electricity Management: Multi-Region Harmonized Data and Knowledge Graph](TODO LINK)
 
-This is the repository for the Energy Knowledge Graph project. The project aims to create a knowledge graph of energy consumption data from various households and appliances. The knowledge graph is created by parsing the raw data from the households and appliances and storing it in a structured format in a PostgreSQL database. The data is then used to train a machine learning model to predict the appliances in the households. The predicted devices are then added to the knowledge graph alongside metadata. The knowledge graph can be queried using SPARQL queries from our [endpoint](https://sparqlelec.ijs.si/) .
+The repository includes downloads for the datasets and all the neccesary code to run the pipeline for preprocessing the data and generating the knowledge graph. The knowledge graph is generated from a set of raw datasets containing electricity consumption data from multiple regions and households. The data is preprocessed and harmonized to generate a knowledge graph containing information about the households, appliances, and electricity consumption.
+We also provide a model training pipeline that can be used to train a model for on/off appliance classification.
+
 
 <!-- add pipeline from images/pipeline.pdf -->
 ![Knowledge graph development methodology.](images/pipeline.png)
+
+# Dataset download
+
+The full raw dump contains all the datasets and their coresponding metadata, while the sample raw dump contains a subset of the full raw dump. The triples dump contains the triples forming the knowledge graph in turtle format, while the harmonized data dump contains the harmonized data in pickle files the harmonized data is the same as the output of the pipeline in step 1.
+
+TODO update links to files
+
+* Full raw dump(91.2 GB): <a href="dataset-files/ws_traffic_20170606.zip">data_dump_full.tar.gz</a>
+* Sample raw dump(10.4 GB): <a href="dataset-files/ws_traffic_20170606.zip">data_sample.tar.gz</a>
+* Triples dump (125 MB): <a href="dataset-files/ws_traffic_20170606.zip">triples.ttl</a>
+* Harmonized data dump(80 GB): <a href="dataset-files/ws_traffic_20170606.zip">harmonized.tar.gz</a>
+* Github: <a href="https://github.com/sensorlab/energy-knowledge-graph">https://github.com/sensorlab/energy-knowledge-graph</a>
+
+
+
+
 
 # File structure
 
@@ -177,5 +196,6 @@ SELECT DISTINCT ?houseName ?city ?dbpediaCity ?wikidataCity WHERE {
     
 ```
 
+If you use this dataset or pipeline in your research, citation of the following paper, which also provides additional details about the dataset and the processing pipeline, would be greatly appreciated:
 
 [TODO add bibtex reference for paper]

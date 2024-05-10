@@ -12,8 +12,6 @@ We also provide a model training pipeline that can be used to train a model for 
 
 The full raw dump contains all the datasets and their coresponding metadata, while the sample raw dump contains a subset of the full raw dump. The triples dump contains the triples forming the knowledge graph in turtle format, while the harmonized data dump contains the harmonized data in pickle files the harmonized data is the same as the output of the pipeline in step 1.
 
-TODO update links to files
-
 * Full raw dump(91.2 GB): [data_dump_full.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_dump_full.tar.gz)
 * Sample raw dump(10.4 GB): [data_sample.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_sample.tar.gz)
 * Triples dump (125 MB): [triples.ttl](http://sensorlab.ijs.si/archive/energy-knowledge-graph/triples.ttl)

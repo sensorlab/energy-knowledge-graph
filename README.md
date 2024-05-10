@@ -14,11 +14,10 @@ The full raw dump contains all the datasets and their coresponding metadata, whi
 
 TODO update links to files
 
-* Full raw dump(91.2 GB): <a href="dataset-files/ws_traffic_20170606.zip">data_dump_full.tar.gz</a>
-* Sample raw dump(10.4 GB): <a href="dataset-files/ws_traffic_20170606.zip">data_sample.tar.gz</a>
-* Triples dump (125 MB): <a href="dataset-files/ws_traffic_20170606.zip">triples.ttl</a>
-* Harmonized data dump(80 GB): <a href="dataset-files/ws_traffic_20170606.zip">harmonized.tar.gz</a>
-* Github: <a href="https://github.com/sensorlab/energy-knowledge-graph">https://github.com/sensorlab/energy-knowledge-graph</a>
+* Full raw dump(91.2 GB): [data_dump_full.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_dump_full.tar.gz)
+* Sample raw dump(10.4 GB): [data_sample.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_sample.tar.gz)
+* Triples dump (125 MB): [triples.ttl](http://sensorlab.ijs.si/archive/energy-knowledge-graph/triples.ttl)
+* Harmonized data dump(80 GB): [harmonized.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/harmonized.tar.gz)
 
 
 
@@ -37,8 +36,6 @@ TODO update links to files
 
 ## Installation / Use
 
-The dataset can be downloaded here[TODO add link to dataset] and the scripts can be run to preprocess the data and populate the database.
-
 The scripts are described in more detail in the [scripts README](src/README.md).
 
 
@@ -54,7 +51,7 @@ and `pip install -r requirements.tensorflow.txt --extra-index-url https://pypi.n
     ```
 6. Check [pipeline_config.py](configs/pipeline_config.py) for the configuration of the pipeline leave as is for default configuration
 7. Run `python scripts/process_data.py` by default this will preprocess the datasets defined in [pipeline_config.py](configs/pipeline_config.py) and store it in the database if we pass the command line argument `--sample` it will preprocess only the datasets present in the sample dump and if we pass `--full` it will preprocess all the datasets present in the full dump
-8. Access PostgreSQL at port `:5433`
+
 
 
 
@@ -95,7 +92,7 @@ and the following steps for predicting devices using a pretrained model (require
 
 The training pipeline consists of the following steps:
 
-1. [generate_training_data.py](scripts/generate_training_data.py) - This script generates the training data for on/off appliance classification from the training datasets specified in the [model_config.py](configs/pipeline_config.py) file.
+1. [generate_training_data.py](scripts/generate_training_data.py) - This script generates the training data for on/off appliance classification from the training datasets specified in the [model_config.py](configs/pipeline_config.py) file the training datasets have to be parsed by running the parse step in the pipeline beforehand.
 2. [train.py](scripts/train.py) - This script trains the model on the training data generated in the previous step and saves the model in the specified path in the [model_config.py](configs/pipeline_config.py) file various hyperparameters and training settings can also be set in the config file.
 3. [eval.py](scripts/eval.py) - This script evaluates the model on the test data and saves the evaluation metrics in the specified path in the [model_config.py](configs/pipeline_config.py) file.
 

@@ -192,12 +192,13 @@ SELECT DISTINCT ?houseName ?city ?dbpediaCity ?wikidataCity WHERE {
 ```
 
 If you use this dataset or pipeline in your research, citation of the following paper, which also provides additional details about the dataset and the processing pipeline, would be greatly appreciated:
-
-@article{hanzel2024datadriven,
-      title={Towards Data-Driven Electricity Management: Multi-Region Harmonized Data and Knowledge Graph}, 
-      author={Vid Hanžel and Blaž Bertalanič and Carolina Fortuna},
-      year={2024},
-      eprint={2405.18869},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
-}
+```
+    @article{hanzel2024datadriven,
+          title={Towards Data-Driven Electricity Management: Multi-Region Harmonized Data and Knowledge Graph}, 
+          author={Vid Hanžel and Blaž Bertalanič and Carolina Fortuna},
+          year={2024},
+          eprint={2405.18869},
+          archivePrefix={arXiv},
+          primaryClass={cs.LG}
+    }
+```

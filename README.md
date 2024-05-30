@@ -1,5 +1,5 @@
 # Electricity Knowledge Graph
-This repository contains the source code and the dataset for the paper [Towards Data-Driven Electricity Management: Multi-Region Harmonized Data and Knowledge Graph](TODO LINK)
+This repository contains the source code and the dataset for the paper [Towards Data-Driven Electricity Management: Multi-Region Harmonized Data and Knowledge Graph](https://arxiv.org/abs/2405.18869)
 
 The repository includes downloads for the datasets and all the neccesary code to run the pipeline for preprocessing the data and generating the knowledge graph. The knowledge graph is generated from a set of raw datasets containing electricity consumption data from multiple regions and households. The data is preprocessed and harmonized to generate a knowledge graph containing information about the households, appliances, and electricity consumption.
 We also provide a model training pipeline that can be used to train a model for on/off appliance classification.
@@ -193,4 +193,11 @@ SELECT DISTINCT ?houseName ?city ?dbpediaCity ?wikidataCity WHERE {
 
 If you use this dataset or pipeline in your research, citation of the following paper, which also provides additional details about the dataset and the processing pipeline, would be greatly appreciated:
 
-[TODO add bibtex reference for paper]
+@article{hanzel2024datadriven,
+      title={Towards Data-Driven Electricity Management: Multi-Region Harmonized Data and Knowledge Graph}, 
+      author={Vid Hanžel and Blaž Bertalanič and Carolina Fortuna},
+      year={2024},
+      eprint={2405.18869},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}

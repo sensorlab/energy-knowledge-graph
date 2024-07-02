@@ -14,8 +14,8 @@ NUM_MODELS = 10  # number of models in ensemble
 WINDOW_SIZE = 2688
 NUM_WINDOWS=100000
 SAMPLING_RATE = "8S" 
-UPPER_BOUND = pd.to_timedelta(32, unit='s') # if there is more than 15 gaps of this size in the window it will be discarded
-MAX_GAP = pd.to_timedelta(3600, unit='s') # if there is a gap larger than this in the window it will be discarded
+UPPER_BOUND = 32 # if there is more than 15 gaps of this size in the window it will be discarded
+MAX_GAP = 3600 # if there is a gap larger than this in the window it will be discarded
 
 # paths to the data and labels used for training / evaluation
 TRAINING_DATA_PATH = "./data/training_data/X_Y_wsize2688_numW_100000_upper32_gap3600_numD64.pkl"
@@ -52,6 +52,11 @@ TRAINING_DATASETS = [
     "REFIT",
     "UKDALE"
 ]
+
+# check if SAVE_PATH exists
+import os
+if not os.path.exists(SAVE_PATH+ "/"+MODEL_NAME):
+    os.makedirs(SAVE_PATH+ "/"+MODEL_NAME)
 
 
 def save_config():

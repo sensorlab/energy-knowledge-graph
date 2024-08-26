@@ -4,6 +4,15 @@ from tqdm import tqdm
 from pathlib import Path
 from src.helper import save_to_pickle
 
+######################DATASET INFO#########################################
+# sampling rate: 1min
+# length: 1 year
+# unit: watts
+# households: 42
+# submetered: no
+# Location: Pakistan
+# Source: https://web.lums.edu.pk/~eig/precon.html
+
 
 def parse_PRECON(data_path: Path, save_path: Path):
     data_dict = {}

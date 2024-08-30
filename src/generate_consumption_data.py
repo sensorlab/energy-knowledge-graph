@@ -8,12 +8,12 @@ import concurrent.futures
 from pathlib import Path
 
 
-def average_daily_consumption(df: pd.DataFrame) -> float:
+def average_daily_consumption(df: pd.DataFrame, kWh=False) -> float:
     """
     Calculate the average daily consumption of a device in kWh
     ### Parameters
     `df` : should be in the form datetime index and column should contain device consumption readings in watts
-
+    `kWh` : if True, the data is already in kWh
     ### Returns
     `float` : average daily consumption in kWh
     """
@@ -21,32 +21,43 @@ def average_daily_consumption(df: pd.DataFrame) -> float:
     if df.empty:
         return 0
     df = df.copy()
-    time_deltas = df.index.to_series().diff().dropna()
-    median_time_delta = time_deltas.median()
-    sampling_rate = median_time_delta.total_seconds() / 3600
-    df /= 1000
-    df *= sampling_rate
+    if not kWh:
+        time_deltas = df.index.to_series().diff().dropna()
+        median_time_delta = time_deltas.median()
+        sampling_rate = median_time_delta.total_seconds() / 3600
+        df /= 1000
+        df *= sampling_rate
     df = df.resample('1D').sum()
 
     return df.values.mean()
 
 
 # noinspection PyBroadException
-def average_on_off_event(df: pd.DataFrame) -> float:
+def average_on_off_event(df: pd.DataFrame, kWh=False) -> float:
     """
     Calculate the average on/off event consumption of a device in kWh
     ### Parameters
     `df` : should be in the form datetime index and column should contain device consumption readings in watts
+    `kWh` : if True, the data is already in kWh
     ### Returns
     `float` : average on/off event consumption in kWh
     """
     # check if df is empty
     if df.empty:
         return 0
+    
+
     df_orig = df.copy()
     time_deltas = df.index.to_series().diff().dropna()
     median_time_delta = time_deltas.median()
     sampling_rate = median_time_delta.total_seconds() / 3600
+
+    # if data is in kWh, convert to watts
+    if kWh:
+        df /= sampling_rate
+        df *= 1000
+
+
 
     threshold = 5  # Define the threshold for 'on' state
     # noinspection PyUnresolvedReferences
@@ -120,6 +131,7 @@ def average_on_off_event(df: pd.DataFrame) -> float:
     avg = []
     for p in merged_on_periods:
         p = p.iloc[:, 0].copy()
+    
         p /= 1000
         p *= sampling_rate
 
@@ -141,17 +153,27 @@ def process_dataset(dataset_path):
 
     house_data_dict = {}
     data = pd.read_pickle(dataset_path)
+
     for h in data.keys():
         house_data = {}
         df = data[h]
+        if "ECDUY" in h or "DEKN" in h or "HUE" in h:
+            for d in df.keys():
+                # for aggregate process only daily consumption
+                if "aggregate" in d:
+                    house_data[d] = {"daily": average_daily_consumption(df[d].copy(), kWh=True)}
+                else:
+                    house_data[d] = {"daily": average_daily_consumption(df[d].copy(), kWh=True),
+                                    "event": average_on_off_event(df[d].copy(), kWh=True)}
+        else:
+            for d in df.keys():
+                # for aggregate process only daily consumption
+                if "aggregate" in d:
+                    house_data[d] = {"daily": average_daily_consumption(df[d].copy())}
+                else:
+                    house_data[d] = {"daily": average_daily_consumption(df[d].copy()),
+                                    "event": average_on_off_event(df[d].copy())}
 
-        for d in df.keys():
-            # for aggregate process only daily consumption
-            if "aggregate" in d:
-                house_data[d] = {"daily": average_daily_consumption(df[d].copy())}
-            else:
-                house_data[d] = {"daily": average_daily_consumption(df[d].copy()),
-                                 "event": average_on_off_event(df[d].copy())}
 
         house_data_dict[h] = house_data
     del data

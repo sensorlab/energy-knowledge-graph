@@ -6,7 +6,7 @@ from src.helper import save_to_pickle
 # sampling rate: 1min
 # length: 2.5 years
 # unit: kWh
-# households: 11
+# households: 5
 # submetered
 # Location: Germany
 # Source: https://data.open-power-system-data.org/household_data/2020-04-15

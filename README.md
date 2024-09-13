@@ -8,16 +8,6 @@ We also provide a model training pipeline that can be used to train a model for 
 <!-- add pipeline from images/pipeline.pdf -->
 ![Knowledge graph development methodology.](images/pipeline.png)
 
-# Dataset download
-
-The full raw dump contains all the datasets and their coresponding metadata, while the sample raw dump contains a subset of the full raw dump. The triples dump contains the triples forming the knowledge graph in turtle format, while the harmonized data dump contains the harmonized data in pickle files the harmonized data is the same as the output of the pipeline in step 1.
-
-* Full raw dump(91.2 GB): [data_dump_full.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_dump_full.tar.gz)
-* Sample raw dump(10.4 GB): [data_sample.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_sample.tar.gz)
-* Triples dump (125 MB): [triples.ttl](http://sensorlab.ijs.si/archive/energy-knowledge-graph/triples.ttl)
-* Harmonized data dump(80 GB): [harmonized.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/harmonized.tar.gz)
-
-
 
 
 
@@ -36,12 +26,18 @@ The full raw dump contains all the datasets and their coresponding metadata, whi
 
 The scripts are described in more detail in the [scripts README](src/README.md).
 
+To use the pipeline, you need to download either the full harmonized data dump from our Figshare repository or the sample dataset. Additionally, the metadata needs to be downloaded and extracted into the data folder. The `./data/` folder should contain two subdirectories: one for the metadata and another for the harmonized datasets.
+
+Before proceeding, ensure that the paths in the [pipeline_config.py](configs/pipeline_config.py) (PARSED_DATA_PATH and METADATA_PATH) file point to the correct folders for the harmonized data and metadata. Once everything is set up, you can start from step 4 below
+
+
 
 1. Start a terminal and clone this [repository](https://github.com/sensorlab/energy-knowledge-graph) `git clone https://github.com/sensorlab/energy-knowledge-graph`
-2. Navigate into energy-knowledge-graph directory, enter conda or virtualenv, and install dependecies with `pip install -r requirements.txt` for data preprocessing 
-and `pip install -r requirements.tensorflow.txt --extra-index-url https://pypi.nvidia.com` if you want to use the machine learning part of the pipeline
+
 3. Unzip the `data_dump_full.tar.gz` file in the data directory using `tar -xvf data_dump_full.tar.gz -C data`, optionally you can use only the data_sample.tar.gz file `tar -xvf data_sample.tar.gz -C data` instead 
 4. Make sure that `./data/`folder contains contains required datasets and metadata data folder should be of structure `./data/metadata/` containing metadata and `./data/raw/` containing raw datasets
+2. Navigate into energy-knowledge-graph directory, enter conda or virtualenv, and install dependecies with `pip install -r requirements.txt` for data preprocessing 
+and `pip install -r requirements.tensorflow.txt --extra-index-url https://pypi.nvidia.com` if you want to use the machine learning part of the pipeline
 5. Create an .env file in the [scripts](./scripts/) directory with the following content:
     ```bash
     DATABASE_USER=<username to access PostgreSQL database>
@@ -51,6 +47,45 @@ and `pip install -r requirements.tensorflow.txt --extra-index-url https://pypi.n
 7. Run `python scripts/process_data.py` by default this will preprocess the datasets defined in [pipeline_config.py](configs/pipeline_config.py) and store it in the database if we pass the command line argument `--sample` it will preprocess only the datasets present in the sample dump and if we pass `--full` it will preprocess all the datasets present in the full dump
 
 
+# Dataset download
+
+The full raw dump contains all the datasets and their coresponding metadata, while the sample raw dump contains a subset of the full raw dump. The triples dump contains the triples forming the knowledge graph in turtle format, while the harmonized data dump contains the harmonized data in pickle files the harmonized data is the same as the output of the pipeline in step 1.
+
+* Full raw dump(91.2 GB): [data_dump_full.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_dump_full.tar.gz)
+* Sample raw dump(10.4 GB): [data_sample.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/data_sample.tar.gz)
+* All raw datasets can be downloaded separately from the [data folder](http://sensorlab.ijs.si/archive/energy-knowledge-graph/partial-files-raw/)
+
+
+The following files are also available for download on figshare: (TODO link when available):
+* Metadata dump(1.2 GB): [metadata.tar.gz](https://sensorlab.ijs.si/archive/energy-knowledge-graph/partial-files-raw/metadata.tar.gz)
+* Triples dump (125 MB): [triples.ttl](http://sensorlab.ijs.si/archive/energy-knowledge-graph/triples.ttl)
+* Harmonized data dump(80 GB): [harmonized.tar.gz](http://sensorlab.ijs.si/archive/energy-knowledge-graph/harmonized.tar.gz)
+
+The datasets used in this project are unified from the following open research datasets:
+
+1. [DEDDIAG](https://www.nature.com/articles/s41597-021-00963-2)
+2. [DEKN](https://data.open-power-system-data.org/household_data/)
+3. [DRED](https://www.st.ewi.tudelft.nl/~akshay/dred/)
+4. [ECDUY](https://www.nature.com/articles/s41597-022-01122-x)
+5. [ECO](https://www.st.ewi.tudelft.nl/~akshay/dred/)
+6. [EEUD](https://www.sciencedirect.com/science/article/pii/S1359431116312649?via%3Dihub#ab005)
+7. [ENERTALK](https://www.nature.com/articles/s41597-019-0212-5)
+8. [HEART](https://zenodo.org/records/7997198)
+9. [HES](whttps://github.com/ETSSmartRes/HES-Dataset)
+10. [HUE](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/N3HGRN)
+11. [IDEAL](https://www.nature.com/articles/s41597-021-00921-y)
+12. [IAWE](https://iawe.github.io/)
+12. [LERTA](https://zenodo.org/records/5608475)
+13. [PRECON](https://web.lums.edu.pk/~eig/precon.html)
+14. [REDD](https://tokhub.github.io/dbecd/links/redd.html)
+14. [REFIT](https://pureportal.strath.ac.uk/en/datasets/refit-electrical-load-measurements-cleaned)
+15. [SUST1](https://osf.io/2ac8q/)
+16. [SUST2](https://osf.io/jcn2q/)
+17. [UCIML](https://doi.org/10.24432/C58K54)
+18. [UKDALE](https://jack-kelly.com/data/)
+
+
+ This project is meant for scientific and research purposes and so are the datasets.
 
 
 ## Detailed pipeline script usage

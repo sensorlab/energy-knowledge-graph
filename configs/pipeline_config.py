@@ -3,13 +3,13 @@ from os import environ
 
 # load the .env file
 load_dotenv()
-# path to the raw data folder
+# path to the folder containing the raw data
 RAW_DATA_PATH = "./data/raw/"
 
 # path to the folder to save the parsed data
 PARSED_DATA_PATH = "./data/parsed/"
 
-# path to the folder to save the loadprofiles
+# path to the folder to save the calculated loadprofiles
 LOADPROFILES_PATH = "./data/loadprofiles/"
 
 # path to the folder containing metadata
@@ -18,7 +18,7 @@ METADATA_PATH = "./data/metadata/datasets/"
 # path to the folder to save the generated metadata
 GENERATED_METADATA_PATH = "./data/"
 
-# path to the folder to save the consumption data
+# path to the folder to save the calculated consumption data
 CONSUMPTION_DATA_PATH = "./data/"
 
 
@@ -41,16 +41,16 @@ KNOWLEDGE_GRAPH_ENDPOINT = "http://193.2.205.14:7200/repositories/Electricity_Gr
 # postgres url to store the data
 POSTGRES_URL = f"postgresql://{environ['DATABASE_USER']}:{environ['DATABASE_PASSWORD']}@193.2.205.14:5432/Energy"
 
-# steps to be executed
+# steps to be executed (Figure containing the steps in the pipeline https://github.com/sensorlab/energy-knowledge-graph/blob/main/images/pipeline.png)
 STEPS = [
-    "parse",
-    "loadprofiles",
-    "metadata",
-    "consumption-data",
-    "db-reset",
-    "generate-links",
-    "predict-devices",
-    "add-predicted-devices"
+    "parse", # this step will parse the raw data and generate the uniform data format(step 1 in the figure)
+    "loadprofiles", # this step will generate the loadprofiles from the parsed data(step 2 in the figure) 
+    "metadata", # this step will generate the metadata for the datasets(step 3 in the figure)
+    "consumption-data", # this step will generate the consumption data for the datasets(average daily consumption in kWh per appliance and average on/off event consumption per appliance)(step 2 in the figure)
+    "db-reset", # this step will reset the database and populate it with the metadata (step 4 in the figure)
+    "generate-links", # this step will generate links between the KG and Wikidata and DBpedia (step 7 in the figure)
+    "predict-devices", # this step will predict the devices for datasets with only aggregate data(step c) in the figure)
+    "add-predicted-devices" # this step will add the predicted devices to the KG(step c) and step 6 in the figure)
 ]
 
 # list of datasets to preprocess
@@ -78,7 +78,7 @@ DATASETS = [
 ]
 
 
-# datasets on which to predict appliances
+# datasets on which to predict appliances (for the pretrained model the datasets have to have atleast 8s sampling rate)
 PREDICT_DATASETS = [
     "IDEAL",
     "LERTA"

@@ -12,7 +12,7 @@ from pathlib import Path
 # Source: https://github.com/ETSSmartRes/HES-Dataset
 
 
-# read data from HES convert to kWh and save to dictionary
+# read data from HES convert to uniform format and save to dictionary
 def parse_HES(data_path: str, save_path: str) -> None:
     data_path: Path = Path(data_path).resolve()
     assert data_path.exists(), f"Path '{data_path}' does not exist!"

@@ -14,7 +14,7 @@ from src.helper import save_to_pickle
 # Source: https://zenodo.org/records/5608475
 
 
-# read file set date as index and convert to kWh
+# read file & set date as index 
 def process_file(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path).set_index("Time")
     df.index = pd.to_datetime(df.index)

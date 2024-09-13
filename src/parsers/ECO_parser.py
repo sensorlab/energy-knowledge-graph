@@ -15,7 +15,7 @@ from src.helper import save_to_pickle
 # Location: Switzerland
 # Source: https://vs.inf.ethz.ch/res/show.html?what=eco-data
 
-# read data from ECO convert to kWh and save to dictionary
+# read data from ECO convert uniform format and save to dictionary
 def get_house_data(file_path: str, device_mapping: dict) -> dict:
     file_path: Path = Path(file_path).resolve()
     assert file_path.exists(), f"Path '{file_path}' does not exist!"

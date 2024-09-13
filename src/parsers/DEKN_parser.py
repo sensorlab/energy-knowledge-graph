@@ -6,7 +6,7 @@ from src.helper import save_to_pickle
 # sampling rate: 1min
 # length: 2.5 years
 # unit: kWh
-# households: 11
+# households: 5
 # submetered
 # Location: Germany
 # Source: https://data.open-power-system-data.org/household_data/2020-04-15
@@ -62,7 +62,12 @@ def parse_DEKN(data_path: str, save_path: str) -> None:
         name = "DEKN_" + str(household[-1])
         # create dataframe for each appliance
         for c in temp_df.columns:
-            data[c] = pd.DataFrame(temp_df[c].dropna())
+            curr_df = temp_df[c].copy()
+            # data is cumulative, so get the difference
+            curr_df = curr_df.diff(periods=1)
+            curr_df = curr_df.dropna()
+
+            data[c] = pd.DataFrame(curr_df)
 
         data_dict[name] = data
 

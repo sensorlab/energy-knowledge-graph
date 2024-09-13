@@ -5,6 +5,18 @@ import pandas as pd
 import os
 from src.helper import save_to_pickle
 
+
+######################DATASET INFO#########################################
+# sampling rate: 1min
+# length: 1 year
+# unit: watts
+# households: 23
+# submetered: yes
+# Location: Canada
+# Source: https://www.sciencedirect.com/science/article/pii/S1359431116312649?via%3Dihub#ab005
+
+
+
 def parse_EEUD(data_path : Path, save_path : Path):
     """
     Parse the EEUD data and save it as a pickle file

@@ -41,6 +41,9 @@ def parse_HES(data_path: str, save_path: str) -> None:
         device_df.set_index("date", inplace=True)
         device_df.sort_index(inplace=True)
 
+        # remove duplicates
+        device_df = device_df[~device_df.index.duplicated(keep="first")]
+
         # Add the current device dataframe to the dict of dataframes
         data[device] = device_df
 

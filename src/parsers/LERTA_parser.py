@@ -20,6 +20,8 @@ def process_file(path: Path) -> pd.DataFrame:
     df.index = pd.to_datetime(df.index)
     df.sort_index(inplace=True)
 
+    # check for duplicates
+    df = df[~df.index.duplicated(keep="first")]
     return df
 
 

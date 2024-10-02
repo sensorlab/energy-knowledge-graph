@@ -26,6 +26,9 @@ def read_and_preprocess_df(path: Path) -> pd.DataFrame:
     # resample to 7s and forward fill up to 35s
     df = df.resample("7s").ffill(limit=7).dropna()
 
+    # check for duplicates
+    df = df[~df.index.duplicated(keep="first")]
+
     return df
 
 

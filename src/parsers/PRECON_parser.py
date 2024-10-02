@@ -27,6 +27,10 @@ def parse_PRECON(data_path: Path, save_path: Path):
             df = df.resample("1min").ffill(limit=2).dropna()
             # convert from kW to watts
             df = df*1000
+
+            # check for duplicates
+            df = df[~df.index.duplicated(keep="first")]
+
             data_dict[name] = {"aggregate" : df}
             
     save_to_pickle(data_dict, save_path)

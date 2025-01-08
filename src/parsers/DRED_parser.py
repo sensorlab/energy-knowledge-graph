@@ -40,6 +40,9 @@ def parse_DRED(data_path: str, save_path: str) -> None:
     df.set_index("time", inplace=True)
     df.sort_index(inplace=True)
 
+    #check for duplicates
+    df = df[~df.index.duplicated(keep="first")]
+
     # split into appliances
     data = {}
     for c in df.columns:

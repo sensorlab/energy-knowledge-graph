@@ -29,6 +29,16 @@ def parse_HUE(data_path: str, save_path: str) -> None:
     # Create a dictionary with the data for each house
     data_dict = {}
     for id in data["residential_id"].unique():
-        data_dict["HUE_" + str(id)] = {"aggregate" : data.loc[data["residential_id"] == id, "energy"]}
+        curr_df = data.loc[data["residential_id"] == id, "energy"]
+
+        # remove the timezone
+        curr_df.index = curr_df.index.tz_localize(None)
+
+
+        #check for duplicates
+        curr_df = curr_df[~curr_df.index.duplicated(keep="first")]
+
+
+        data_dict["HUE_" + str(id)] = {"aggregate" : curr_df}
 
     save_to_pickle(data_dict, save_path)

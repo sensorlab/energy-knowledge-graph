@@ -25,6 +25,10 @@ def preproces_file(file_path: Path) -> pd.DataFrame:
     df[0] = pd.to_datetime(df[0], unit="s")
     df = df.set_index(0)
 
+    # check for duplicates and remove them by keeping the first occurence
+    df = df[~df.index.duplicated(keep="first")]
+    
+
     return df
 
 

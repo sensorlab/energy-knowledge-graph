@@ -25,10 +25,15 @@ DATA_PATH: Path = Path("./data/metadata/").resolve()
 
 
 # get location data from openstreetmaps api for given lat, lon
+import requests
 def get_location_data(lat, lon):
     url = f'https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&accept-language=en'
+    # Add User-Agent to prevent 403 error
+    headers = {
+        'User-Agent': 'EKG/1.0'  # Use your email or app identifier
+    }
     try:
-        res = requests.get(url)
+        res = requests.get(url, headers=headers)
         # Raise an exception if the response status is not 200 (HTTP_OK)
         res.raise_for_status()
     except requests.exceptions.HTTPError as http_err:
@@ -54,6 +59,7 @@ def get_location_data(lat, lon):
 
     # No error was raised, so we can return the JSON data
     return data
+
 
 
 # get GDP(PPP) for given country and year, the GDP is in 2017 USD

@@ -40,6 +40,9 @@ def parse_HEART(data_path: str, save_path: str) -> None:
             df = df.set_index("Timestamp").drop(columns=["dw", "wm"])
             df.sort_index(inplace=True)
 
+            # check for duplicates
+            df = df[~df.index.duplicated(keep="first")]
+
             df.rename(columns={"Value": "aggregate"}, inplace=True)
 
             df.dropna(inplace=True)

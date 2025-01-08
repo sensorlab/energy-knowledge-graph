@@ -45,6 +45,9 @@ def process_dataframe(df: pd.DataFrame, house_number: int) -> pd.DataFrame:
     df = df.set_index("Time").sort_index()
     df = df.resample("8s").fillna(method="nearest", limit=1).dropna()
 
+    # check for duplicates
+    df = df[~df.index.duplicated(keep="first")]
+
     device_names = appliances[house_number - 1].split(",")
     if device_names != None:
         df.columns = device_names

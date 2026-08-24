@@ -150,7 +150,7 @@ Quick start guide for training pipeline:
 
 # SPARQL examples
 
-We provide some example SPARQL queries that can be run on the knowledge graph. We also host a [SPARQL endpoint](https://sparqlelec.ijs.si/) where you can test your queries.
+We provide some example SPARQL queries that can be run on the knowledge graph. We also host a [SPARQL endpoint](https://sparqlelec.ijs.si/query.html) where you can test your queries.
 
 
 ## Example 1: Query all countries with GDP greater than 50000
